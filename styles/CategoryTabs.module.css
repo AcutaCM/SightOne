@@ -1,0 +1,193 @@
+/**
+ * CategoryTabs Styles
+ * 
+ * Styles for the category tabs component with animations.
+ */
+
+.container {
+  padding: var(--wf-spacing-md) var(--wf-spacing-lg);
+  border-bottom: 1px solid var(--wf-panel-border);
+  background-color: var(--wf-panel-bg);
+}
+
+.scrollContainer {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.tabsWrapper {
+  display: flex;
+  gap: var(--wf-spacing-sm);
+  padding-bottom: var(--wf-spacing-xs);
+  min-width: min-content;
+}
+
+/* Tab button */
+.tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.tab:hover {
+  transform: translateY(-1px);
+}
+
+.tab:active {
+  transform: translateY(0);
+}
+
+.tabContent {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  padding: var(--wf-spacing-xs) var(--wf-spacing-md);
+  background-color: var(--wf-panel-hover);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-md);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.tab:hover .tabContent {
+  background-color: var(--wf-panel-bg);
+  border-color: var(--border-focus);
+  box-shadow: var(--wf-shadow-sm);
+}
+
+.tabSelected .tabContent {
+  background-color: var(--wf-panel-bg);
+  border-color: var(--border-focus);
+  box-shadow: var(--wf-shadow-md);
+}
+
+/* Icon wrapper */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--wf-radius-sm);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.tabSelected .iconWrapper {
+  box-shadow: var(--wf-shadow-sm);
+}
+
+.icon {
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Label */
+.label {
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  color: var(--wf-panel-text-secondary);
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.tabSelected .label {
+  color: var(--wf-panel-text);
+  font-weight: var(--wf-font-semibold);
+}
+
+/* Count badge */
+.count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--wf-spacing-xs);
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-medium);
+  color: var(--wf-panel-text-secondary);
+  background-color: var(--wf-panel-hover);
+  border-radius: var(--wf-radius-full);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.tabSelected .count {
+  color: var(--wf-panel-text);
+  background-color: var(--wf-panel-border);
+}
+
+/* Active indicator */
+.activeIndicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: var(--wf-radius-full) var(--wf-radius-full) 0 0;
+  animation: slideIn var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+@keyframes slideIn {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Accessibility */
+.tab:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: var(--wf-radius-md);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+  }
+  
+  .tabsWrapper {
+    gap: var(--wf-spacing-xs);
+  }
+  
+  .tabContent {
+    padding: var(--wf-spacing-xs) var(--wf-spacing-sm);
+  }
+  
+  .label {
+    font-size: var(--wf-text-xs);
+  }
+  
+  .iconWrapper {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Dark theme adjustments */
+.container[data-theme="dark"] .tabContent {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.container[data-theme="dark"] .tab:hover .tabContent {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.container[data-theme="dark"] .tabSelected .tabContent {
+  background-color: rgba(255, 255, 255, 0.1);
+}

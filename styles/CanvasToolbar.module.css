@@ -1,0 +1,193 @@
+/**
+ * CanvasToolbar Styles
+ * 
+ * Styles for the canvas toolbar component.
+ */
+
+.toolbar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm);
+  padding: var(--wf-spacing-sm);
+  z-index: 10;
+  transition: all var(--wf-duration-normal) var(--wf-easing-default);
+  pointer-events: auto;
+}
+
+/* Position variants */
+.toolbar.top-left {
+  top: var(--wf-spacing-lg);
+  left: var(--wf-spacing-lg);
+}
+
+.toolbar.top-right {
+  top: var(--wf-spacing-lg);
+  right: var(--wf-spacing-lg);
+}
+
+.toolbar.bottom-left {
+  bottom: var(--wf-spacing-lg);
+  left: var(--wf-spacing-lg);
+}
+
+.toolbar.bottom-right {
+  bottom: var(--wf-spacing-lg);
+  right: var(--wf-spacing-lg);
+}
+
+/* Zoom controls container */
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+}
+
+/* View controls container */
+.viewControls {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+}
+
+/* Toolbar button */
+.toolbarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--wf-radius-sm);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  outline: none;
+}
+
+.toolbarButton:hover {
+  background: var(--wf-panel-hover);
+  transform: scale(1.05);
+}
+
+.toolbarButton:active {
+  transform: scale(0.95);
+}
+
+.toolbarButton:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.toolbarButton svg {
+  width: 20px;
+  height: 20px;
+  transition: transform var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.toolbarButton:hover svg {
+  transform: scale(1.1);
+}
+
+/* Zoom level display */
+.zoomLevel {
+  min-width: 48px;
+  padding: 0 var(--wf-spacing-sm);
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  font-family: var(--wf-font-mono);
+  text-align: center;
+  user-select: none;
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Divider */
+.divider {
+  width: 1px;
+  height: 24px;
+  margin: 0 var(--wf-spacing-xs);
+  transition: background var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .toolbar {
+    padding: var(--wf-spacing-xs);
+    gap: var(--wf-spacing-xs);
+  }
+
+  .toolbar.top-left,
+  .toolbar.top-right {
+    top: var(--wf-spacing-sm);
+  }
+
+  .toolbar.top-left {
+    left: var(--wf-spacing-sm);
+  }
+
+  .toolbar.top-right {
+    right: var(--wf-spacing-sm);
+  }
+
+  .toolbar.bottom-left,
+  .toolbar.bottom-right {
+    bottom: var(--wf-spacing-sm);
+  }
+
+  .toolbar.bottom-left {
+    left: var(--wf-spacing-sm);
+  }
+
+  .toolbar.bottom-right {
+    right: var(--wf-spacing-sm);
+  }
+
+  .toolbarButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .toolbarButton svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .zoomLevel {
+    min-width: 40px;
+    font-size: var(--wf-text-xs);
+  }
+
+  .divider {
+    height: 20px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .toolbarButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .toolbarButton svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Animation for toolbar appearance */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolbar {
+  animation: slideIn var(--wf-duration-normal) var(--wf-easing-out);
+}

@@ -1,0 +1,692 @@
+/**
+ * Workflow Redesign - Global Styles
+ * 
+ * This file contains:
+ * - CSS Variables for theming
+ * - Global animations
+ * - Utility classes
+ * - Design tokens
+ */
+
+/* ============================================
+   CSS Variables - Light Theme
+   ============================================ */
+:root {
+  /* Canvas Colors */
+  --workflow-canvas-bg: #f8fafc;
+  --workflow-canvas-grid: #e2e8f0;
+  --workflow-canvas-grid-dot: #cbd5e1;
+  
+  /* Panel Colors */
+  --workflow-panel-bg: #ffffff;
+  --workflow-panel-border: rgba(255, 255, 255, 0.1);
+  --workflow-panel-hover: #f8fafc;
+  
+  /* Text Colors */
+  --workflow-text-primary: #0f172a;
+  --workflow-text-secondary: #64748b;
+  --workflow-text-tertiary: #94a3b8;
+  --workflow-text-inverse: #ffffff;
+  
+  /* Node Colors */
+  --workflow-node-bg: #ffffff;
+  --workflow-node-border: rgba(255, 255, 255, 0.1);
+  --workflow-node-shadow: none;
+  --workflow-node-selected: rgba(255, 255, 255, 0.4);
+  --workflow-node-hover: #f1f5f9;
+  
+  /* Edge Colors */
+  --workflow-edge-default: #94a3b8;
+  --workflow-edge-selected: #3b82f6;
+  --workflow-edge-animated: #10b981;
+  
+  /* Status Colors */
+  --workflow-status-idle: #94a3b8;
+  --workflow-status-running: #3b82f6;
+  --workflow-status-success: #10b981;
+  --workflow-status-error: #ef4444;
+  --workflow-status-warning: #f59e0b;
+  
+  /* Spacing System (4px base) */
+  --workflow-spacing-xs: 4px;
+  --workflow-spacing-sm: 8px;
+  --workflow-spacing-md: 12px;
+  --workflow-spacing-lg: 16px;
+  --workflow-spacing-xl: 24px;
+  --workflow-spacing-2xl: 32px;
+  --workflow-spacing-3xl: 48px;
+  
+  /* Border Radius System */
+  --workflow-radius-sm: 8px;
+  --workflow-radius-md: 12px;
+  --workflow-radius-lg: 16px;
+  --workflow-radius-xl: 20px;
+  --workflow-radius-full: 9999px;
+  
+  /* Shadow System */
+  --workflow-shadow-sm: none;
+  --workflow-shadow-md: none;
+  --workflow-shadow-lg: none;
+  --workflow-shadow-xl: none;
+  --workflow-shadow-glow: none;
+  --workflow-shadow-glow-success: none;
+  --workflow-shadow-glow-error: none;
+  
+  /* Animation Durations */
+  --workflow-duration-fast: 150ms;
+  --workflow-duration-normal: 300ms;
+  --workflow-duration-slow: 500ms;
+  
+  /* Animation Easing */
+  --workflow-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --workflow-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --workflow-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --workflow-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Layout Dimensions */
+  --workflow-sidebar-width: 280px;
+  --workflow-sidebar-collapsed: 48px;
+  --workflow-control-panel-width: 360px;
+  --workflow-control-panel-collapsed: 48px;
+  
+  /* Z-Index Layers */
+  --workflow-z-canvas: 1;
+  --workflow-z-nodes: 10;
+  --workflow-z-edges: 5;
+  --workflow-z-toolbar: 20;
+  --workflow-z-panel: 30;
+  --workflow-z-modal: 40;
+  --workflow-z-tooltip: 50;
+}
+
+/* ============================================
+   CSS Variables - Dark Theme
+   ============================================ */
+[data-theme="dark"] {
+  /* Canvas Colors */
+  --workflow-canvas-bg: #0a0f1e;
+  --workflow-canvas-grid: #1e293b;
+  --workflow-canvas-grid-dot: #334155;
+  
+  /* Panel Colors */
+  --workflow-panel-bg: #111827;
+  --workflow-panel-border: rgba(255, 255, 255, 0.1);
+  --workflow-panel-hover: #1f2937;
+  
+  /* Text Colors */
+  --workflow-text-primary: #f1f5f9;
+  --workflow-text-secondary: #94a3b8;
+  --workflow-text-tertiary: #64748b;
+  --workflow-text-inverse: #0f172a;
+  
+  /* Node Colors */
+  --workflow-node-bg: #1e293b;
+  --workflow-node-border: rgba(255, 255, 255, 0.1);
+  --workflow-node-shadow: none;
+  --workflow-node-selected: rgba(255, 255, 255, 0.4);
+  --workflow-node-hover: #334155;
+  
+  /* Edge Colors */
+  --workflow-edge-default: #475569;
+  --workflow-edge-selected: #60a5fa;
+  --workflow-edge-animated: #34d399;
+  
+  /* Status Colors */
+  --workflow-status-idle: #64748b;
+  --workflow-status-running: #60a5fa;
+  --workflow-status-success: #34d399;
+  --workflow-status-error: #f87171;
+  --workflow-status-warning: #fbbf24;
+  
+  /* Shadow System (darker) */
+  --workflow-shadow-sm: none;
+  --workflow-shadow-md: none;
+  --workflow-shadow-lg: none;
+  --workflow-shadow-xl: none;
+  --workflow-shadow-glow: none;
+  --workflow-shadow-glow-success: none;
+  --workflow-shadow-glow-error: none;
+}
+
+/* ============================================
+   Global Animations
+   ============================================ */
+
+/* Fade In */
+@keyframes workflow-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade Out */
+@keyframes workflow-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Slide In from Left */
+@keyframes workflow-slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide In from Right */
+@keyframes workflow-slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide Out to Left */
+@keyframes workflow-slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Slide Out to Right */
+@keyframes workflow-slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Scale In */
+@keyframes workflow-scale-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Scale Out */
+@keyframes workflow-scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* Bounce In */
+@keyframes workflow-bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Pulse */
+@keyframes workflow-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Spin */
+@keyframes workflow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Glow Pulse */
+@keyframes workflow-glow-pulse {
+  0%, 100% {
+    box-shadow: none;
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+/* Shake */
+@keyframes workflow-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+/* Float */
+@keyframes workflow-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Shimmer */
+@keyframes workflow-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Progress Bar */
+@keyframes workflow-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+/* Animation Classes */
+.workflow-animate-fade-in {
+  animation: workflow-fade-in var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-animate-fade-out {
+  animation: workflow-fade-out var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-animate-slide-in-left {
+  animation: workflow-slide-in-left var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-animate-slide-in-right {
+  animation: workflow-slide-in-right var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-animate-scale-in {
+  animation: workflow-scale-in var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-animate-bounce-in {
+  animation: workflow-bounce-in var(--workflow-duration-slow) var(--workflow-easing-bounce);
+}
+
+.workflow-animate-pulse {
+  animation: workflow-pulse 2s var(--workflow-easing) infinite;
+}
+
+.workflow-animate-spin {
+  animation: workflow-spin 1s linear infinite;
+}
+
+.workflow-animate-float {
+  animation: workflow-float 3s var(--workflow-easing) infinite;
+}
+
+/* Transition Classes */
+.workflow-transition-all {
+  transition: all var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-transition-colors {
+  transition: color var(--workflow-duration-normal) var(--workflow-easing),
+              background-color var(--workflow-duration-normal) var(--workflow-easing),
+              border-color var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-transition-transform {
+  transition: transform var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-transition-opacity {
+  transition: opacity var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-transition-fast {
+  transition-duration: var(--workflow-duration-fast);
+}
+
+.workflow-transition-slow {
+  transition-duration: var(--workflow-duration-slow);
+}
+
+/* Hover Effects */
+.workflow-hover-lift {
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing),
+              box-shadow var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.workflow-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+.workflow-hover-scale {
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.workflow-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.workflow-hover-glow {
+  transition: box-shadow var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.workflow-hover-glow:hover {
+  box-shadow: none;
+}
+
+/* Focus Styles */
+.workflow-focus-ring {
+  outline: none;
+  transition: box-shadow var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.workflow-focus-ring:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.workflow-focus-ring:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Loading States */
+.workflow-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.workflow-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--workflow-text-secondary);
+  border-top-color: var(--workflow-status-running);
+  border-radius: 50%;
+  animation: workflow-spin 0.6s linear infinite;
+}
+
+/* Disabled States */
+.workflow-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Scrollbar Styles */
+.workflow-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--workflow-text-tertiary) transparent;
+}
+
+.workflow-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.workflow-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.workflow-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--workflow-text-tertiary);
+  border-radius: var(--workflow-radius-full);
+}
+
+.workflow-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--workflow-text-secondary);
+}
+
+/* Card Styles */
+.workflow-card {
+  background: var(--workflow-panel-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--workflow-radius-md);
+  box-shadow: none;
+}
+
+.workflow-card-hover {
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.workflow-card-hover:hover {
+  border-color: var(--workflow-node-selected);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Badge Styles */
+.workflow-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--workflow-radius-full);
+  line-height: 1.5;
+}
+
+.workflow-badge-primary {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--workflow-status-running);
+}
+
+.workflow-badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--workflow-status-success);
+}
+
+.workflow-badge-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--workflow-status-error);
+}
+
+.workflow-badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--workflow-status-warning);
+}
+
+/* Divider */
+.workflow-divider {
+  height: 1px;
+  background: var(--workflow-panel-border);
+  margin: var(--workflow-spacing-md) 0;
+}
+
+/* Text Utilities */
+.workflow-text-primary {
+  color: var(--workflow-text-primary);
+}
+
+.workflow-text-secondary {
+  color: var(--workflow-text-secondary);
+}
+
+.workflow-text-tertiary {
+  color: var(--workflow-text-tertiary);
+}
+
+.workflow-text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workflow-text-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Spacing Utilities */
+.workflow-p-xs { padding: var(--workflow-spacing-xs); }
+.workflow-p-sm { padding: var(--workflow-spacing-sm); }
+.workflow-p-md { padding: var(--workflow-spacing-md); }
+.workflow-p-lg { padding: var(--workflow-spacing-lg); }
+.workflow-p-xl { padding: var(--workflow-spacing-xl); }
+
+.workflow-m-xs { margin: var(--workflow-spacing-xs); }
+.workflow-m-sm { margin: var(--workflow-spacing-sm); }
+.workflow-m-md { margin: var(--workflow-spacing-md); }
+.workflow-m-lg { margin: var(--workflow-spacing-lg); }
+.workflow-m-xl { margin: var(--workflow-spacing-xl); }
+
+/* Flexbox Utilities */
+.workflow-flex {
+  display: flex;
+}
+
+.workflow-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.workflow-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workflow-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.workflow-flex-1 {
+  flex: 1;
+}
+
+/* Grid Utilities */
+.workflow-grid {
+  display: grid;
+}
+
+.workflow-grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.workflow-grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.workflow-gap-sm {
+  gap: var(--workflow-spacing-sm);
+}
+
+.workflow-gap-md {
+  gap: var(--workflow-spacing-md);
+}
+
+.workflow-gap-lg {
+  gap: var(--workflow-spacing-lg);
+}
+
+/* Performance Optimizations */
+.workflow-will-change-transform {
+  will-change: transform;
+}
+
+.workflow-will-change-opacity {
+  will-change: opacity;
+}
+
+.workflow-gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Accessibility */
+.workflow-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Print Styles */
+@media print {
+  .workflow-no-print {
+    display: none !important;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

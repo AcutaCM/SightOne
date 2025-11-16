@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { saveDroneState, getDroneState, clearDroneState, hasValidStoredState, onStorageChange } from '../lib/droneStateStorage';
+import toast from 'react-hot-toast';
 
 interface DroneStatus {
   connected: boolean;
@@ -49,6 +50,7 @@ interface VideoStreamState {
     qr_enabled: boolean;
     strawberry_enabled: boolean;
     ai_enabled: boolean;
+    diagnosis_workflow_enabled: boolean;
   };
 }
 
@@ -68,7 +70,7 @@ interface QRScanResult {
   timestamp: string;
   qrImage: string; // Base64 encoded image
   size?: string;
-  cooldownTime?: number;
+  cooldownTime?: number; // Cooldown end timestamp
 }
 
 // 新增：QR扫描状态接口
@@ -84,6 +86,16 @@ interface MissionMessage {
   timestamp: string;
   level: 'info' | 'warning' | 'error' | 'success';
   message: string;
+}
+
+// 辅助函数：获取默认模型
+function getDefaultModelForProvider(provider: string): string {
+  const defaults: Record<string, string> = {
+    openai: 'gpt-4-vision-preview',
+    anthropic: 'claude-3-5-sonnet-20241022',
+    google: 'gemini-1.5-pro'
+  };
+  return defaults[provider] || 'gpt-4-vision-preview';
 }
 
 export const useDroneControl = () => {
@@ -148,7 +160,8 @@ export const useDroneControl = () => {
     detectionStatus: {
       qr_enabled: false,
       strawberry_enabled: false,
-      ai_enabled: false
+      ai_enabled: false,
+      diagnosis_workflow_enabled: false
     }
   });
   
@@ -200,7 +213,7 @@ export const useDroneControl = () => {
       ws.onopen = () => {
         wsRef.current = ws;
         addLog('info', 'WebSocket连接成功，发送无人机连接命令...');
-        // Send drone_connect message
+        // Send connect command with 'type' field
         ws.send(JSON.stringify({ type: 'drone_connect' }));
         setIsConnecting(false);
         setIsReconnecting(false);
@@ -269,6 +282,29 @@ export const useDroneControl = () => {
                 addLog('info', `检测到${data.data.total_count}个草莓`);
               }
               break;
+            case 'strawberry_summary':
+              // 处理草莓检测摘要（实时更新）
+              if (data.data) {
+                const summary = data.data;
+                setDetectionStats(prev => ({
+                  ...prev,
+                  totalPlants: summary.total || 0,
+                  matureStrawberries: (summary.ripe || 0) + (summary.overripe || 0),
+                  immatureStrawberries: (summary.unripe || 0) + (summary.partially_ripe || 0),
+                  diseased: prev.diseased
+                }));
+                
+                // 可选：添加详细日志
+                if (summary.total > 0) {
+                  const details = [];
+                  if (summary.unripe) details.push(`未成熟:${summary.unripe}`);
+                  if (summary.partially_ripe) details.push(`部分成熟:${summary.partially_ripe}`);
+                  if (summary.ripe) details.push(`成熟:${summary.ripe}`);
+                  if (summary.overripe) details.push(`过熟:${summary.overripe}`);
+                  addLog('info', `🍓 检测到${summary.total}个草莓 (${details.join(', ')})`);
+                }
+              }
+              break;
             case 'ai_analysis_complete':
               addLog('success', 'AI分析完成');
               // 处理AI分析结果并触发相应的无人机动作
@@ -316,32 +352,213 @@ export const useDroneControl = () => {
             }
             case 'qr_detected': {
               const payload = data.data;
-              if (payload?.plant_id) {
+              // 处理多个QR码检测结果
+              if (payload?.results && Array.isArray(payload.results)) {
                 const now = Date.now();
-                const cooldownEnds = now + (payload.cooldown_seconds ?? 60) * 1000;
+                
+                payload.results.forEach((qr: any) => {
+                  if (qr.plant_id) {
+                    const cooldownEnds = now + 60000; // 默认60秒冷却
+                    
+                    const newScan: QRScanResult = {
+                      id: `${qr.plant_id}-${now}`,
+                      plantId: qr.plant_id.toString(),
+                      timestamp: qr.timestamp || new Date(now).toLocaleTimeString(),
+                      qrImage: qr.qr_image || '', // QR码图像
+                      size: qr.size,
+                      cooldownTime: cooldownEnds
+                    };
 
-                const newScan: QRScanResult = {
-                  id: `${payload.plant_id}-${now}`,
-                  plantId: payload.plant_id,
-                  timestamp: new Date(now).toLocaleTimeString(),
-                  qrImage: payload.qr_image, // 假设后端返回'qr_image'字段
-                  size: payload.size,
-                  cooldownTime: cooldownEnds
-                };
+                    setQrScan(prev => {
+                      const newHistory = [newScan, ...prev.scanHistory].slice(0, 20);
+                      return {
+                        lastScan: newScan,
+                        scanHistory: newHistory,
+                        cooldowns: {
+                          ...prev.cooldowns,
+                          [qr.plant_id]: cooldownEnds
+                        }
+                      };
+                    });
 
-                setQrScan(prev => {
-                  const newHistory = [newScan, ...prev.scanHistory].slice(0, 20);
-                  return {
-                    lastScan: newScan,
-                    scanHistory: newHistory,
+                    addLog('info', `检测到QR码: 植株ID ${qr.plant_id}`);
+                  } else {
+                    // 非植株ID的QR码
+                    addLog('info', `检测到QR码: ${qr.data}`);
+                  }
+                });
+              }
+              break;
+            }
+            case 'detection_status': {
+              // 更新检测状态（用于诊断工作流自动启用）
+              const payload = data.data;
+              if (payload) {
+                setVideoStream(prev => ({
+                  ...prev,
+                  detectionStatus: {
+                    qr_enabled: payload.qr_enabled ?? prev.detectionStatus.qr_enabled,
+                    strawberry_enabled: payload.strawberry_enabled ?? prev.detectionStatus.strawberry_enabled,
+                    ai_enabled: prev.detectionStatus.ai_enabled,
+                    diagnosis_workflow_enabled: payload.diagnosis_workflow_enabled ?? prev.detectionStatus.diagnosis_workflow_enabled
+                  }
+                }));
+                addLog('info', '检测状态已更新');
+              }
+              break;
+            }
+            case 'qr_plant_detected': {
+              const payload = data.data;
+              if (payload?.plant_id) {
+                // 显示QR检测成功通知
+                toast.success(`🏷️ ${payload.message || `检测到植株 ${payload.plant_id}`}`, {
+                  duration: 3000,
+                  position: 'top-right',
+                  icon: '✅'
+                });
+                addLog('success', `检测到植株 ${payload.plant_id}`);
+              }
+              break;
+            }
+            case 'diagnosis_config_error': {
+              const payload = data.data;
+              if (payload?.plant_id) {
+                // 根据错误类型显示不同的通知
+                let errorMessage = payload.message || '模型配置错误';
+                let errorIcon = '⚠️';
+                
+                if (payload.error_type === 'no_model') {
+                  errorMessage = '❌ 未配置AI模型\n请在PureChat中配置模型';
+                  errorIcon = '🤖';
+                } else if (payload.error_type === 'no_vision') {
+                  errorMessage = '❌ 模型不支持视觉\n请配置支持视觉的模型';
+                  errorIcon = '👁️';
+                } else if (payload.error_type === 'no_unipixel') {
+                  errorMessage = '❌ 未配置Unipixel\n请先配置Unipixel服务';
+                  errorIcon = '🔧';
+                }
+                
+                toast.error(errorMessage, {
+                  duration: 5000,
+                  position: 'top-right',
+                  icon: errorIcon,
+                  style: {
+                    whiteSpace: 'pre-line'
+                  }
+                });
+                addLog('error', `植株 ${payload.plant_id}: ${errorMessage.replace('\n', ' ')}`);
+              }
+              break;
+            }
+            case 'diagnosis_started': {
+              const payload = data.data;
+              if (payload?.plant_id) {
+                // 显示诊断开始通知
+                toast.success(`🔬 开始诊断植株 ${payload.plant_id}`, {
+                  duration: 3000,
+                  position: 'top-right',
+                  icon: '🚀'
+                });
+                addLog('success', `开始诊断植株 ${payload.plant_id}`);
+                
+                // 更新QR扫描冷却时间
+                if (payload.cooldown_seconds) {
+                  const cooldownEnds = Date.now() + payload.cooldown_seconds * 1000;
+                  setQrScan(prev => ({
+                    ...prev,
                     cooldowns: {
                       ...prev.cooldowns,
                       [payload.plant_id]: cooldownEnds
                     }
-                  };
+                  }));
+                }
+              }
+              break;
+            }
+            case 'diagnosis_progress': {
+              const payload = data.data;
+              if (payload?.plant_id) {
+                // 显示诊断进度通知
+                const stageMessages: Record<string, string> = {
+                  'generating_mask_prompt': '🤖 AI正在分析病害部位...',
+                  'generating_mask': '🎨 Unipixel正在生成遮罩图...',
+                  'generating_report': '📝 AI正在生成诊断报告...',
+                  'complete': '✅ 诊断完成'
+                };
+                
+                const message = stageMessages[payload.stage] || payload.message || '诊断进行中...';
+                const progress = payload.progress || 0;
+                
+                toast.loading(`${message} (${progress}%)`, {
+                  id: `diagnosis-${payload.plant_id}`,
+                  duration: 2000,
+                  position: 'top-right'
                 });
-
-                addLog('info', `检测到QR码: ${payload.plant_id}`);
+                
+                addLog('info', `植株 ${payload.plant_id}: ${message}`);
+              }
+              break;
+            }
+            case 'diagnosis_complete': {
+              const payload = data.data;
+              if (payload?.plant_id && payload?.report) {
+                // 关闭进度通知
+                toast.dismiss(`diagnosis-${payload.plant_id}`);
+                
+                // 显示诊断完成通知
+                const report = payload.report;
+                const severityIcons: Record<string, string> = {
+                  'low': '🟢',
+                  'medium': '🟡',
+                  'high': '🔴'
+                };
+                const icon = severityIcons[report.severity] || '📊';
+                
+                toast.success(`${icon} 植株 ${payload.plant_id} 诊断完成\n${report.summary}`, {
+                  duration: 5000,
+                  position: 'top-right',
+                  style: {
+                    whiteSpace: 'pre-line'
+                  }
+                });
+                
+                addLog('success', `植株 ${payload.plant_id} 诊断完成: ${report.summary}`);
+                
+                // 触发全局事件，通知AI分析管理器
+                const event = new CustomEvent('diagnosis_complete', {
+                  detail: report
+                });
+                window.dispatchEvent(event);
+                console.log('已触发diagnosis_complete事件，报告:', report);
+              }
+              break;
+            }
+            case 'diagnosis_error': {
+              const payload = data.data;
+              if (payload?.plant_id) {
+                // 关闭进度通知
+                toast.dismiss(`diagnosis-${payload.plant_id}`);
+                
+                // 显示错误通知
+                const errorMessages: Record<string, string> = {
+                  'no_model': '❌ 未配置AI模型',
+                  'no_vision': '❌ 模型不支持视觉功能',
+                  'unipixel_error': '⚠️ Unipixel服务错误',
+                  'ai_error': '❌ AI调用失败',
+                  'timeout': '⏱️ 诊断超时',
+                  'diagnosis_failed': '❌ 诊断失败',
+                  'exception': '❌ 诊断异常'
+                };
+                
+                const errorType = payload.error_type || 'exception';
+                const errorMessage = errorMessages[errorType] || payload.message || '诊断失败';
+                
+                toast.error(`植株 ${payload.plant_id}: ${errorMessage}`, {
+                  duration: 5000,
+                  position: 'top-right'
+                });
+                
+                addLog('error', `植株 ${payload.plant_id}: ${errorMessage}`);
               }
               break;
             }
@@ -379,6 +596,41 @@ export const useDroneControl = () => {
                 currentFrame: null
               }));
               addLog('error', `视频流错误: ${payload.message || '未知错误'}`);
+              break;
+            }
+            case 'qr_cooldown_updated': {
+              const payload = data.data;
+              if (payload?.message) {
+                toast.success(payload.message, {
+                  duration: 3000,
+                  position: 'top-right',
+                  icon: '⏱️'
+                });
+                addLog('success', payload.message);
+              }
+              break;
+            }
+            case 'qr_cooldowns_cleared': {
+              const payload = data.data;
+              if (payload?.message) {
+                toast.success(payload.message, {
+                  duration: 3000,
+                  position: 'top-right',
+                  icon: '🧹'
+                });
+                addLog('success', payload.message);
+                // 清空前端的冷却记录
+                setQrScan(prev => ({
+                  ...prev,
+                  cooldowns: {}
+                }));
+              }
+              break;
+            }
+            case 'qr_cooldown_status': {
+              const payload = data.data;
+              console.log('QR冷却状态:', payload);
+              // 可以在这里更新UI显示冷却状态
               break;
             }
             default:
@@ -425,7 +677,7 @@ export const useDroneControl = () => {
       addLog('error', '连接错误: ' + (error as Error).message);
       setIsConnecting(false);
     }
-  }, [isConnecting, droneStatus.connected, addLog]);
+  }, [isConnecting, addLog, clearReconnectTimeout]);
 
   // 自动重连函数
   const attemptReconnect = useCallback(() => {
@@ -445,18 +697,6 @@ export const useDroneControl = () => {
     }, reconnectDelay);
   }, [reconnectAttempts, maxReconnectAttempts, addLog, connectToDrone]);
 
-  const disconnectFromDrone = useCallback(() => {
-     if (wsRef.current) {
-       // Send drone_disconnect message before closing
-       wsRef.current.send(JSON.stringify({ type: 'drone_disconnect' }));
-       wsRef.current.close();
-       wsRef.current = null;
-     }
-     updateDroneStatus(prev => ({ ...prev, connected: false }));
-     setVideoStream(prev => ({ ...prev, isStreaming: false, currentFrame: null }));
-     addLog('info', '已断开无人机连接');
-   }, [addLog]);
-
   const sendMessage = useCallback((type: string, data?: any) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
       addLog('error', '无人机未连接，无法发送命令');
@@ -472,6 +712,17 @@ export const useDroneControl = () => {
       return false;
     }
   }, [addLog]);
+
+  const disconnectFromDrone = useCallback(() => {
+    if (wsRef.current) {
+      sendMessage('drone_disconnect');
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    updateDroneStatus(prev => ({ ...prev, connected: false }));
+    setVideoStream(prev => ({ ...prev, isStreaming: false, currentFrame: null }));
+    addLog('info', '已断开无人机连接');
+  }, [addLog, sendMessage]);
 
   const takeoff = useCallback(() => {
     addLog('info', '发送起飞命令...');
@@ -533,6 +784,107 @@ export const useDroneControl = () => {
     return sendMessage('stop_qr_detection');
   }, [sendMessage, addLog]);
 
+  const startDiagnosisWorkflow = useCallback(() => {
+    addLog('info', '启动诊断工作流...');
+    
+    // 在启动诊断工作流之前，自动发送AI配置
+    try {
+      // 从localStorage读取AI配置
+      const providers = ['openai', 'anthropic', 'google', 'qwen', 'dashscope'];
+      let configSent = false;
+      
+      // 尝试多种可能的键名格式
+      const possibleKeyFormats = [
+        (provider: string) => `chat.apiKey.${provider}`,
+        (provider: string) => `apiKey.${provider}`,
+        (provider: string) => `${provider}.apiKey`,
+        (provider: string) => `chat_apiKey_${provider}`,
+      ];
+      
+      for (const provider of providers) {
+        let apiKey = null;
+        let apiBase = null;
+        let model = null;
+        
+        // 尝试不同的键名格式
+        for (const keyFormat of possibleKeyFormats) {
+          const key = localStorage.getItem(keyFormat(provider));
+          if (key) {
+            apiKey = key;
+            // 尝试相应的base和model键
+            apiBase = localStorage.getItem(keyFormat(provider).replace('apiKey', 'apiBase'));
+            model = localStorage.getItem(keyFormat(provider).replace('apiKey', 'model'));
+            break;
+          }
+        }
+        
+        // 如果找到API密钥
+        if (apiKey) {
+          // 确保model不为null
+          const finalModel = model && model.trim() !== '' ? model : getDefaultModelForProvider(provider);
+          
+          // 找到配置的提供商，发送配置
+          const config = {
+            provider,
+            model: finalModel,
+            api_key: apiKey,
+            api_base: apiBase || undefined,
+            max_tokens: 2000,
+            temperature: 0.7
+          };
+          
+          console.log('🔍 发送AI配置:', {
+            provider: config.provider,
+            model: config.model,
+            api_base: config.api_base,
+            has_api_key: !!config.api_key
+          });
+          
+          addLog('info', `自动配置AI模型: ${config.provider}/${config.model}`);
+          sendMessage('set_ai_config', config);
+          configSent = true;
+          break;
+        }
+      }
+      
+      if (!configSent) {
+        // 打印所有localStorage键以便调试
+        console.log('📋 localStorage中的所有键:', Object.keys(localStorage));
+        console.log('🔍 查找的键格式:', providers.map(p => `chat.apiKey.${p}`));
+        
+        addLog('warning', '⚠️ 未找到AI配置，请在PureChat中配置模型');
+        toast.error('未配置AI模型\n请在PureChat中配置模型', {
+          duration: 5000,
+          position: 'top-center',
+          icon: '❌'
+        });
+      }
+    } catch (error) {
+      console.error('读取AI配置失败:', error);
+      addLog('warning', '读取AI配置失败');
+    }
+    
+    // 发送启动诊断工作流命令
+    return sendMessage('start_diagnosis_workflow');
+  }, [sendMessage, addLog]);
+
+  const stopDiagnosisWorkflow = useCallback(() => {
+    addLog('info', '停止诊断工作流...');
+    return sendMessage('stop_diagnosis_workflow');
+  }, [sendMessage, addLog]);
+
+  const sendAIConfig = useCallback((config: {
+    provider: string;
+    model: string;
+    api_key: string;
+    api_base?: string;
+    max_tokens?: number;
+    temperature?: number;
+  }) => {
+    addLog('info', `配置AI模型: ${config.provider}/${config.model}`);
+    return sendMessage('set_ai_config', config);
+  }, [sendMessage, addLog]);
+
   const manualControl = useCallback((direction: 'up' | 'down' | 'left' | 'right' | 'center') => {
     let left_right = 0;
     let forward_backward = 0;
@@ -570,8 +922,8 @@ export const useDroneControl = () => {
 
   const startVideoStream = useCallback(() => {
     addLog('info', '启动视频流...');
-    return sendMessage('start_video_streaming', {});
-  }, [sendMessage, addLog]);
+    return sendMessage('start_video_streaming');
+  }, [addLog, sendMessage]);
 
   const stopVideoStream = useCallback(() => {
     addLog('info', '停止视频流...');
@@ -580,8 +932,8 @@ export const useDroneControl = () => {
       isStreaming: false,
       currentFrame: null
     }));
-    return sendMessage('stop_video_streaming', {});
-  }, [sendMessage, addLog]);
+    return sendMessage('stop_video_streaming');
+  }, [addLog, sendMessage]);
 
   const clearLogs = useCallback(() => {
     setLogs([]);
@@ -634,6 +986,84 @@ export const useDroneControl = () => {
     checkAndReconnect();
   }, [connectToDrone]); // 依赖connectToDrone函数
 
+  // 在WebSocket连接建立后自动发送AI配置
+  useEffect(() => {
+    const sendAIConfigOnConnect = async () => {
+      // 检查WebSocket是否已连接
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        // 尝试从localStorage读取PureChat配置
+        try {
+          const providers: Array<'openai' | 'anthropic' | 'google'> = ['openai', 'anthropic', 'google'];
+          
+          for (const provider of providers) {
+            const apiKey = localStorage.getItem(`chat.apiKey.${provider}`);
+            
+            if (apiKey) {
+              // 读取其他配置
+              const apiBase = localStorage.getItem(`chat.apiBase.${provider}`);
+              const model = localStorage.getItem(`chat.model.${provider}`) || getDefaultModelForProvider(provider);
+              const maxTokens = localStorage.getItem('chat.maxTokens');
+              const temperature = localStorage.getItem('chat.temperature');
+              
+              const config = {
+                provider,
+                model,
+                api_key: apiKey,
+                api_base: apiBase || undefined,
+                max_tokens: maxTokens ? parseInt(maxTokens) : 2000,
+                temperature: temperature ? parseFloat(temperature) : 0.7
+              };
+              
+              // 发送AI配置到后端
+              sendAIConfig(config);
+              addLog('info', `自动发送AI配置: ${provider}/${model}`);
+              break; // 只发送第一个找到的配置
+            }
+          }
+        } catch (error) {
+          console.error('自动发送AI配置失败:', error);
+        }
+      }
+    };
+
+    // 延迟一点时间，确保WebSocket连接已建立
+    const timer = setTimeout(sendAIConfigOnConnect, 1500);
+    
+    return () => clearTimeout(timer);
+  }, [droneStatus.connected, sendAIConfig, addLog]); // 当连接状态改变时触发
+
+
+  // QR冷却相关函数
+  const setQRCooldown = useCallback((cooldownSeconds: number) => {
+    if (sendMessage('set_qr_cooldown', { cooldown_seconds: cooldownSeconds })) {
+      addLog('info', `设置QR扫描冷却时间: ${cooldownSeconds}秒`);
+      return true;
+    }
+    return false;
+  }, [sendMessage, addLog]);
+
+  const getQRCooldownStatus = useCallback(() => {
+    return sendMessage('get_qr_cooldown_status');
+  }, [sendMessage]);
+
+  const clearQRCooldowns = useCallback(() => {
+    if (sendMessage('clear_qr_cooldowns')) {
+      addLog('info', '清空所有QR扫描冷却记录');
+      return true;
+    }
+    return false;
+  }, [sendMessage, addLog]);
+
+  // 挑战卡巡航控制
+  const startChallengeCruise = useCallback((params?: { rounds?: number; height?: number; stayDuration?: number }) => {
+    addLog('info', `启动挑战卡巡航任务 (轮次:${params?.rounds || 3}, 高度:${params?.height || 100}cm, 停留:${params?.stayDuration || 5}s)`);
+    return sendMessage('challenge_cruise_start', params || {});
+  }, [sendMessage, addLog]);
+
+  const stopChallengeCruise = useCallback(() => {
+    addLog('info', '停止挑战卡巡航任务');
+    return sendMessage('challenge_cruise_stop');
+  }, [sendMessage, addLog]);
 
   return {
     droneStatus,
@@ -659,10 +1089,18 @@ export const useDroneControl = () => {
     stopRippleDetection,
     startQRDetection,
     stopQRDetection,
+    startDiagnosisWorkflow,
+    stopDiagnosisWorkflow,
     startVideoStream,
     stopVideoStream,
     manualControl,
     clearLogs,
-    sendMessage
+    sendMessage,
+    setQRCooldown,
+    getQRCooldownStatus,
+    clearQRCooldowns,
+    sendAIConfig, // 新增：发送AI配置
+    startChallengeCruise, // 挑战卡巡航
+    stopChallengeCruise,
   };
 };

@@ -7,6 +7,7 @@ import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/input";
 import { Chip } from "@heroui/chip";
 import AnimatedList from './ui/AnimatedList';
+import { usePanelStyles } from "@/hooks/usePanelStyles";
 
 interface LogEntry {
   id: string;
@@ -36,6 +37,7 @@ const SystemLogPanel: React.FC<SystemLogPanelProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [isPaused, setIsPaused] = useState(false);
   const logContainerRef = useRef<HTMLDivElement>(null);
+  const { cardStyle } = usePanelStyles();
 
   const logLevels = [
     { key: "all", label: "全部" },
@@ -134,7 +136,7 @@ const SystemLogPanel: React.FC<SystemLogPanelProps> = ({
   const stats = getLogStats();
 
   return (
-    <Card className="h-full bg-black/40 border border-white/20">
+    <Card className="h-full" style={cardStyle}>
       <CardHeader className="pb-2">
         <div className="flex flex-col w-full">
           <div className="flex items-center justify-between">

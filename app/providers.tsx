@@ -1,36 +1,33 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import {NextUIProvider} from "@nextui-org/react";
-import {useRouter} from "next/navigation";
-import {ThemeProvider as NextThemesProvider} from "next-themes";
-import {AuthProvider} from "@/contexts/AuthContext";
-import { CustomThemeProvider } from "@/contexts/ThemeContext";
-import { ConfigProvider, theme as antdTheme } from "antd";
-import { ThemeProvider as AntdStyleThemeProvider } from "antd-style";
+import * as React from 'react';
+import { HeroUIProvider } from '@heroui/react';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ThemeProviderProps } from 'next-themes/dist/types';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { AssistantProvider } from '@/contexts/AssistantContext';
+import { CustomThemeProvider } from '@/contexts/ThemeContext';
+import { ChatProvider } from '@/contexts/ChatContext';
 
 export interface ProvidersProps {
   children: React.ReactNode;
-  themeProps?: React.ComponentProps<typeof NextThemesProvider>;
+  themeProps?: ThemeProviderProps;
 }
 
-export function Providers({children, themeProps}: ProvidersProps) {
-  const router = useRouter();
-
+export function Providers({ children, themeProps }: ProvidersProps) {
   return (
-    <NextUIProvider navigate={router.push}>
-      {/* 主题切换（class）与 antd-style/antd 集成 */}
+    <HeroUIProvider>
       <NextThemesProvider {...themeProps}>
-        <AntdStyleThemeProvider>
-          <ConfigProvider theme={{ algorithm: antdTheme.darkAlgorithm }}>
-            <CustomThemeProvider>
-              <AuthProvider>
+        <CustomThemeProvider>
+          <AuthProvider>
+            <AssistantProvider>
+              <ChatProvider>
                 {children}
-              </AuthProvider>
-            </CustomThemeProvider>
-          </ConfigProvider>
-        </AntdStyleThemeProvider>
+              </ChatProvider>
+            </AssistantProvider>
+          </AuthProvider>
+        </CustomThemeProvider>
       </NextThemesProvider>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }

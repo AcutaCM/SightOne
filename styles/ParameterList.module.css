@@ -1,0 +1,259 @@
+/* ParameterList Component Styles - Black/White/Gray Theme */
+
+/* 主容器 - 卡片式布局 Requirements: 2.2, 2.4 */
+.parameterList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 增加间距以适应卡片式布局 */
+  padding: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* 优化滚动性能 Requirements: 9.1 */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+}
+
+/* 单列布局 */
+.singleColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 双列布局 - Requirements: 8.5 */
+.doubleColumn {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  column-gap: 14px;
+}
+
+.doubleColumn .parameterGroup {
+  grid-column: 1 / -1; /* 组标题占满整行 */
+}
+
+.doubleColumn .groupItems {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  column-gap: 14px;
+}
+
+/* 紧凑模式 */
+.parameterList.compact {
+  gap: 8px;
+  padding: 8px;
+  max-height: 300px;
+}
+
+/* 自定义滚动条样式 - 黑白灰主题 Requirements: 2.4 */
+.parameterList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.parameterList::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(0, 0, 0, 0.05));
+  border-radius: 3px;
+}
+
+.parameterList::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(0, 0, 0, 0.2));
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.parameterList::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(0, 0, 0, 0.35));
+}
+
+/* 深色主题滚动条 */
+:global(.dark) .parameterList::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(255, 255, 255, 0.05));
+}
+
+:global(.dark) .parameterList::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
+}
+
+:global(.dark) .parameterList::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.35));
+}
+
+/* 参数组 - 卡片式布局 Requirements: 2.2 */
+.parameterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: var(--param-bg, #F8F8F8);
+  border: 1px solid var(--param-border, #E0E0E0);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.parameterGroup:hover {
+  background: var(--param-bg-hover, #F0F0F0);
+  border-color: var(--param-border-hover, #D0D0D0);
+}
+
+.parameterGroup:last-child {
+  margin-bottom: 0;
+}
+
+/* 深色主题参数组 */
+:global(.dark) .parameterGroup {
+  background: var(--param-bg, #242424);
+  border-color: var(--param-border, #3A3A3A);
+}
+
+:global(.dark) .parameterGroup:hover {
+  background: var(--param-bg-hover, #2E2E2E);
+  border-color: var(--param-border-hover, #4A4A4A);
+}
+
+.groupTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #666666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+:global(.dark) .groupTitle {
+  color: var(--text-secondary, #999999);
+  border-bottom-color: var(--node-divider, #2A2A2A);
+}
+
+.groupItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 空状态 */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  color: var(--text-tertiary, #999999);
+  font-size: 13px;
+  text-align: center;
+  font-style: italic;
+  background: var(--param-bg, #F8F8F8);
+  border: 1px dashed var(--param-border, #E0E0E0);
+  border-radius: 8px;
+}
+
+:global(.dark) .emptyState {
+  color: var(--text-tertiary, #666666);
+  background: var(--param-bg, #242424);
+  border-color: var(--param-border, #3A3A3A);
+}
+
+/* 紧凑模式下的样式调整 */
+.parameterList.compact .parameterGroup {
+  margin-bottom: 8px;
+  padding: 8px;
+  gap: 6px;
+}
+
+.parameterList.compact .groupTitle {
+  font-size: 10px;
+  padding: 4px 6px;
+  margin-bottom: 4px;
+}
+
+.parameterList.compact .groupItems {
+  gap: 6px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .parameterList {
+    max-height: 300px;
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .parameterList.compact {
+    max-height: 200px;
+    padding: 6px;
+  }
+  
+  .parameterGroup {
+    padding: 8px;
+  }
+}
+
+/* 虚拟化列表样式 - 优化大量参数的渲染 Requirements: 9.1 */
+.virtualized {
+  /* 使用 GPU 加速 */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  
+  /* 优化滚动性能 */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+}
+
+/* 虚拟化列表的滚动条样式 */
+.virtualized::-webkit-scrollbar {
+  width: 6px;
+}
+
+.virtualized::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(0, 0, 0, 0.05));
+  border-radius: 3px;
+}
+
+.virtualized::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(0, 0, 0, 0.2));
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.virtualized::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(0, 0, 0, 0.35));
+}
+
+:global(.dark) .virtualized::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, rgba(255, 255, 255, 0.05));
+}
+
+:global(.dark) .virtualized::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
+}
+
+:global(.dark) .virtualized::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.35));
+}
+
+/* 动画由 Framer Motion 控制，提供更好的性能和控制 Requirements: 7.1, 9.1 */
+/* 使用 GPU 加速优化动画性能 */
+.parameterList,
+.parameterGroup,
+.groupItems {
+  /* 启用硬件加速 */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 减少动画以提升性能和可访问性 */
+@media (prefers-reduced-motion: reduce) {
+  .parameterList,
+  .parameterGroup,
+  .groupItems {
+    /* 禁用所有动画 */
+    animation: none !important;
+    transition: none !important;
+  }
+}

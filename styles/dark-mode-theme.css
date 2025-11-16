@@ -1,0 +1,329 @@
+/**
+ * Dark Mode Theme - CSS Custom Properties
+ * 
+ * This file defines CSS custom properties (CSS variables) for the dark mode theme.
+ * All values use pure black (#000000) as the base with white transparency for hierarchy.
+ * 
+ * Usage:
+ * - Apply [data-theme="dark"] to the root element to activate dark mode
+ * - Reference variables using var(--variable-name) in your CSS
+ * 
+ * @see lib/design-tokens-dark.ts for TypeScript constants
+ */
+
+:root[data-theme="dark"] {
+  /* ========================================
+     Background Colors
+     ======================================== */
+  
+  /* Primary background - Pure black */
+  --bg-primary: #000000;
+  
+  /* Panel backgrounds - Solid dark gray (~10% white on black) */
+  --bg-panel: #1a1a1a;
+  
+  /* Modal overlays - Solid darker gray (~5% white on black) */
+  --bg-modal: #0d0d0d;
+  
+  /* Dropdown menus - Solid medium gray (~15% white on black) */
+  --bg-dropdown: #262626;
+  
+  /* Tooltips - Solid light gray (~20% white on black) */
+  --bg-tooltip: #333333;
+  
+  /* Input fields - Solid very dark gray */
+  --bg-input: #0a0a0a;
+  --bg-input-focus: #1a1a1a;
+  --bg-input-disabled: #050505;
+  
+  /* ========================================
+     Text Colors
+     ======================================== */
+  
+  /* Primary text - 100% white opacity */
+  --text-primary: rgba(255, 255, 255, 1.0);
+  
+  /* Secondary text - 70% white opacity */
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  
+  /* Tertiary text - 40% white opacity */
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+  
+  /* Placeholder text - 30% white opacity */
+  --text-placeholder: rgba(255, 255, 255, 0.3);
+  
+  /* Disabled text - 40% white opacity */
+  --text-disabled: rgba(255, 255, 255, 0.4);
+  
+  /* ========================================
+     Button Colors
+     ======================================== */
+  
+  /* Primary buttons - 100% white opacity */
+  --btn-primary: rgba(255, 255, 255, 1.0);
+  --btn-primary-hover: rgba(255, 255, 255, 1.0);
+  --btn-primary-text: rgba(0, 0, 0, 1.0);
+  
+  /* Secondary buttons - 20% white opacity */
+  --btn-secondary: rgba(255, 255, 255, 0.2);
+  --btn-secondary-hover: rgba(255, 255, 255, 0.3);
+  --btn-secondary-text: rgba(255, 255, 255, 1.0);
+  
+  /* Tertiary buttons - 10% white opacity */
+  --btn-tertiary: rgba(255, 255, 255, 0.1);
+  --btn-tertiary-hover: rgba(255, 255, 255, 0.2);
+  --btn-tertiary-text: rgba(255, 255, 255, 1.0);
+  
+  /* ========================================
+     Border Colors
+     ======================================== */
+  
+  /* Default borders - 10% white opacity */
+  --border-default: rgba(255, 255, 255, 0.1);
+  
+  /* Subtle dividers - 8% white opacity */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  
+  /* Focus rings - 40% white opacity */
+  --border-focus: rgba(255, 255, 255, 0.4);
+  
+  /* Error borders - 60% white opacity */
+  --border-error: rgba(255, 255, 255, 0.6);
+  
+  /* ========================================
+     State Colors
+     ======================================== */
+  
+  /* Success state - 100% white opacity */
+  --state-success: rgba(255, 255, 255, 1.0);
+  
+  /* Warning state - 80% white opacity */
+  --state-warning: rgba(255, 255, 255, 0.8);
+  
+  /* Error state - 90% white opacity */
+  --state-error: rgba(255, 255, 255, 0.9);
+  
+  /* Loading state - 60% white opacity */
+  --state-loading: rgba(255, 255, 255, 0.6);
+  
+  /* ========================================
+     Navigation Colors
+     ======================================== */
+  
+  /* Navigation background - 8% white opacity */
+  --nav-background: rgba(255, 255, 255, 0.08);
+  
+  /* Active navigation items - 100% white opacity */
+  --nav-active: rgba(255, 255, 255, 1.0);
+  
+  /* Inactive navigation items - 60% white opacity */
+  --nav-inactive: rgba(255, 255, 255, 0.6);
+  
+  /* Navigation hover - 80% white opacity */
+  --nav-hover: rgba(255, 255, 255, 0.8);
+  
+  /* ========================================
+     Workflow Colors
+     ======================================== */
+  
+  /* Workflow canvas - Pure black */
+  --workflow-canvas: #000000;
+  
+  /* Workflow nodes - 8% white opacity */
+  --workflow-node: rgba(255, 255, 255, 0.08);
+  
+  /* Workflow node borders - 10% white opacity */
+  --workflow-node-border: rgba(255, 255, 255, 0.1);
+  
+  /* Workflow edges - 30% white opacity */
+  --workflow-edge: rgba(255, 255, 255, 0.3);
+  
+  /* ========================================
+     Opacity Values
+     ======================================== */
+  
+  --opacity-full: 1.0;
+  --opacity-high: 0.9;
+  --opacity-medium-high: 0.8;
+  --opacity-medium: 0.7;
+  --opacity-medium-low: 0.6;
+  --opacity-low: 0.4;
+  --opacity-very-low: 0.3;
+  --opacity-minimal: 0.2;
+  --opacity-subtle: 0.1;
+  --opacity-very-subtle: 0.08;
+  --opacity-ultra-subtle: 0.05;
+  --opacity-disabled: 0.03;
+  
+  /* ========================================
+     Transition Durations
+     ======================================== */
+  
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  
+  /* ========================================
+     Transition Easing
+     ======================================== */
+  
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-smooth: cubic-bezier(0.4, 0, 0.6, 1);
+  --easing-sharp: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+/* Apply smooth opacity transitions to elements */
+.dark-mode-transition {
+  transition: opacity var(--transition-normal) var(--easing-default),
+              background-color var(--transition-normal) var(--easing-default),
+              border-color var(--transition-normal) var(--easing-default);
+}
+
+/* Fast transitions for interactive elements */
+.dark-mode-transition-fast {
+  transition: opacity var(--transition-fast) var(--easing-default),
+              background-color var(--transition-fast) var(--easing-default),
+              border-color var(--transition-fast) var(--easing-default);
+}
+
+/* Slow transitions for emphasis */
+.dark-mode-transition-slow {
+  transition: opacity var(--transition-slow) var(--easing-smooth),
+              background-color var(--transition-slow) var(--easing-smooth),
+              border-color var(--transition-slow) var(--easing-smooth);
+}
+
+/* ========================================
+   Tooltip Styles
+   ======================================== */
+
+/* Tooltip container */
+[data-tooltip] {
+  position: relative;
+}
+
+/* Tooltip content */
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: 8px 12px;
+  background-color: var(--bg-tooltip);
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast) var(--easing-default),
+              transform var(--transition-fast) var(--easing-default);
+  z-index: 1000;
+}
+
+/* Tooltip arrow */
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-2px);
+  border: 4px solid transparent;
+  border-top-color: var(--bg-tooltip);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast) var(--easing-default),
+              transform var(--transition-fast) var(--easing-default);
+  z-index: 1000;
+}
+
+/* Show tooltip on hover */
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========================================
+   HeroUI Component Overrides - Solid Backgrounds
+   ======================================== */
+
+/* Dropdown menu backgrounds */
+[data-slot="base"][role="menu"],
+.heroui-dropdown-menu {
+  background-color: var(--bg-dropdown) !important;
+}
+
+/* Tooltip backgrounds */
+[data-slot="base"][role="tooltip"],
+.heroui-tooltip {
+  background-color: var(--bg-tooltip) !important;
+}
+
+/* Modal backgrounds */
+[data-slot="base"][role="dialog"],
+.heroui-modal {
+  background-color: var(--bg-modal) !important;
+}
+
+/* ========================================
+   Light Theme - Solid Colors
+   ======================================== */
+
+:root[data-theme="light"] {
+  /* ========================================
+     Background Colors - Solid
+     ======================================== */
+  
+  /* Primary background - Pure white */
+  --bg-primary: #ffffff;
+  
+  /* Panel backgrounds - Solid light gray (~96% white) */
+  --bg-panel: #f5f5f5;
+  
+  /* Modal overlays - Solid lighter gray (~98% white) */
+  --bg-modal: #fafafa;
+  
+  /* Dropdown menus - Solid medium light gray (~94% white) */
+  --bg-dropdown: #f0f0f0;
+  
+  /* Tooltips - Solid darker gray (~90% white) */
+  --bg-tooltip: #e6e6e6;
+  
+  /* Input fields - Solid very light gray */
+  --bg-input: #fcfcfc;
+  --bg-input-focus: #f5f5f5;
+  --bg-input-disabled: #fefefe;
+  
+  /* Text colors for light theme */
+  --text-primary: rgba(0, 0, 0, 0.9);
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-tertiary: rgba(0, 0, 0, 0.5);
+  --text-placeholder: rgba(0, 0, 0, 0.4);
+  --text-disabled: rgba(0, 0, 0, 0.4);
+  
+  /* Button colors for light theme */
+  --btn-primary: rgba(0, 0, 0, 0.9);
+  --btn-primary-hover: rgba(0, 0, 0, 1.0);
+  --btn-primary-text: rgba(255, 255, 255, 1.0);
+  
+  --btn-secondary: rgba(0, 0, 0, 0.1);
+  --btn-secondary-hover: rgba(0, 0, 0, 0.15);
+  --btn-secondary-text: rgba(0, 0, 0, 0.9);
+  
+  --btn-tertiary: rgba(0, 0, 0, 0.05);
+  --btn-tertiary-hover: rgba(0, 0, 0, 0.1);
+  --btn-tertiary-text: rgba(0, 0, 0, 0.9);
+  
+  /* Border colors for light theme */
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-focus: rgba(0, 0, 0, 0.4);
+  --border-error: rgba(220, 38, 38, 0.6);
+}

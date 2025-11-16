@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, Tabs, Input, Button as AntdButton, Tag, Switch, Row, Col, Tooltip } from "antd";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
+import { Tabs, Tab } from "@heroui/tabs";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import { Switch } from "@heroui/switch";
+import { Tooltip } from "@heroui/tooltip";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { getModalPanelStyle } from "@/lib/panel-styles";
 
 // 厂商元数据（可扩展）
 type VendorKey =
@@ -94,6 +102,7 @@ interface SettingsModalProps {
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onJumpToConfig }) => {
   const router = useRouter();
+  const { theme, resolvedTheme } = useTheme();
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(true); // “全部”按钮
   const [iconsMap, setIconsMap] = useState<Record<string, string | null>>({});
@@ -175,7 +184,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onJumpToCo
         <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ fontWeight: 600 }}>{v.name}</div>
-            {enabled ? <Tag color="green" style={{ margin: 0, borderRadius: 999 }}>启用</Tag> : null}
+            {enabled ? <Chip color="success" size="sm" variant="flat">启用</Chip> : null}
           </div>
           <div style={{ color: "#9ca3af", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {v.desc}
@@ -188,15 +197,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onJumpToCo
     );
   };
 
+  const modalStyle = useMemo(() => {
+    // Use resolvedTheme as fallback to handle SSR and system theme
+    const currentTheme = (theme || resolvedTheme) as 'light' | 'dark' | undefined;
+    return getModalPanelStyle(currentTheme === 'light' ? 'light' : 'dark');
+  }, [theme, resolvedTheme]);
+
   return (
     <Modal
-      title="设置"
-      open={open}
-      onCancel={onClose}
-      footer={null}
-      width={980}
-      styles={{ content: { borderRadius: 16 } }}
+      isOpen={open}
+      onClose={onClose}
+      size="5xl"
+      classNames={{
+        base: "max-w-[980px]",
+        body: "p-0",
+      }}
     >
+      <ModalContent style={modalStyle}>
+        <ModalHeader className="flex flex-col gap-1">设置</ModalHeader>
+        <ModalBody className="pb-6">
       <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 12 }}>
         {/* 左侧导航（含搜索与“全部”按钮、分组列表） */}
         <aside style={{ borderRight: "1px solid rgba(255,255,255,0.08)", paddingRight: 12 }}>
@@ -204,16 +223,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onJumpToCo
             <Input
               placeholder="搜索服务商…"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              allowClear
+              onValueChange={setQuery}
+              isClearable
             />
-            <Tooltip title="切换查看全部服务商">
-              <AntdButton
+            <Tooltip content="切换查看全部服务商">
+              <Button
                 onClick={() => setShowAll(s => !s)}
-                type={showAll ? "primary" : "default"}
+                color={showAll ? "primary" : "default"}
+                variant={showAll ? "solid" : "bordered"}
               >
                 全部
-              </AntdButton>
+              </Button>
             </Tooltip>
           </div>
 
@@ -241,39 +261,46 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose, onJumpToCo
 
         {/* 右侧主区：Tabs 按图示展示“已启用/未启用”卡片列表；点击已启用卡片跳配置页 */}
         <main>
-          <Tabs
-            defaultActiveKey="enabled"
-            items={[
-              {
-                key: "enabled",
-                label: <>已启用服务商 <Tag style={{ marginLeft: 6 }}>{enabledList.length}</Tag></>,
-                children: (
-                  <Row gutter={[12, 12]}>
-                    {enabledList.map(v => (
-                      <Col key={v.key} xs={24} sm={12} md={12} lg={8}>
-                        {card(v, true)}
-                      </Col>
-                    ))}
-                  </Row>
-                ),
-              },
-              {
-                key: "disabled",
-                label: <>未启用服务商 <Tag style={{ marginLeft: 6 }}>{disabledList.length}</Tag></>,
-                children: (
-                  <Row gutter={[12, 12]}>
-                    {(showAll ? disabledList : disabledList.slice(0, 9)).map(v => (
-                      <Col key={v.key} xs={24} sm={12} md={12} lg={8}>
-                        {card(v, false)}
-                      </Col>
-                    ))}
-                  </Row>
-                ),
-              },
-            ]}
-          />
+          <Tabs defaultSelectedKey="enabled">
+            <Tab
+              key="enabled"
+              title={
+                <div className="flex items-center gap-2">
+                  <span>已启用服务商</span>
+                  <Chip size="sm" variant="flat">{enabledList.length}</Chip>
+                </div>
+              }
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+                {enabledList.map(v => (
+                  <div key={v.key}>
+                    {card(v, true)}
+                  </div>
+                ))}
+              </div>
+            </Tab>
+            <Tab
+              key="disabled"
+              title={
+                <div className="flex items-center gap-2">
+                  <span>未启用服务商</span>
+                  <Chip size="sm" variant="flat">{disabledList.length}</Chip>
+                </div>
+              }
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+                {(showAll ? disabledList : disabledList.slice(0, 9)).map(v => (
+                  <div key={v.key}>
+                    {card(v, false)}
+                  </div>
+                ))}
+              </div>
+            </Tab>
+          </Tabs>
         </main>
-      </div>
+        </div>
+        </ModalBody>
+      </ModalContent>
     </Modal>
   );
 };

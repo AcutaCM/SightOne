@@ -1,0 +1,194 @@
+/**
+ * NodeSelectionOverlay Styles
+ * 
+ * Styles for the node selection overlay with glow effects and animations.
+ */
+
+/* Selection glow border */
+.selectionGlow {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid;
+  border-radius: calc(var(--wf-radius-lg) + 2px);
+  pointer-events: none;
+  animation: selectionAppear var(--wf-duration-normal) var(--wf-easing-out);
+  z-index: -1;
+}
+
+@keyframes selectionAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Multi-selection badge */
+.multiSelectBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  border-radius: var(--wf-radius-full);
+  color: white;
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-bold);
+  box-shadow: var(--wf-shadow-md);
+  animation: badgeAppear var(--wf-duration-normal) var(--wf-easing-out);
+  z-index: 20;
+}
+
+@keyframes badgeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.badgeNumber {
+  font-size: var(--wf-text-sm);
+}
+
+.badgeTotal {
+  font-size: var(--wf-text-xs);
+  opacity: 0.9;
+}
+
+/* Selection corners (decorative) */
+.selectionCorners {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-style: solid;
+  border-width: 0;
+  animation: cornerAppear var(--wf-duration-normal) var(--wf-easing-out);
+}
+
+@keyframes cornerAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.corner.topLeft {
+  top: -2px;
+  left: -2px;
+  border-top-width: 3px;
+  border-left-width: 3px;
+  border-top-left-radius: var(--wf-radius-md);
+  animation-delay: 0ms;
+}
+
+.corner.topRight {
+  top: -2px;
+  right: -2px;
+  border-top-width: 3px;
+  border-right-width: 3px;
+  border-top-right-radius: var(--wf-radius-md);
+  animation-delay: 50ms;
+}
+
+.corner.bottomLeft {
+  bottom: -2px;
+  left: -2px;
+  border-bottom-width: 3px;
+  border-left-width: 3px;
+  border-bottom-left-radius: var(--wf-radius-md);
+  animation-delay: 100ms;
+}
+
+.corner.bottomRight {
+  bottom: -2px;
+  right: -2px;
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+  border-bottom-right-radius: var(--wf-radius-md);
+  animation-delay: 150ms;
+}
+
+/* Pulse animation for active selection */
+.selectionGlow {
+  animation: selectionAppear var(--wf-duration-normal) var(--wf-easing-out),
+             selectionPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .multiSelectBadge {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .corner {
+    width: 10px;
+    height: 10px;
+  }
+
+  .corner.topLeft,
+  .corner.topRight,
+  .corner.bottomLeft,
+  .corner.bottomRight {
+    border-width: 2px;
+  }
+}
+
+/* Accessibility - reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .selectionGlow,
+  .multiSelectBadge,
+  .corner {
+    animation: none;
+  }
+
+  .selectionGlow {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .multiSelectBadge {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .corner {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

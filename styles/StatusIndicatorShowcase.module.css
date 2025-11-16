@@ -1,0 +1,124 @@
+/**
+ * StatusIndicatorShowcase Styles
+ * 
+ * Styles for the status indicator demonstration component.
+ */
+
+.showcase {
+  padding: 32px;
+  background-color: var(--bg-primary, #000000);
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary, rgba(255, 255, 255, 1.0));
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+.section {
+  margin-bottom: 48px;
+  padding: 24px;
+  background-color: var(--bg-panel, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary, rgba(255, 255, 255, 1.0));
+  margin-bottom: 8px;
+}
+
+.sectionDescription {
+  font-size: 14px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  margin-bottom: 24px;
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inlineExamples {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inlineText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-primary, rgba(255, 255, 255, 1.0));
+  margin: 0;
+}
+
+.footer {
+  margin-top: 48px;
+  padding: 24px;
+  background-color: var(--bg-panel, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  text-align: center;
+}
+
+.footerText {
+  font-size: 14px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  line-height: 1.6;
+  margin: 0;
+}
+
+.footerText code {
+  padding: 2px 6px;
+  background-color: var(--bg-input, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--text-primary, rgba(255, 255, 255, 1.0));
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .showcase {
+    padding: 16px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .section {
+    padding: 16px;
+    margin-bottom: 32px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+  }
+}

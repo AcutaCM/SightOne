@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-11-12T12:49:34.009549",
+  "command": "起飞",
+  "analysis": {
+    "success": true,
+    "commands": [
+      {
+        "action": "takeoff",
+        "parameters": {},
+        "description": "无人机起飞"
+      }
+    ],
+    "raw_response": "{\n  \"commands\": [\n    {\n      \"action\": \"takeoff\",\n      \"description\": \"无人机起飞\"\n    }\n  ]\n}"
+  },
+  "ai_provider": "ollama",
+  "model": "llama3.1:8b"
+}

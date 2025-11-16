@@ -171,6 +171,34 @@ export async function POST(req: Request) {
         data?.result?.mask ||
         '';
     }
+    // 更宽松的掩码提取：兼容多种返回形态
+    if (!mask) {
+      try {
+        const candidates: any[] = [
+          data?.result?.annotated_image,
+          data?.result?.image,
+          data?.outputs?.[0]?.image,
+          data?.data?.[1],
+          data?.image,
+          data?.url,
+        ];
+        for (const v of candidates) {
+          if (typeof v === 'string' && v) { mask = v; break; }
+          if (v && typeof v === 'object') {
+            const cand = v.base64 || v.data || v.image || v.url || v.path;
+            if (typeof cand === 'string' && cand) { mask = cand; break; }
+          }
+        }
+        if (!mask && Array.isArray(data?.frames) && data.frames.length) {
+          const f = data.frames[0];
+          if (typeof f === 'string') mask = f;
+          else if (f && typeof f === 'object') {
+            const cand = f.base64 || f.data || f.image || f.url || f.path;
+            if (typeof cand === 'string') mask = cand;
+          }
+        }
+      } catch {}
+    }
     if (!description) {
       description =
         data?.description ||
@@ -178,9 +206,50 @@ export async function POST(req: Request) {
         data?.text ||
         '';
     }
+    // 更宽松的描述提取
+    if (!description) {
+      try {
+        description =
+          data?.data?.[0]?.text ||
+          data?.data?.[0]?.content ||
+          data?.data?.[0]?.response ||
+          data?.outputs?.[0]?.text ||
+          description;
+      } catch {}
+    }
 
     if (!mask && !description) {
       return NextResponse.json({ warning: 'no usable result returned from endpoint', raw: data }, { status: 200 });
+    }
+
+    // 统一清理描述中的占位符（如 <|seg|> / <|seg|>）
+    if (typeof description === 'string' && description) {
+      try {
+        description = description.replaceAll(/<\|?seg\|>|<\|?seg\|>/g, String(target));
+      } catch {}
+    }
+
+    // 标准化 mask：相对路径 -> 绝对URL；纯base64 -> dataURL
+    if (typeof mask === 'string' && mask) {
+      try {
+        let v = mask.trim();
+        if (!/^data:image\//i.test(v) && !/^(https?:|blob:)/i.test(v)) {
+          const base = new URL(url);
+          if (v.startsWith('//')) {
+            // 协议相对 URL，补全协议
+            v = `${base.protocol}${v}`;
+          } else if (v.startsWith('/')) {
+            // 站点相对路径，补全同源绝对 URL
+            v = new URL(v, base.origin).toString();
+          } else {
+            // 可能是纯 base64
+            const compact = v.replace(/\s+/g, '');
+            const looksB64 = /^[0-9A-Za-z+/]+=*$/.test(compact) && compact.length > 100;
+            if (looksB64) v = `data:image/png;base64,${compact}`;
+          }
+        }
+        mask = v;
+      } catch {}
     }
 
     return NextResponse.json({ mask, description });

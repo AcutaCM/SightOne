@@ -1,0 +1,330 @@
+/**
+ * Custom Workflow Node - Redesigned
+ * Modern node styling with status indicators
+ */
+
+.node {
+  min-width: 200px;
+  background: var(--workflow-node-bg);
+  border: 2px solid var(--workflow-node-border);
+  border-radius: var(--workflow-radius-lg);
+  box-shadow: var(--workflow-shadow-md);
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+  overflow: hidden;
+}
+
+.node:hover {
+  box-shadow: var(--workflow-shadow-lg);
+  transform: translateY(-2px);
+}
+
+.node.selected {
+  border-color: var(--workflow-node-selected);
+  box-shadow: var(--workflow-shadow-glow);
+}
+
+.node.running {
+  border-color: var(--workflow-status-running);
+  animation: workflow-glow-pulse 2s ease-in-out infinite;
+}
+
+.node.success {
+  border-color: var(--workflow-status-success);
+}
+
+.node.error {
+  border-color: var(--workflow-status-error);
+  animation: workflow-shake 0.5s ease-in-out;
+}
+
+/* Node Header */
+.nodeHeader {
+  display: flex;
+  align-items: center;
+  padding: var(--workflow-spacing-md);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-bottom: 1px solid var(--workflow-node-border);
+  position: relative;
+}
+
+.nodeIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--workflow-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--workflow-spacing-sm);
+  flex-shrink: 0;
+}
+
+.nodeIcon svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.nodeTitle {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--workflow-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status Indicator */
+.statusIndicator {
+  position: absolute;
+  top: var(--workflow-spacing-sm);
+  right: var(--workflow-spacing-sm);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--workflow-node-bg);
+}
+
+.statusIndicator.idle {
+  background: var(--workflow-status-idle);
+}
+
+.statusIndicator.running {
+  background: var(--workflow-status-running);
+  animation: workflow-pulse 1s ease-in-out infinite;
+}
+
+.statusIndicator.success {
+  background: var(--workflow-status-success);
+}
+
+.statusIndicator.error {
+  background: var(--workflow-status-error);
+}
+
+/* Node Content */
+.nodeContent {
+  padding: var(--workflow-spacing-md);
+}
+
+.nodeDescription {
+  font-size: 12px;
+  color: var(--workflow-text-secondary);
+  line-height: 1.4;
+  margin-bottom: var(--workflow-spacing-sm);
+}
+
+/* Parameter Preview */
+.parameterPreview {
+  margin-top: var(--workflow-spacing-sm);
+}
+
+.parameterPreviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--workflow-spacing-xs) 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.parameterPreviewTitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--workflow-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.parameterPreviewChevron {
+  width: 12px;
+  height: 12px;
+  color: var(--workflow-text-tertiary);
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.parameterPreview.expanded .parameterPreviewChevron {
+  transform: rotate(180deg);
+}
+
+.parameterList {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--workflow-duration-normal) var(--workflow-easing),
+              opacity var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.parameterPreview.expanded .parameterList {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: var(--workflow-spacing-xs);
+}
+
+.parameterItem {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--workflow-spacing-xs) 0;
+  font-size: 11px;
+  border-bottom: 1px solid var(--workflow-panel-border);
+}
+
+.parameterItem:last-child {
+  border-bottom: none;
+}
+
+.parameterKey {
+  color: var(--workflow-text-secondary);
+  font-weight: 500;
+}
+
+.parameterValue {
+  color: var(--workflow-text-primary);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Unsaved Changes Badge */
+.unsavedBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  background: var(--workflow-status-warning);
+  border: 2px solid var(--workflow-node-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: workflow-pulse 2s ease-in-out infinite;
+}
+
+.unsavedBadge svg {
+  width: 10px;
+  height: 10px;
+  color: white;
+}
+
+/* Node Footer */
+.nodeFooter {
+  padding: var(--workflow-spacing-sm) var(--workflow-spacing-md);
+  background: var(--workflow-canvas-bg);
+  border-top: 1px solid var(--workflow-node-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--workflow-text-tertiary);
+}
+
+.nodeType {
+  font-weight: 500;
+}
+
+.nodeActions {
+  display: flex;
+  gap: var(--workflow-spacing-xs);
+}
+
+.nodeActionButton {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--workflow-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--workflow-radius-sm);
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.nodeActionButton:hover {
+  background: var(--workflow-panel-hover);
+  color: var(--workflow-text-primary);
+}
+
+.nodeActionButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Connection Handles */
+.handle {
+  width: 12px;
+  height: 12px;
+  background: var(--workflow-status-running);
+  border: 2px solid var(--workflow-node-bg);
+  border-radius: 50%;
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.handle:hover {
+  width: 16px;
+  height: 16px;
+  box-shadow: var(--workflow-shadow-glow);
+}
+
+.handle.source {
+  background: var(--workflow-status-success);
+}
+
+.handle.target {
+  background: var(--workflow-status-running);
+}
+
+/* Drag Handle */
+.dragHandle {
+  cursor: grab;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* Node Variants */
+.node.compact {
+  min-width: 150px;
+}
+
+.node.compact .nodeHeader {
+  padding: var(--workflow-spacing-sm);
+}
+
+.node.compact .nodeContent {
+  padding: var(--workflow-spacing-sm);
+}
+
+.node.compact .nodeIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.node.compact .nodeIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Animation on mount */
+.node {
+  animation: workflow-scale-in var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .node {
+    min-width: 160px;
+  }
+  
+  .nodeHeader {
+    padding: var(--workflow-spacing-sm);
+  }
+  
+  .nodeContent {
+    padding: var(--workflow-spacing-sm);
+  }
+}

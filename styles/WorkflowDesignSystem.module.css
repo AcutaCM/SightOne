@@ -1,0 +1,673 @@
+/* ========================================
+   Workflow Design System Styles
+   工作流设计系统样式
+   ======================================== */
+
+/* 节点库样式 */
+.nodeLibrary {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: hsl(var(--heroui-content1));
+  border-right: 1px solid hsl(var(--heroui-divider));
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nodeLibraryHeader {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: hsl(var(--heroui-content2));
+}
+
+.nodeLibraryTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: hsl(var(--heroui-foreground));
+  margin-bottom: 0.75rem;
+}
+
+.nodeLibrarySearch {
+  width: 100%;
+}
+
+/* 分类标签 */
+.categoryTabs {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.categoryTabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.categoryTabs::-webkit-scrollbar-track {
+  background: hsl(var(--heroui-content2));
+}
+
+.categoryTabs::-webkit-scrollbar-thumb {
+  background: hsl(var(--heroui-divider));
+  border-radius: 2px;
+}
+
+.categoryChip {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.categoryChip:hover {
+  transform: translateY(-1px);
+}
+
+/* 节点列表 */
+.nodeList {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.nodeItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  background: hsl(var(--heroui-content2));
+  border: 1px solid hsl(var(--heroui-divider));
+  cursor: grab;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nodeItem:hover {
+  background: hsl(var(--heroui-content3));
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: none;
+}
+
+.nodeItem:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.nodeItemIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.nodeItemContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.nodeItemLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--heroui-foreground));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nodeItemDescription {
+  font-size: 0.75rem;
+  color: hsl(var(--heroui-foreground) / 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.125rem;
+}
+
+/* 节点库底部统计 */
+.nodeLibraryFooter {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border-subtle);
+  background: hsl(var(--heroui-content2));
+}
+
+.nodeLibraryStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: hsl(var(--heroui-foreground) / 0.6);
+}
+
+/* 控制面板样式 - 现代化设计 */
+.controlPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 14, 26, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: none;
+}
+
+.controlPanelHeader {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.controlPanelHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+}
+
+.controlPanelTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.statusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  background: rgba(30, 41, 59, 0.4);
+  padding: 0.875rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.statusLabel {
+  color: rgba(148, 163, 184, 0.9);
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+.statusValue {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.statusConnected {
+  color: #10B981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.statusDisconnected {
+  color: #EF4444;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+/* 控制按钮 - 现代化设计 */
+.controlButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.controlButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+.controlButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.controlButton:not(:disabled):hover::before {
+  left: 100%;
+}
+
+.controlButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.controlButton:not(:disabled):hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: none;
+}
+
+.controlButton:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
+}
+
+.runButton {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.runButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: none;
+}
+
+.stopButton {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.stopButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  box-shadow: none;
+}
+
+.aiButton {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  color: white;
+  box-shadow: none;
+  position: relative;
+}
+
+.aiButton::after {
+  content: '✨';
+  position: absolute;
+  right: 1rem;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.aiButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+  box-shadow: none;
+}
+
+.saveButton {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.saveButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  box-shadow: none;
+}
+
+.saveButton.unsaved {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  box-shadow: none;
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: none;
+  }
+  50% { 
+    box-shadow: none;
+  }
+}
+
+.loadButton {
+  background: rgba(30, 41, 59, 0.6);
+  color: rgba(148, 163, 184, 1);
+  border: 1px solid var(--border-default);
+  box-shadow: none;
+}
+
+.loadButton:not(:disabled):hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--border-default);
+  color: rgba(96, 165, 250, 1);
+}
+
+.clearButton {
+  background: rgba(30, 41, 59, 0.6);
+  color: rgba(148, 163, 184, 1);
+  border: 1px solid var(--border-default);
+  box-shadow: none;
+}
+
+.clearButton:not(:disabled):hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--border-default);
+  color: rgba(248, 113, 113, 1);
+}
+
+/* 日志和结果面板 - 现代化设计 */
+.outputPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(10, 14, 26, 0.5);
+}
+
+.outputTabs {
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.outputContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(10, 14, 26, 0.3);
+}
+
+.outputContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.outputContent::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+
+.outputContent::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.outputContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.logItem {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.4);
+  font-size: 0.8125rem;
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+  color: rgba(203, 213, 225, 0.9);
+  border-left: 3px solid rgba(59, 130, 246, 0.6);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.logItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: inherit;
+  filter: brightness(1.5);
+}
+
+.logItem:hover {
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateX(4px);
+}
+
+.logItemError {
+  border-left-color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.logItemError::before {
+  background: #EF4444;
+  box-shadow: none;
+}
+
+.logItemWarning {
+  border-left-color: #F59E0B;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.logItemWarning::before {
+  background: #F59E0B;
+  box-shadow: none;
+}
+
+.logItemSuccess {
+  border-left-color: #10B981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.logItemSuccess::before {
+  background: #10B981;
+  box-shadow: none;
+}
+
+.resultList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.resultItem {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid var(--border-default);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.resultItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
+}
+
+.resultItem:hover {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+.resultItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  gap: 0.75rem;
+}
+
+.resultItemTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 1);
+  letter-spacing: 0.3px;
+}
+
+.resultItemBadge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.2);
+  color: rgba(96, 165, 250, 1);
+  border: 1px solid var(--border-default);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.resultItemContent {
+  font-size: 0.8125rem;
+  color: rgba(148, 163, 184, 0.9);
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(10, 14, 26, 0.5);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+  line-height: 1.6;
+}
+
+/* 空状态 - 现代化设计 */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: rgba(148, 163, 184, 0.7);
+  min-height: 200px;
+}
+
+.emptyStateIcon {
+  margin-bottom: 1.5rem;
+  opacity: 0.4;
+  color: rgba(59, 130, 246, 0.5);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.emptyStateText {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.8);
+  letter-spacing: 0.3px;
+}
+
+/* 动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes flow {
+  0% {
+    stroke-dashoffset: 20;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .nodeLibrary {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+
+  .nodeLibrary.visible {
+    transform: translateX(0);
+  }
+
+  .controlPanel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 320px;
+    z-index: 1000;
+    transform: translateX(100%);
+  }
+
+  .controlPanel.visible {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .nodeLibrary {
+    width: 240px;
+  }
+
+  .controlPanel {
+    width: 280px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .nodeLibrary {
+    width: 280px;
+  }
+
+  .controlPanel {
+    width: 320px;
+  }
+}

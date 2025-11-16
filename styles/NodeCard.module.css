@@ -1,0 +1,240 @@
+/**
+ * NodeCard Styles
+ * 
+ * Styles for the node card component with hover and drag animations.
+ */
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-md);
+  padding: var(--wf-spacing-md);
+  background-color: var(--wf-panel-hover);
+  border: 1px solid var(--wf-panel-border);
+  border-left: 3px solid;
+  border-radius: var(--wf-radius-md);
+  cursor: grab;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  user-select: none;
+}
+
+.card:hover {
+  background-color: var(--wf-panel-bg);
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: var(--wf-shadow-md);
+}
+
+.card:active,
+.card[data-dragging="true"] {
+  cursor: grabbing;
+  transform: translateY(0) scale(0.98);
+  opacity: 0.7;
+}
+
+.card[data-dragging="true"] {
+  box-shadow: var(--wf-shadow-lg);
+}
+
+/* Icon section */
+.iconSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--wf-radius-md);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.card:hover .iconSection {
+  transform: scale(1.05);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--wf-radius-sm);
+  box-shadow: var(--wf-shadow-sm);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.card:hover .iconWrapper {
+  box-shadow: var(--wf-shadow-md);
+}
+
+.icon {
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+/* Content section */
+.contentSection {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-xs);
+}
+
+.title {
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-semibold);
+  color: var(--wf-panel-text);
+  line-height: var(--wf-leading-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  line-height: var(--wf-leading-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Drag indicator */
+.dragIndicator {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.card:hover .dragIndicator {
+  opacity: 0.5;
+}
+
+.dragDot {
+  width: 3px;
+  height: 3px;
+  background-color: var(--wf-panel-text-secondary);
+  border-radius: var(--wf-radius-full);
+}
+
+/* Tooltip styles */
+.tooltip {
+  max-width: 300px;
+  padding: var(--wf-spacing-md);
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-md);
+  box-shadow: var(--wf-shadow-lg);
+}
+
+.tooltipContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-sm);
+}
+
+.tooltipTitle {
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-semibold);
+  color: var(--wf-panel-text);
+  line-height: var(--wf-leading-tight);
+}
+
+.tooltipDescription {
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  line-height: var(--wf-leading-normal);
+}
+
+.tooltipMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  font-size: var(--wf-text-xs);
+}
+
+.tooltipMetaLabel {
+  color: var(--wf-panel-text-secondary);
+}
+
+.tooltipMetaValue {
+  color: var(--wf-panel-text);
+  font-weight: var(--wf-font-medium);
+}
+
+.tooltipHint {
+  margin-top: var(--wf-spacing-xs);
+  padding-top: var(--wf-spacing-sm);
+  border-top: 1px solid var(--wf-panel-border);
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  font-style: italic;
+}
+
+/* Accessibility */
+.card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: var(--wf-spacing-sm);
+    gap: var(--wf-spacing-sm);
+  }
+  
+  .iconSection {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .iconWrapper {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .title {
+    font-size: var(--wf-text-xs);
+  }
+  
+  .description {
+    font-size: 0.7rem;
+    -webkit-line-clamp: 1;
+  }
+}
+
+/* Dark theme adjustments */
+.card[data-theme="dark"] {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.card[data-theme="dark"]:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Animation for card entrance */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: cardEnter var(--wf-duration-normal) var(--wf-easing-out);
+}

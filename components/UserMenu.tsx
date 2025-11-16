@@ -57,6 +57,10 @@ export default function UserMenu() {
         aria-label="用户菜单" 
         variant="flat"
         className="w-64"
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.10)',
+          backdropFilter: 'none'
+        }}
         onAction={(key) => {
           if (key === 'settings') {
             router.push('/settings');
@@ -74,10 +78,10 @@ export default function UserMenu() {
                 <span>{user.email}</span>
                 <span className={`px-2 py-0.5 rounded-full text-xs ${
                   user.role === 'admin' 
-                    ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+                    ? 'bg-danger/10 text-danger'
                     : user.role === 'pilot'
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                    : 'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-default/10 text-default-600'
                 }`}>
                   {getRoleLabel(user.role)}
                 </span>

@@ -1,0 +1,179 @@
+/**
+ * CollapsibleNodeLibrary Styles
+ * 
+ * Styles for the collapsible node library panel with animations and theme support.
+ */
+
+.container {
+  position: relative;
+  height: 100%;
+  background-color: var(--wf-panel-bg);
+  border-right: 1px solid var(--wf-panel-border);
+  transition: width var(--wf-duration-normal) var(--wf-easing-default);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.container[data-resizing="true"] {
+  user-select: none;
+  transition: none;
+}
+
+.container[data-collapsed="true"] {
+  overflow: visible;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.container[data-collapsed="true"] .content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.container[data-collapsed="false"] .content {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--wf-duration-normal) var(--wf-easing-default);
+}
+
+/* Resize handle */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.resizeHandle:hover {
+  background-color: var(--wf-panel-hover);
+}
+
+.resizeHandle:hover .resizeIndicator {
+  opacity: 1;
+}
+
+.resizeIndicator {
+  width: 2px;
+  height: 40px;
+  background-color: var(--wf-panel-border);
+  border-radius: var(--wf-radius-full);
+  opacity: 0;
+  transition: opacity var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.container[data-resizing="true"] .resizeIndicator {
+  opacity: 1;
+  background-color: var(--wf-node-selected-border);
+}
+
+/* Collapse button */
+.collapseButton {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: 0 var(--wf-radius-md) var(--wf-radius-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--wf-panel-text-secondary);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  z-index: 20;
+  box-shadow: var(--wf-shadow-sm);
+}
+
+.collapseButton:hover {
+  background-color: var(--wf-panel-hover);
+  color: var(--wf-panel-text);
+  box-shadow: var(--wf-shadow-md);
+}
+
+.collapseButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.container[data-collapsed="true"] .collapseButton {
+  right: -24px;
+  border-radius: var(--wf-radius-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: var(--wf-shadow-xl);
+  }
+  
+  .container[data-collapsed="true"] {
+    transform: translateX(-100%);
+  }
+  
+  .resizeHandle {
+    display: none;
+  }
+}
+
+/* Animation for collapse/expand */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* Accessibility */
+.collapseButton:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Dark theme adjustments */
+.container[data-theme="dark"] {
+  box-shadow: var(--wf-shadow-lg);
+}
+
+.container[data-theme="dark"] .collapseButton {
+  box-shadow: var(--wf-shadow-md);
+}
+
+.container[data-theme="dark"] .collapseButton:hover {
+  box-shadow: var(--wf-shadow-lg);
+}

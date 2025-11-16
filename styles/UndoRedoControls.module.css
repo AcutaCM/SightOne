@@ -1,0 +1,91 @@
+/**
+ * UndoRedoControls Styles
+ * 
+ * Styling for the undo/redo controls component.
+ * Provides a clean, compact interface for history navigation.
+ */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--workflow-spacing-sm);
+  padding: var(--workflow-spacing-xs) var(--workflow-spacing-sm);
+  border-radius: var(--workflow-radius-md);
+  backdrop-filter: blur(8px);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+}
+
+.info {
+  font-size: 12px;
+  color: var(--workflow-text-secondary);
+  font-weight: 500;
+  padding: 0 var(--workflow-spacing-xs);
+  min-width: 50px;
+  text-align: center;
+}
+
+.tooltip {
+  display: flex;
+  align-items: center;
+  gap: var(--workflow-spacing-sm);
+  font-size: 13px;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Button hover effects */
+.controls button:not(:disabled):hover {
+  transform: translateY(-1px);
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.controls button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] .controls {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+[data-theme="dark"] .kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-default);
+  color: var(--workflow-text-primary);
+}
+
+[data-theme="light"] .controls {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+[data-theme="light"] .kbd {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: var(--border-default);
+  color: var(--workflow-text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .info {
+    display: none;
+  }
+  
+  .controls {
+    padding: var(--workflow-spacing-xs);
+  }
+}

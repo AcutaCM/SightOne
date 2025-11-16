@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useDroneControl } from "@/hooks/useDroneControl";
 import { useAIConfig } from "@/hooks/useAIConfig";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLayout } from "@/contexts/LayoutContext";
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
@@ -23,6 +24,7 @@ import DetectionControlPanel from "@/components/DetectionControlPanel";
 import HelpPanel from "@/components/HelpPanel";
 import ManualControlPanel from "@/components/ManualControlPanel";
 import AIAnalysisReport from "@/components/AIAnalysisReport";
+import AIAnalysisManager from "@/components/AIAnalysisManager";
 import BatteryStatusPanel from "@/components/BatteryStatusPanel";
 import AppInfoPanel from "@/components/AppInfoPanel";
 import VirtualPositionView from "@/components/VirtualPositionView";
@@ -35,29 +37,30 @@ import DropZones from "@/components/layout/DropZones";
 import ComponentSelector from "@/components/ComponentSelector";
 // Import additional components
 import ChallengeCruisePanel from "@/components/ChallengeCruisePanel";
-import AIAnalysisPanel from "@/components/AIAnalysisPanel";
-import ToolsPanel from "@/components/ToolsPanel";
-import ConfigurationPanel from "@/components/ConfigurationPanel";
-import SimulationPanel from "@/components/SimulationPanel";
-import StatusInfoPanel from "@/components/StatusInfoPanel";
+
+
+
+
+
 import SystemLogPanel from "@/components/SystemLogPanel";
-import VideoControlPanel from "@/components/VideoControlPanel";
-import ReportPanel from "@/components/ReportPanel";
-import TelloControlPanel from "@/components/TelloControlPanel";
+
+
+
 import ChatDock from "@/components/ChatDock";
-import PureChat from "@/components/ChatbotChat";
+import PureChat from "@/components/ChatbotChat/PureChatWrapper";
 import MemoryPanel from "@/components/MemoryPanel";
 import DarkVeil from "@/components/DarkVeil";
-import TelloWorkflowPanel from "@/components/TelloWorkflowPanel";
+import WorkflowEditor from "@/components/WorkflowEditor";
 import TelloIntelligentAgent from "@/components/TelloIntelligentAgent";
 import ModelManagerPanel from "@/components/ui/ModelManagerPanel";
 import EnhancedModelSelector from "@/components/ui/EnhancedModelSelector";
+import PlantQRGeneratorPanel from "@/components/PlantQRGeneratorPanel";
+import { AssistantMessageDock } from "@/components/AssistantMessageDock";
 
-import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
+import { LayoutProvider } from "@/contexts/LayoutContext";
 import { DropZonesProvider, useDropZonesContext } from "@/contexts/DropZonesContext";
 import { DroneProvider } from "@/contexts/DroneContext";
-import { GlobalModalProvider } from "@/contexts/GlobalModalContext";
-import GlobalKnowledgeModal from "@/components/GlobalKnowledgeModal";
+import { ChatProvider } from "@/contexts/ChatContext";
 
 import { DroneIcon, AiIcon, MissionIcon, CruiseIcon } from "@/components/icons";
 
@@ -87,6 +90,8 @@ export default function Home() {
     stopRippleDetection,
     startQRDetection,
     stopQRDetection,
+    startDiagnosisWorkflow,
+    stopDiagnosisWorkflow,
     startVideoStream,
     stopVideoStream,
     clearLogs,
@@ -94,6 +99,9 @@ export default function Home() {
     sendMessage,
     missionPosition,
     missionMessages,
+    qrScan,
+    startChallengeCruise,
+    stopChallengeCruise,
   } = useDroneControl();
 
   const {
@@ -123,6 +131,7 @@ export default function Home() {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [rippleDetectionEnabled, setRippleDetectionEnabled] = useState<boolean>(false);
   const [qrDetectionEnabled, setQRDetectionEnabled] = useState<boolean>(false);
+  const [diagnosisWorkflowEnabled, setDiagnosisWorkflowEnabled] = useState<boolean>(false);
   const [strawberryDetections, setStrawberryDetections] = useState<any[]>([]);
   const [latestStrawberryDetection, setLatestStrawberryDetection] = useState<any>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -392,49 +401,53 @@ export default function Home() {
 
   return (
     <DroneProvider>
-      <GlobalModalProvider>
-        <LayoutProvider>
-          <DropZonesProvider>
-          <MainContent 
-            droneStatus={droneStatus}
-            isConnecting={isConnecting}
-            connectToDrone={connectToDrone}
-            disconnectFromDrone={disconnectFromDrone}
-            missionStatus={missionStatus}
-            startMission={startMission}
-            stopMission={stopMission}
-            startDetection={startDetection}
-            onOpen={onOpen}
-            rippleDetectionEnabled={rippleDetectionEnabled}
-            qrDetectionEnabled={qrDetectionEnabled}
-            setRippleDetectionEnabled={setRippleDetectionEnabled}
-            setQRDetectionEnabled={setQRDetectionEnabled}
-            startRippleDetection={startRippleDetection}
-            stopRippleDetection={stopRippleDetection}
-            startQRDetection={startQRDetection}
-            stopQRDetection={stopQRDetection}
-            takeoff={takeoff}
-            land={land}
-            analysisResults={analysisResults}
-            handleExportCSV={handleExportCSV}
-            exportAnalysisResults={exportAnalysisResults}
-            clearAnalysisResults={clearAnalysisResults}
-            batteryLevel={batteryLevel}
-            manualControl={manualControl}
-            videoStream={videoStream}
-            logs={logs}
-            clearLogs={clearLogs}
-            sendMessage={sendMessage}
-            missionPosition={missionPosition}
-            missionMessages={missionMessages}
-            strawberryDetections={strawberryDetections}
-            latestStrawberryDetection={latestStrawberryDetection}
-            strawberryMaturityStats={strawberryMaturityStats}
-          />
-        </DropZonesProvider>
-      </LayoutProvider>
-      <GlobalKnowledgeModal />
-    </GlobalModalProvider>
+      <LayoutProvider>
+        <DropZonesProvider>
+        <MainContent 
+          droneStatus={droneStatus}
+          isConnecting={isConnecting}
+          connectToDrone={connectToDrone}
+          disconnectFromDrone={disconnectFromDrone}
+          missionStatus={missionStatus}
+          startMission={startMission}
+          stopMission={stopMission}
+          startDetection={startDetection}
+          onOpen={onOpen}
+          rippleDetectionEnabled={rippleDetectionEnabled}
+          qrDetectionEnabled={qrDetectionEnabled}
+          diagnosisWorkflowEnabled={diagnosisWorkflowEnabled}
+          setRippleDetectionEnabled={setRippleDetectionEnabled}
+          setQRDetectionEnabled={setQRDetectionEnabled}
+          setDiagnosisWorkflowEnabled={setDiagnosisWorkflowEnabled}
+          startRippleDetection={startRippleDetection}
+          stopRippleDetection={stopRippleDetection}
+          startQRDetection={startQRDetection}
+          stopQRDetection={stopQRDetection}
+          startDiagnosisWorkflow={startDiagnosisWorkflow}
+          stopDiagnosisWorkflow={stopDiagnosisWorkflow}
+          takeoff={takeoff}
+          land={land}
+          analysisResults={analysisResults}
+          handleExportCSV={handleExportCSV}
+          exportAnalysisResults={exportAnalysisResults}
+          clearAnalysisResults={clearAnalysisResults}
+          batteryLevel={batteryLevel}
+          manualControl={manualControl}
+          videoStream={videoStream}
+          logs={logs}
+          clearLogs={clearLogs}
+          sendMessage={sendMessage}
+          missionPosition={missionPosition}
+          missionMessages={missionMessages}
+          strawberryDetections={strawberryDetections}
+          latestStrawberryDetection={latestStrawberryDetection}
+          strawberryMaturityStats={strawberryMaturityStats}
+          qrScan={qrScan}
+          startChallengeCruise={startChallengeCruise}
+          stopChallengeCruise={stopChallengeCruise}
+        />
+      </DropZonesProvider>
+    </LayoutProvider>
   </DroneProvider>
   );
 }
@@ -452,12 +465,16 @@ interface MainContentProps {
   onOpen: () => void;
   rippleDetectionEnabled: boolean;
   qrDetectionEnabled: boolean;
+  diagnosisWorkflowEnabled: boolean;
   setRippleDetectionEnabled: (enabled: boolean) => void;
   setQRDetectionEnabled: (enabled: boolean) => void;
+  setDiagnosisWorkflowEnabled: (enabled: boolean) => void;
   startRippleDetection: () => void;
   stopRippleDetection: () => void;
   startQRDetection: () => void;
   stopQRDetection: () => void;
+  startDiagnosisWorkflow: () => void;
+  stopDiagnosisWorkflow: () => void;
   takeoff: () => void;
   land: () => void;
   analysisResults: any[];
@@ -475,6 +492,9 @@ interface MainContentProps {
   strawberryDetections: any[];
   latestStrawberryDetection: any;
   strawberryMaturityStats: any;
+  qrScan: any;
+  startChallengeCruise: (params?: { rounds?: number; height?: number; stayDuration?: number }) => boolean;
+  stopChallengeCruise: () => boolean;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
@@ -489,12 +509,16 @@ const MainContent: React.FC<MainContentProps> = ({
   onOpen,
   rippleDetectionEnabled,
   qrDetectionEnabled,
+  diagnosisWorkflowEnabled,
   setRippleDetectionEnabled,
   setQRDetectionEnabled,
+  setDiagnosisWorkflowEnabled,
   startRippleDetection,
   stopRippleDetection,
   startQRDetection,
   stopQRDetection,
+  startDiagnosisWorkflow,
+  stopDiagnosisWorkflow,
   takeoff,
   land,
   analysisResults,
@@ -512,6 +536,9 @@ const MainContent: React.FC<MainContentProps> = ({
   strawberryDetections,
   latestStrawberryDetection,
   strawberryMaturityStats,
+  qrScan,
+  startChallengeCruise,
+  stopChallengeCruise,
 }) => {
   const {
     isEditMode,
@@ -525,6 +552,65 @@ const MainContent: React.FC<MainContentProps> = ({
   const dropZonesContext = useDropZonesContext();
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [containerOffset, setContainerOffset] = useState<{left: number; top: number; width?: number; height?: number}>({ left: 0, top: 64 });
+
+  /**
+   * State management for PureChat integration with AssistantMessageDock.
+   * 
+   * These state variables maintain the context when transitioning from
+   * MessageDock to the full PureChat interface.
+   */
+  const [selectedAssistantId, setSelectedAssistantId] = useState<string | null>(null);
+  const [initialMessage, setInitialMessage] = useState<string>('');
+
+  /**
+   * Handles opening the chat interface from AssistantMessageDock.
+   * 
+   * This callback is triggered when a user sends a message through the MessageDock.
+   * It manages the transition from the compact dock interface to the full chat panel.
+   * 
+   * Flow:
+   * 1. Stores the selected assistant ID and initial message in state
+   * 2. Ensures the chat panel is visible (toggles visibility if needed)
+   * 3. The PureChat component will use these state values to initialize the conversation
+   * 
+   * Integration Points:
+   * - AssistantMessageDock: Calls this function when user sends a message
+   * - PureChat: Receives selectedAssistantId and initialMessage as props
+   * - LayoutContext: Manages chat panel visibility
+   * 
+   * @param assistantId - The unique identifier of the selected assistant
+   * @param message - The initial message text entered by the user
+   * 
+   * @see {@link AssistantMessageDock} for the message dock component
+   * @see {@link PureChat} for the chat interface component
+   * 
+   * @example
+   * ```tsx
+   * // User clicks assistant and types "Hello"
+   * handleOpenChat("asst_123", "Hello");
+   * // Result: Chat panel opens with assistant asst_123 and message "Hello"
+   * ```
+   */
+  const handleOpenChat = (assistantId: string, message: string) => {
+    // Store the selected assistant and initial message for PureChat
+    setSelectedAssistantId(assistantId);
+    setInitialMessage(message);
+    
+    // Ensure the chat panel is visible
+    if (!isComponentVisible('chat-panel')) {
+      toggleComponentVisibility('chat-panel');
+    }
+    
+    // Log for debugging and monitoring
+    console.log('Opening chat with assistant:', assistantId, 'Message:', message);
+    
+    // TODO: Update PureChat component to accept and use these props
+    // The PureChat component should be modified to:
+    // 1. Accept assistantId and initialMessage as props
+    // 2. Auto-select the assistant based on assistantId
+    // 3. Pre-populate the input field with initialMessage
+    // 4. Optionally auto-send the message on mount
+  };
 
   // Video stream reference and state
   const vs = videoStream;
@@ -571,25 +657,15 @@ const MainContent: React.FC<MainContentProps> = ({
 
   return (
     <>
-      {/* DarkVeil background */}
-      <div className="fixed inset-0 z-[-30]">
-        <DarkVeil 
-          hueShift={25} 
-          speed={2.2}
-          noiseIntensity={0.05}
-          warpAmount={0.3}
-        />
-      </div>
+      {/* Beautiful white-blue gradient background */}
+      <div className="fixed inset-0 z-[-30] bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-zinc-950 dark:via-blue-950 dark:to-zinc-900" />
       
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-background/30 z-[-29]" />
-
-      {/* Grid system */}
+      {/* Grid system - subtle grid for visual interest */}
       <GridSystem 
         gridSize={20}
         showGrid={true}
-        gridColor="#ffffff"
-        gridOpacity={0.05}
+        gridColor="#000000"
+        gridOpacity={0.03}
       />
       
       {/* Drop zones */}
@@ -639,7 +715,7 @@ const MainContent: React.FC<MainContentProps> = ({
             enableDropZones={true}
             strictDropZones={false}
           >
-            <Card className="bg-background/60 backdrop-blur-sm border border-divider rounded-[21px]" style={{width: '100%', height: '100%'}}>
+            <Card className="bg-content1 border-divider rounded-[21px]" style={{width: '100%', height: '100%'}}>
               <CardBody className="flex flex-col" style={{padding: '27px 36px'}}>
                 <ConnectionControlPanel
                   isConnecting={isConnecting}
@@ -665,8 +741,9 @@ const MainContent: React.FC<MainContentProps> = ({
           >
             <MissionPadPanel
               isConnected={droneStatus.connected}
-              onStartMission={missionStatus.active ? stopMission : startMission}
-              onStopMission={stopMission}
+              onStartMission={startChallengeCruise}
+              onStopMission={stopChallengeCruise}
+              missionActive={missionStatus.active}
             />
           </DraggableContainer>
         )}
@@ -688,12 +765,16 @@ const MainContent: React.FC<MainContentProps> = ({
               onConfigAPI={onOpen}
               rippleDetectionEnabled={rippleDetectionEnabled}
               qrDetectionEnabled={qrDetectionEnabled}
+              diagnosisWorkflowEnabled={diagnosisWorkflowEnabled}
               onRippleDetectionChange={setRippleDetectionEnabled}
               onQRDetectionChange={setQRDetectionEnabled}
+              onDiagnosisWorkflowChange={setDiagnosisWorkflowEnabled}
               startRippleDetection={startRippleDetection}
               stopRippleDetection={stopRippleDetection}
               startQRDetection={startQRDetection}
               stopQRDetection={stopQRDetection}
+              startDiagnosisWorkflow={startDiagnosisWorkflow}
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow}
             />
           </DraggableContainer>
         )}
@@ -724,8 +805,8 @@ const MainContent: React.FC<MainContentProps> = ({
             enableDropZones={true}
             strictDropZones={false}
           >
-          <Card className="bg-background/60 backdrop-blur-sm border border-divider w-full h-full">
-            <CardBody className="p-0 flex flex-row w-full h-full bg-content1/50 rounded-[20px] backdrop-blur-[120px]">
+          <Card className="bg-content1 border-divider w-full h-full">
+            <CardBody className="p-0 flex flex-row w-full h-full bg-content1 rounded-[20px]">
               {/* Left sidebar with controls */}
               <div className="w-[280px] p-6 flex flex-col h-full">
                   {/* Header */}
@@ -833,7 +914,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   
                   {/* Countdown overlay */}
                   {showCountdown && (
-                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-content2 flex items-center justify-center">
                       <div className="text-foreground text-6xl font-bold">{countdown}</div>
                     </div>
                   )}
@@ -940,7 +1021,11 @@ const MainContent: React.FC<MainContentProps> = ({
             enableDropZones={true}
             strictDropZones={false}
           >
-            <QRScanPanel />
+            <QRScanPanel 
+              scanResult={qrScan?.lastScan}
+              cooldownTime={qrScan?.lastScan ? qrScan.cooldowns[qrScan.lastScan.plantId] : null}
+              scanHistory={qrScan?.scanHistory}
+            />
           </DraggableContainer>
         )}
 
@@ -972,6 +1057,19 @@ const MainContent: React.FC<MainContentProps> = ({
               onExportJSON={exportAnalysisResults}
               onClear={clearAnalysisResults}
             />
+          </DraggableContainer>
+        )}
+
+        {/* AI Analysis Manager */}
+        {isComponentVisible('ai-analysis-manager') && (
+          <DraggableContainer
+            componentId="ai-analysis-manager"
+            initialPosition={{ x: 1600, y: 20 }}
+            initialSize={{ width: 400, height: 500 }}
+            enableDropZones={true}
+            strictDropZones={false}
+          >
+            <AIAnalysisManager />
           </DraggableContainer>
         )}
 
@@ -1008,8 +1106,20 @@ const MainContent: React.FC<MainContentProps> = ({
             <ChallengeCruisePanel 
               isConnected={droneStatus.connected}
               cruiseActive={Boolean(missionStatus?.active)}
-              onStartCruise={(params) => { sendMessage('cruise_start', params); }}
-              onStopCruise={() => { sendMessage('cruise_stop'); }}
+              onStartCruise={async (params) => { 
+                // First takeoff if not already flying
+                if (!droneStatus.flying) {
+                  const takeoffSuccess = takeoff();
+                  if (!takeoffSuccess) {
+                    return;
+                  }
+                  // Wait a bit for the drone to stabilize after takeoff
+                  await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+                // Then start the cruise mission
+                sendMessage('challenge_cruise_start', params); 
+              }}
+              onStopCruise={() => { sendMessage('challenge_cruise_stop'); }}
               cruiseProgress={missionStatus?.progress ?? 0}
               currentRound={missionStatus?.currentRound ?? 0}
               totalRounds={missionStatus?.totalRounds ?? 0}
@@ -1017,105 +1127,11 @@ const MainContent: React.FC<MainContentProps> = ({
           </DraggableContainer>
         )}
 
-        {/* AI Analysis Panel */}
-        {isComponentVisible('ai-analysis-panel') && (
-          <DraggableContainer
-            componentId="ai-analysis-panel"
-            initialPosition={{ x: 1600, y: 780 }}
-            initialSize={{ width: 400, height: 500 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <AIAnalysisPanel 
-              isConnected={droneStatus.connected}
-              analysisActive={false}
-              onStartAnalysis={(config) => { sendMessage('analysis_start', config); }}
-              onStopAnalysis={() => { sendMessage('analysis_stop'); }}
-              onTestAI={() => { sendMessage('ai_test'); }}
-            />
-          </DraggableContainer>
-        )}
 
-        {/* Tools Panel */}
-        {isComponentVisible('tools-panel') && (
-          <DraggableContainer
-            componentId="tools-panel"
-            initialPosition={{ x: 2020, y: 20 }}
-            initialSize={{ width: 380, height: 600 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <ToolsPanel 
-              isConnected={droneStatus.connected}
-              onGenerateQR={(config) => { sendMessage('qr_generate', config); }}
-              onResetQR={() => { sendMessage('qr_reset'); }}
-              onCalibrateCamera={() => { sendMessage('camera_calibrate'); }}
-              onResetSystem={() => { sendMessage('system_reset'); }}
-              onOpenWorkflowEditor={() => { toggleComponentVisibility('tello-workflow-panel'); }}
-            />
-          </DraggableContainer>
-        )}
 
-        {/* Configuration Panel */}
-        {isComponentVisible('configuration-panel') && (
-          <DraggableContainer
-            componentId="configuration-panel"
-            initialPosition={{ x: 2020, y: 640 }}
-            initialSize={{ width: 400, height: 500 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <ConfigurationPanel 
-              isConnected={droneStatus.connected}
-              onSaveConfig={(config) => { sendMessage('ai_config_save', config); }}
-              onTestAI={() => { sendMessage('ai_test'); }}
-              onLoadConfig={() => { sendMessage('ai_config_load'); }}
-              onExportConfig={() => { sendMessage('ai_config_export'); }}
-            />
-          </DraggableContainer>
-        )}
 
-        {/* Simulation Panel */}
-        {isComponentVisible('simulation-panel') && (
-          <DraggableContainer
-            componentId="simulation-panel"
-            initialPosition={{ x: 2440, y: 20 }}
-            initialSize={{ width: 380, height: 550 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <SimulationPanel sendMessage={sendMessage} isConnected={droneStatus.connected} />
-          </DraggableContainer>
-        )}
 
-        {/* Status Info Panel */}
-        {isComponentVisible('status-info-panel') && (
-          <DraggableContainer
-            componentId="status-info-panel"
-            initialPosition={{ x: 2440, y: 590 }}
-            initialSize={{ width: 350, height: 450 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <StatusInfoPanel 
-              batteryLevel={batteryLevel}
-              analyzedPlants={analysisResults.length}
-              detectionMode={rippleDetectionEnabled ? "Strawberry Detection" : "Standard Mode"}
-              cruiseStatus={missionStatus?.status || "Idle"}
-              strawberryCount={{
-                ripe: analysisResults.filter(r => r.maturity === 'ripe').length,
-                halfRipe: analysisResults.filter(r => r.maturity === 'half-ripe').length,
-                unripe: analysisResults.filter(r => r.maturity === 'unripe').length
-              }}
-              connectionStatus={droneStatus?.connected ? "Connected" : "Disconnected"}
-              flightTime={droneStatus?.flightTime || 0}
-              altitude={droneStatus?.altitude || 0}
-              gpsSignal={droneStatus?.gpsSignal || 0}
-              temperature={droneStatus?.temperature || 25}
-              humidity={droneStatus?.humidity || 60}
-            />
-          </DraggableContainer>
-        )}
+
 
         {/* System Log Panel */}
         {isComponentVisible('system-log-panel') && (
@@ -1151,56 +1167,6 @@ const MainContent: React.FC<MainContentProps> = ({
           </DraggableContainer>
         )}
 
-        {/* Video Control Panel */}
-        {isComponentVisible('video-control-panel') && (
-          <DraggableContainer
-            componentId="video-control-panel"
-            initialPosition={{ x: 2820, y: 640 }}
-            initialSize={{ width: 380, height: 400 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <VideoControlPanel
-              isConnected={droneStatus.connected}
-              isRecording={isRecording}
-              onStartRecording={startRecording}
-              onStopRecording={stopRecording}
-              onTakeScreenshot={takeScreenshot}
-              onToggleFullscreen={toggleFullscreen}
-              videoStream={videoStream}
-            />
-          </DraggableContainer>
-        )}
-
-        {/* Report Panel */}
-        {isComponentVisible('report-panel') && (
-          <DraggableContainer
-            componentId="report-panel"
-            initialPosition={{ x: 3220, y: 20 }}
-            initialSize={{ width: 400, height: 650 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <ReportPanel
-              onGenerateReport={(config) => {
-                console.log('Generating report with config:', config);
-                // TODO: Implement report generation
-              }}
-              onExportReport={(reportId, format) => {
-                console.log('Exporting report:', reportId, format);
-                // TODO: Implement report export
-              }}
-              onDeleteReport={(reportId) => {
-                console.log('Deleting report:', reportId);
-                // TODO: Implement report deletion
-              }}
-              reports={[]}
-              isGenerating={false}
-              generationProgress={0}
-            />
-          </DraggableContainer>
-        )}
-
         {/* Chat Panel */}
         {isComponentVisible('chat-panel') && (
           <DraggableContainer
@@ -1210,7 +1176,14 @@ const MainContent: React.FC<MainContentProps> = ({
             enableDropZones={true}
             strictDropZones={false}
           >
-            <PureChat />
+            <PureChat 
+              selectedAssistantId={selectedAssistantId}
+              initialMessage={initialMessage}
+              onMessageSent={() => {
+                // Clear the initial message after it's sent
+                setInitialMessage('');
+              }}
+            />
           </DraggableContainer>
         )}
 
@@ -1229,18 +1202,6 @@ const MainContent: React.FC<MainContentProps> = ({
 
 
 
-        {/* Tello Control Panel */}
-        {isComponentVisible('drone-control-panel') && (
-          <DraggableContainer
-            componentId="drone-control-panel"
-            initialPosition={{ x: 100, y: 100 }}
-            initialSize={{ width: 600, height: 700 }}
-            enableDropZones={true}
-            strictDropZones={false}
-          >
-            <TelloControlPanel />
-          </DraggableContainer>
-        )}
 
         {/* Tello Intelligent Agent */}
         {isComponentVisible('tello-intelligent-agent') && (
@@ -1306,7 +1267,86 @@ const MainContent: React.FC<MainContentProps> = ({
             />
           </DraggableContainer>
         )}
+
+        {/* Tello Workflow Panel */}
+        {isComponentVisible('tello-workflow-panel') && (
+          <DraggableContainer
+            componentId="tello-workflow-panel"
+            initialPosition={{ x: 300, y: 150 }}
+            initialSize={{ width: 900, height: 600 }}
+            enableDropZones={true}
+            strictDropZones={false}
+          >
+            <WorkflowEditor />
+          </DraggableContainer>
+        )}
+
+        {/* Plant QR Generator Panel */}
+        {isComponentVisible('plant-qr-generator') && (
+          <DraggableContainer
+            componentId="plant-qr-generator"
+            initialPosition={{ x: 800, y: 100 }}
+            initialSize={{ width: 380, height: 520 }}
+            enableDropZones={true}
+            strictDropZones={false}
+          >
+            <PlantQRGeneratorPanel 
+              onQRGenerated={(plantId, qrData) => {
+                console.log(`QR码已生成: 植株ID ${plantId}`);
+              }}
+            />
+          </DraggableContainer>
+        )}
       </div>
+      
+      {/* 
+        MessageDock Integration
+        
+        The AssistantMessageDock provides quick access to AI assistants from anywhere on the page.
+        It's positioned at the bottom center of the viewport and remains fixed during scrolling.
+        
+        Features:
+        - Displays up to 5 published assistants from AssistantContext
+        - Automatically adapts to light/dark theme
+        - Routes messages to PureChat via handleOpenChat callback
+        - Non-draggable, always accessible interface
+        - Z-index of 50 ensures it appears above content but below modals
+        
+        Integration:
+        - Data Source: AssistantContext (publishedAssistants)
+        - Theme: next-themes (automatic light/dark detection)
+        - Message Routing: handleOpenChat → PureChat component
+        - Positioning: Fixed at bottom center (z-50)
+        
+        Requirements Satisfied:
+        - Req 1.1-1.5: Component integration and display
+        - Req 2.1-2.5: Assistant-to-Character mapping
+        - Req 3.1-3.4: Theme integration
+        - Req 4.1-4.4: Message routing to PureChat
+        - Req 5.1-5.5: Fixed positioning and layout
+        - Req 6.1-6.5: Animations and interactions
+        
+        @see {@link AssistantMessageDock} for component implementation
+        @see {@link handleOpenChat} for message routing logic
+        @see docs/MESSAGE_DOCK_USAGE_GUIDE.md for detailed usage guide
+      */}
+      <AssistantMessageDock 
+        onOpenChat={handleOpenChat}
+        className="z-50"
+      />
+      
+      {/* 打开组件选择器的按钮 */}
+      <Button
+        isIconOnly
+        color="primary"
+        size="lg"
+        className="fixed bottom-6 right-6 z-50 shadow-2xl"
+        onPress={() => setShowComponentSelector(true)}
+      >
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </Button>
     </>
   );
 };

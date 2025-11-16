@@ -1,0 +1,467 @@
+/**
+ * WorkflowEditorLayout Styles
+ * 
+ * Styles for the three-column workflow editor layout with
+ * collapsible sidebars, resize handles, and responsive behavior.
+ */
+
+/* Main Layout Container */
+.layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--wf-canvas-bg, #f8fafc);
+  font-family: var(--wf-font-sans, 'Inter', sans-serif);
+}
+
+/* Sidebar Base Styles */
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--wf-panel-bg, #ffffff);
+  border-color: var(--wf-panel-border, #e2e8f0);
+  transition: width var(--wf-duration-normal, 300ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1)),
+              transform var(--wf-duration-normal, 300ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Node Library Sidebar */
+.nodeLibrary {
+  border-right: 1px solid var(--wf-panel-border, #e2e8f0);
+}
+
+/* Control Panel Sidebar */
+.controlPanel {
+  border-left: 1px solid var(--wf-panel-border, #e2e8f0);
+}
+
+/* Collapsed State */
+.sidebar.collapsed {
+  width: 48px !important;
+}
+
+.sidebar.collapsed .sidebarContent {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sidebar Content */
+.sidebarContent {
+  flex: 1;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--wf-duration-normal, 300ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* Canvas */
+.canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--wf-canvas-bg, #f8fafc);
+}
+
+/* Collapse Button */
+.collapseButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--wf-panel-bg, #ffffff);
+  border: 1px solid var(--border-default);
+  color: var(--wf-panel-text-secondary, #64748b);
+  cursor: pointer;
+  z-index: 20;
+  transition: all var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+  outline: none;
+}
+
+.collapseButton:hover {
+  background-color: var(--wf-panel-hover, #f1f5f9);
+  color: var(--wf-panel-text, #0f172a);
+  box-shadow: none;
+}
+
+.collapseButton:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.collapseButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Collapse Button Positions */
+.collapseButtonLeft {
+  right: -16px;
+  border-radius: 0 var(--wf-radius-md, 12px) var(--wf-radius-md, 12px) 0;
+  border-left: none;
+}
+
+.collapseButtonRight {
+  left: -16px;
+  border-radius: var(--wf-radius-md, 12px) 0 0 var(--wf-radius-md, 12px);
+  border-right: none;
+}
+
+/* Collapse Icon */
+.collapseIcon {
+  transition: transform var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.collapseButton:hover .collapseIcon {
+  transform: scale(1.1);
+}
+
+/* Resize Handle */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  z-index: 15;
+  transition: background-color var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.resizeHandle:hover {
+  background-color: var(--wf-node-selected-border, #3b82f6);
+  opacity: 0.3;
+}
+
+.resizeHandle:active {
+  background-color: var(--wf-node-selected-border, #3b82f6);
+  opacity: 0.5;
+}
+
+.resizeHandleLeft {
+  left: 0;
+}
+
+.resizeHandleRight {
+  right: 0;
+}
+
+/* Overlay for Mobile */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  animation: fadeIn var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive Styles */
+
+/* Desktop Layout (>1024px) */
+@media (min-width: 1024px) {
+  .layout[data-layout-mode="desktop"] .sidebar {
+    position: relative;
+  }
+  
+  /* Standard desktop widths */
+  .layout[data-layout-mode="desktop"] .nodeLibrary:not(.collapsed) {
+    min-width: 240px;
+    max-width: 400px;
+  }
+  
+  .layout[data-layout-mode="desktop"] .controlPanel:not(.collapsed) {
+    min-width: 300px;
+    max-width: 500px;
+  }
+  
+  /* Optimize for large screens (>1440px) */
+  @media (min-width: 1440px) {
+    .layout[data-layout-mode="desktop"] .nodeLibrary:not(.collapsed) {
+      max-width: 450px;
+    }
+    
+    .layout[data-layout-mode="desktop"] .controlPanel:not(.collapsed) {
+      max-width: 550px;
+    }
+  }
+  
+  /* Optimize for ultra-wide screens (>1920px) */
+  @media (min-width: 1920px) {
+    .layout[data-layout-mode="desktop"] .nodeLibrary:not(.collapsed) {
+      max-width: 500px;
+    }
+    
+    .layout[data-layout-mode="desktop"] .controlPanel:not(.collapsed) {
+      max-width: 600px;
+    }
+    
+    /* Increase spacing for ultra-wide */
+    .layout[data-layout-mode="desktop"] .sidebarContent {
+      padding: var(--wf-spacing-xl, 24px);
+    }
+  }
+  
+  /* Enable smooth resize transitions on desktop */
+  .layout[data-layout-mode="desktop"] .sidebar:not(.collapsed) {
+    transition: width var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+  
+  /* Enhance resize handle visibility on desktop */
+  .layout[data-layout-mode="desktop"] .resizeHandle {
+    width: 8px;
+  }
+  
+  .layout[data-layout-mode="desktop"] .resizeHandle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 3px;
+    height: 40px;
+    background-color: var(--wf-panel-border, #e2e8f0);
+    border-radius: var(--wf-radius-full, 9999px);
+    opacity: 0;
+    transition: opacity var(--wf-duration-fast, 150ms) var(--wf-easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+  
+  .layout[data-layout-mode="desktop"] .resizeHandle:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Tablet Layout (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .layout[data-layout-mode="tablet"] .sidebar {
+    position: relative;
+  }
+  
+  .layout[data-layout-mode="tablet"] .nodeLibrary {
+    max-width: 240px;
+    min-width: 200px;
+  }
+  
+  .layout[data-layout-mode="tablet"] .nodeLibrary:not(.collapsed) {
+    width: min(240px, 25vw) !important;
+  }
+  
+  .layout[data-layout-mode="tablet"] .controlPanel {
+    max-width: 300px;
+    min-width: 260px;
+  }
+  
+  .layout[data-layout-mode="tablet"] .controlPanel:not(.collapsed) {
+    width: min(300px, 30vw) !important;
+  }
+  
+  /* Optimize button sizes for tablet */
+  .layout[data-layout-mode="tablet"] .collapseButton {
+    width: 36px;
+    height: 52px;
+  }
+  
+  /* Adjust spacing for tablet */
+  .layout[data-layout-mode="tablet"] .sidebarContent {
+    padding: var(--wf-spacing-md, 12px);
+  }
+  
+  /* Optimize resize handle for tablet */
+  .layout[data-layout-mode="tablet"] .resizeHandle {
+    width: 6px;
+  }
+  
+  /* Ensure touch-friendly targets on tablet */
+  .layout[data-layout-mode="tablet"] button,
+  .layout[data-layout-mode="tablet"] [role="button"] {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Mobile Layout (<768px) */
+@media (max-width: 767px) {
+  .layout[data-layout-mode="mobile"] .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: min(85vw, 320px) !important;
+    z-index: 100;
+    box-shadow: none;
+    will-change: transform;
+  }
+  
+  .layout[data-layout-mode="mobile"] .nodeLibrary {
+    left: 0;
+    transform: translateX(0);
+    transition: transform var(--wf-duration-normal, 300ms) var(--wf-easing-out, cubic-bezier(0, 0, 0.2, 1));
+  }
+  
+  .layout[data-layout-mode="mobile"] .nodeLibrary.collapsed {
+    transform: translateX(-100%);
+    width: min(85vw, 320px) !important;
+  }
+  
+  .layout[data-layout-mode="mobile"] .controlPanel {
+    right: 0;
+    transform: translateX(0);
+    transition: transform var(--wf-duration-normal, 300ms) var(--wf-easing-out, cubic-bezier(0, 0, 0.2, 1));
+  }
+  
+  .layout[data-layout-mode="mobile"] .controlPanel.collapsed {
+    transform: translateX(100%);
+    width: min(85vw, 320px) !important;
+  }
+  
+  .layout[data-layout-mode="mobile"] .resizeHandle {
+    display: none;
+  }
+  
+  /* Show collapse buttons as floating buttons on mobile */
+  .layout[data-layout-mode="mobile"] .collapseButton {
+    position: fixed;
+    top: 50%;
+    width: 40px;
+    height: 56px;
+    border-radius: var(--wf-radius-lg, 16px);
+    box-shadow: none;
+    z-index: 90;
+  }
+  
+  .layout[data-layout-mode="mobile"] .collapseButtonLeft {
+    left: 12px;
+    right: auto;
+    border: 1px solid var(--border-default);
+  }
+  
+  .layout[data-layout-mode="mobile"] .collapseButtonRight {
+    right: 12px;
+    left: auto;
+    border: 1px solid var(--border-default);
+  }
+  
+  /* Hide collapse buttons when drawer is open */
+  .layout[data-layout-mode="mobile"] .nodeLibrary:not(.collapsed) ~ * .collapseButtonLeft,
+  .layout[data-layout-mode="mobile"] .controlPanel:not(.collapsed) ~ .collapseButtonRight {
+    display: none;
+  }
+  
+  /* Ensure minimum touch target size */
+  .layout[data-layout-mode="mobile"] button,
+  .layout[data-layout-mode="mobile"] [role="button"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Dark Theme Adjustments */
+.layout[data-theme="dark"] {
+  background-color: var(--wf-canvas-bg, #0a0f1e);
+}
+
+.layout[data-theme="dark"] .sidebar {
+  background-color: var(--wf-panel-bg, #111827);
+  border-color: var(--wf-panel-border, #1f2937);
+}
+
+.layout[data-theme="dark"] .collapseButton {
+  background-color: var(--wf-panel-bg, #111827);
+  border-color: var(--wf-panel-border, #1f2937);
+  color: var(--wf-panel-text-secondary, #94a3b8);
+}
+
+.layout[data-theme="dark"] .collapseButton:hover {
+  background-color: var(--wf-panel-hover, #1f2937);
+  color: var(--wf-panel-text, #f1f5f9);
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch target sizes */
+  .collapseButton {
+    width: 44px;
+    height: 56px;
+  }
+  
+  .resizeHandle {
+    width: 12px;
+  }
+  
+  /* Prevent text selection during touch interactions */
+  .layout {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Add visual feedback for touch */
+  .collapseButton:active {
+    transform: translateY(-50%) scale(0.92);
+    background-color: var(--wf-panel-hover, #f1f5f9);
+  }
+  
+  /* Optimize overlay for touch */
+  .overlay {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebarContent,
+  .collapseButton,
+  .collapseIcon,
+  .resizeHandle,
+  .overlay {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .sidebar {
+    border-width: 2px;
+  }
+  
+  .collapseButton {
+    border-width: 2px;
+  }
+  
+  .resizeHandle:hover,
+  .resizeHandle:active {
+    opacity: 1;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebar {
+    display: none;
+  }
+  
+  .canvas {
+    width: 100%;
+  }
+  
+  .collapseButton,
+  .resizeHandle,
+  .overlay {
+    display: none;
+  }
+}

@@ -1,0 +1,103 @@
+/**
+ * CustomMiniMap Styles
+ * 
+ * Styling for the custom minimap component with toggle functionality.
+ * Provides smooth animations and theme-aware appearance.
+ */
+
+.minimapContainer {
+  position: relative;
+  z-index: 5;
+}
+
+.toggleButton {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 10;
+  background: var(--workflow-panel-bg);
+  border: 1px solid var(--workflow-panel-border);
+  box-shadow: var(--workflow-shadow-md);
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.toggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--workflow-shadow-lg);
+}
+
+.toggleButton:active {
+  transform: translateY(0);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: var(--workflow-text-primary);
+}
+
+.minimapWrapper {
+  animation: fadeIn var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.minimap {
+  transition: opacity var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] .toggleButton {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+[data-theme="dark"] .icon {
+  color: var(--workflow-text-primary);
+}
+
+[data-theme="light"] .toggleButton {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+[data-theme="light"] .icon {
+  color: var(--workflow-text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .toggleButton {
+    bottom: 12px;
+    left: 12px;
+  }
+  
+  .minimap {
+    width: 120px !important;
+    height: 80px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .minimap {
+    width: 150px !important;
+    height: 100px !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .minimap {
+    width: 200px !important;
+    height: 150px !important;
+  }
+}

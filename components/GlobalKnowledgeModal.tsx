@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { Plus, X, Bot } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useGlobalModal } from '@/contexts/GlobalModalContext';
+import { useTheme } from 'next-themes';
 
 interface QuickKnowledgeForm {
   title: string;
@@ -17,14 +20,15 @@ interface GlobalKnowledgeModalProps {
   onSubmit: () => void;
 }
 
-const GlobalKnowledgeModal: React.FC<GlobalKnowledgeModalProps> = ({
+const GlobalKnowledgeModalCore: React.FC<GlobalKnowledgeModalProps> = ({
   isOpen,
   onClose,
   quickKnowledgeForm,
   setQuickKnowledgeForm,
   onSubmit
 }) => {
-  const { isDark } = useTheme();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   if (!isOpen) return null;
 
@@ -179,6 +183,27 @@ const GlobalKnowledgeModal: React.FC<GlobalKnowledgeModalProps> = ({
         </div>
       </div>
     </div>
+  );
+};
+
+// Wrapper component that connects to GlobalModalContext
+const GlobalKnowledgeModal: React.FC = () => {
+  const { 
+    showQuickAddKnowledge,
+    setShowQuickAddKnowledge,
+    quickKnowledgeForm,
+    setQuickKnowledgeForm,
+    handleQuickAddKnowledge
+  } = useGlobalModal();
+
+  return (
+    <GlobalKnowledgeModalCore
+      isOpen={showQuickAddKnowledge}
+      onClose={() => setShowQuickAddKnowledge(false)}
+      quickKnowledgeForm={quickKnowledgeForm}
+      setQuickKnowledgeForm={setQuickKnowledgeForm}
+      onSubmit={handleQuickAddKnowledge}
+    />
   );
 };
 

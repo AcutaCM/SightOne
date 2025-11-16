@@ -1,0 +1,243 @@
+/**
+ * ActionButtons Styles
+ * 
+ * Styles for the action button group with gradient colors and animations
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-md);
+}
+
+/* Primary Actions */
+.primaryActions {
+  display: flex;
+  gap: var(--wf-spacing-sm);
+}
+
+/* Secondary Actions */
+.secondaryActions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--wf-spacing-sm);
+}
+
+/* AI Action */
+.aiAction {
+  display: flex;
+}
+
+/* Base Button */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wf-spacing-xs);
+  padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+  border: none;
+  border-radius: var(--wf-radius-md);
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  font-family: var(--wf-font-sans);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  position: relative;
+  overflow: hidden;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.buttonIcon {
+  flex-shrink: 0;
+}
+
+.buttonText {
+  white-space: nowrap;
+}
+
+/* Run Button */
+.runButton {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: var(--wf-spacing-md) var(--wf-spacing-lg);
+  font-size: var(--wf-text-base);
+  box-shadow: none;
+}
+
+.runButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+}
+
+/* Stop Button */
+.stopButton {
+  flex: 1;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: var(--wf-spacing-md) var(--wf-spacing-lg);
+  font-size: var(--wf-text-base);
+  box-shadow: none;
+}
+
+.stopButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Secondary Button */
+.secondaryButton {
+  background-color: var(--wf-panel-hover);
+  color: var(--wf-panel-text);
+  border: 1px solid var(--wf-panel-border);
+}
+
+.secondaryButton:not(:disabled):hover {
+  background-color: var(--wf-panel-bg);
+  border-color: var(--wf-panel-text-secondary);
+}
+
+/* Secondary Button - Light Theme */
+.container[data-theme='light'] .secondaryButton {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #e2e8f0;
+}
+
+.container[data-theme='light'] .secondaryButton:not(:disabled):hover {
+  background-color: #ffffff;
+  border-color: #94a3b8;
+}
+
+/* Secondary Button - Dark Theme */
+.container[data-theme='dark'] .secondaryButton {
+  background-color: #1f2937;
+  color: #f1f5f9;
+  border-color: #374151;
+}
+
+.container[data-theme='dark'] .secondaryButton:not(:disabled):hover {
+  background-color: #111827;
+  border-color: #64748b;
+}
+
+/* Danger Button */
+.dangerButton:not(:disabled):hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--wf-status-error);
+  color: var(--wf-status-error);
+}
+
+/* Has Changes Indicator */
+.hasChanges {
+  position: relative;
+}
+
+.changeIndicator {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--wf-status-warning);
+  animation: pulse-indicator 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* AI Button */
+.aiButton {
+  flex: 1;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.aiButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 0 1px 3px rgba(139, 92, 246, 0.15);
+}
+
+/* Ripple Effect */
+.button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.button:not(:disabled):active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .secondaryActions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .button {
+    padding: var(--wf-spacing-xs) var(--wf-spacing-sm);
+    font-size: var(--wf-text-xs);
+  }
+  
+  .runButton,
+  .stopButton {
+    padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+    font-size: var(--wf-text-sm);
+  }
+  
+  .buttonText {
+    display: none;
+  }
+  
+  .primaryActions .buttonText,
+  .aiAction .buttonText {
+    display: inline;
+  }
+}
+
+/* Animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .changeIndicator {
+    transition: none;
+    animation: none;
+  }
+  
+  .button:not(:disabled):hover {
+    transform: none;
+  }
+  
+  .button::before {
+    display: none;
+  }
+}

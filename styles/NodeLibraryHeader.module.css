@@ -1,0 +1,127 @@
+/**
+ * NodeLibraryHeader Styles
+ * 
+ * Styles for the node library header component.
+ */
+
+.container {
+  padding: var(--wf-spacing-lg);
+  border-bottom: 1px solid var(--wf-panel-border);
+  background-color: var(--wf-panel-bg);
+}
+
+/* Title row */
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--wf-spacing-md);
+}
+
+.title {
+  font-size: var(--wf-text-lg);
+  font-weight: var(--wf-font-semibold);
+  color: var(--wf-panel-text);
+  margin: 0;
+  line-height: var(--wf-leading-tight);
+}
+
+.collapseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--wf-radius-sm);
+  color: var(--wf-panel-text-secondary);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.collapseBtn:hover {
+  background-color: var(--wf-panel-hover);
+  color: var(--wf-panel-text);
+}
+
+.collapseBtn:active {
+  transform: scale(0.95);
+}
+
+/* Search row */
+.searchRow {
+  position: relative;
+}
+
+.searchInputBase {
+  width: 100%;
+}
+
+.searchInput {
+  font-size: var(--wf-text-sm);
+  color: var(--wf-panel-text);
+}
+
+.searchInputWrapper {
+  background-color: var(--wf-panel-hover) !important;
+  border: 1px solid var(--wf-panel-border);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.searchInputWrapper:hover {
+  border-color: var(--border-focus);
+}
+
+.searchInputWrapper:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: none;
+}
+
+.searchIcon {
+  color: var(--wf-panel-text-secondary);
+  flex-shrink: 0;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--wf-radius-sm);
+  color: var(--wf-panel-text-secondary);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.clearButton:hover {
+  background-color: var(--wf-panel-hover);
+  color: var(--wf-panel-text);
+}
+
+.clearButton:active {
+  transform: scale(0.9);
+}
+
+/* Accessibility */
+.collapseBtn:focus-visible,
+.clearButton:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--wf-spacing-md);
+  }
+  
+  .title {
+    font-size: var(--wf-text-base);
+  }
+}

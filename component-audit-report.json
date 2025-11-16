@@ -1,0 +1,1369 @@
+{
+  "summary": {
+    "total": 87,
+    "heroui": 44,
+    "nextui": 4,
+    "antd": 3,
+    "mui": 0,
+    "custom": 33,
+    "mixed": 3
+  },
+  "components": [
+    {
+      "componentName": "index.tsx",
+      "filePath": "components\\ChatbotChat\\index.tsx",
+      "primaryLibrary": "antd",
+      "usedLibraries": [
+        "antd"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 50,
+      "lineCount": 3989,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": true,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "AIAnalysisReport.tsx",
+      "filePath": "components\\AIAnalysisReport.tsx",
+      "primaryLibrary": "nextui",
+      "usedLibraries": [
+        "nextui"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 7,
+      "lineCount": 483,
+      "libraries": {
+        "heroui": false,
+        "nextui": true,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "SettingsModal.tsx",
+      "filePath": "components\\SettingsModal.tsx",
+      "primaryLibrary": "antd",
+      "usedLibraries": [
+        "antd"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 4,
+      "lineCount": 281,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": true,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "QrGenerator.tsx",
+      "filePath": "components\\ChatbotChat\\QrGenerator.tsx",
+      "primaryLibrary": "antd",
+      "usedLibraries": [
+        "antd"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 3,
+      "lineCount": 170,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": true,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DronePositionPanel.tsx",
+      "filePath": "components\\DronePositionPanel.tsx",
+      "primaryLibrary": "nextui",
+      "usedLibraries": [
+        "nextui"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 3,
+      "lineCount": 181,
+      "libraries": {
+        "heroui": false,
+        "nextui": true,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "SizeControl.tsx",
+      "filePath": "components\\SizeControl.tsx",
+      "primaryLibrary": "nextui",
+      "usedLibraries": [
+        "nextui"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 3,
+      "lineCount": 168,
+      "libraries": {
+        "heroui": false,
+        "nextui": true,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "VirtualPositionView.tsx",
+      "filePath": "components\\VirtualPositionView.tsx",
+      "primaryLibrary": "nextui",
+      "usedLibraries": [
+        "nextui"
+      ],
+      "migrationStatus": "pending",
+      "priority": "high",
+      "estimatedEffort": 2,
+      "lineCount": 141,
+      "libraries": {
+        "heroui": false,
+        "nextui": true,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "AIAnalysisManager.tsx",
+      "filePath": "components\\AIAnalysisManager.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 4,
+      "lineCount": 347,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DraggableContainer.tsx",
+      "filePath": "components\\DraggableContainer.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 4,
+      "lineCount": 382,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "icons.tsx",
+      "filePath": "components\\icons.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 4,
+      "lineCount": 310,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "BatteryStatusPanel.tsx",
+      "filePath": "components\\BatteryStatusPanel.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 3,
+      "lineCount": 260,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DecryptedText.tsx",
+      "filePath": "components\\DecryptedText.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 3,
+      "lineCount": 221,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "GlobalKnowledgeModal.tsx",
+      "filePath": "components\\GlobalKnowledgeModal.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 3,
+      "lineCount": 210,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "AnimatedList.tsx",
+      "filePath": "components\\ui\\AnimatedList.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 3,
+      "lineCount": 201,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ReportPanel.tsx",
+      "filePath": "components\\ChatbotChat\\ReportPanel.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 109,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DarkVeil.tsx",
+      "filePath": "components\\DarkVeil.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 171,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DiagnosisReportViewer.tsx",
+      "filePath": "components\\DiagnosisReportViewer.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 199,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DropZones.tsx",
+      "filePath": "components\\layout\\DropZones.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 143,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ManualControlPanel.tsx",
+      "filePath": "components\\ManualControlPanel.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 183,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "MessageMarkdown.tsx",
+      "filePath": "components\\markdown\\MessageMarkdown.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 149,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TextType.tsx",
+      "filePath": "components\\TextType.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 195,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TrueFocus.tsx",
+      "filePath": "components\\TrueFocus.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 132,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "WorkflowEditor.tsx",
+      "filePath": "components\\WorkflowEditor.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 2,
+      "lineCount": 181,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ChatDock.tsx",
+      "filePath": "components\\ChatDock.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 25,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ControlStatusPanel.tsx",
+      "filePath": "components\\ControlStatusPanel.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 71,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "GridSystem.tsx",
+      "filePath": "components\\GridSystem.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 70,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "InternalDraggable.tsx",
+      "filePath": "components\\InternalDraggable.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 88,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "BackgroundLayer.tsx",
+      "filePath": "components\\login\\BackgroundLayer.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 56,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "BrandingSection.tsx",
+      "filePath": "components\\login\\BrandingSection.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 89,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "FeatureCard.tsx",
+      "filePath": "components\\login\\FeatureCard.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 40,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "PageTransition.tsx",
+      "filePath": "components\\PageTransition.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 39,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "SnapLines.tsx",
+      "filePath": "components\\SnapLines.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 40,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "StatusNode.tsx",
+      "filePath": "components\\StatusNode.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 46,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TaskNodeLibrary.tsx",
+      "filePath": "components\\TaskNodeLibrary.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 41,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "BlockNode.tsx",
+      "filePath": "components\\TTBlock\\BlockNode.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 69,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "badge.tsx",
+      "filePath": "components\\ui\\badge.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 36,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "button.tsx",
+      "filePath": "components\\ui\\button.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 56,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "card.tsx",
+      "filePath": "components\\ui\\card.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 79,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "meteors.tsx",
+      "filePath": "components\\ui\\meteors.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 34,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "WorkflowCanvas.tsx",
+      "filePath": "components\\WorkflowCanvas.tsx",
+      "primaryLibrary": "custom",
+      "usedLibraries": [],
+      "migrationStatus": "pending",
+      "priority": "medium",
+      "estimatedEffort": 1,
+      "lineCount": 79,
+      "libraries": {
+        "heroui": false,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "AppInfoPanel.tsx",
+      "filePath": "components\\AppInfoPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 80,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "AuthButtons.tsx",
+      "filePath": "components\\AuthButtons.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 46,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ChallengeCruisePanel.tsx",
+      "filePath": "components\\ChallengeCruisePanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 183,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ComponentSelector.tsx",
+      "filePath": "components\\ComponentSelector.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 663,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ComponentSelectorButton.tsx",
+      "filePath": "components\\ComponentSelectorButton.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 47,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ConnectionControlPanel.tsx",
+      "filePath": "components\\ConnectionControlPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 50,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DemoReportGenerator.tsx",
+      "filePath": "components\\DemoReportGenerator.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 462,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DetectionControlPanel.tsx",
+      "filePath": "components\\DetectionControlPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 198,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "DroneControlPanel.tsx",
+      "filePath": "components\\DroneControlPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 361,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "HelpPanel.tsx",
+      "filePath": "components\\HelpPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 125,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ComponentGroupManager.tsx",
+      "filePath": "components\\layout\\ComponentGroupManager.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 261,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "LayoutControl.tsx",
+      "filePath": "components\\LayoutControl.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 122,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "LayoutToggle.tsx",
+      "filePath": "components\\LayoutToggle.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 163,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "FormInput.tsx",
+      "filePath": "components\\login\\FormInput.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 73,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "LoginCard.tsx",
+      "filePath": "components\\login\\LoginCard.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 52,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "PasswordInput.tsx",
+      "filePath": "components\\login\\PasswordInput.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 89,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "MemoryPanel.tsx",
+      "filePath": "components\\MemoryPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 165,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "MissionPadPanel.tsx",
+      "filePath": "components\\MissionPadPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 107,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ModelSwitcher.tsx",
+      "filePath": "components\\ModelSwitcher.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 94,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "NodeConfigModal.tsx",
+      "filePath": "components\\NodeConfigModal.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 592,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "PlantAnalysisWorkflow.tsx",
+      "filePath": "components\\PlantAnalysisWorkflow.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 272,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "PlantQRGeneratorPanel.tsx",
+      "filePath": "components\\PlantQRGeneratorPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 308,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "QRCooldownSettings.tsx",
+      "filePath": "components\\QRCooldownSettings.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 133,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "QRScanPanel.tsx",
+      "filePath": "components\\QRScanPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 110,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "StrawberryDetectionCard.tsx",
+      "filePath": "components\\StrawberryDetectionCard.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 203,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "SystemLogPanel.tsx",
+      "filePath": "components\\SystemLogPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 335,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TelloIntelligentAgent.tsx",
+      "filePath": "components\\TelloIntelligentAgent.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 856,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TelloWorkflowPanel.tsx",
+      "filePath": "components\\TelloWorkflowPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 988,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "theme-switch.tsx",
+      "filePath": "components\\theme-switch.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 82,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TopNavbar.tsx",
+      "filePath": "components\\TopNavbar.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 537,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "NodeConfigModal.tsx",
+      "filePath": "components\\TTBlock\\NodeConfigModal.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 190,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "TTBlockPanel.tsx",
+      "filePath": "components\\TTBlock\\TTBlockPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 576,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "EnhancedModelSelector.tsx",
+      "filePath": "components\\ui\\EnhancedModelSelector.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 559,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ModelManagerPanel.tsx",
+      "filePath": "components\\ui\\ModelManagerPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 314,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "ModelSelectorDemo.tsx",
+      "filePath": "components\\ui\\ModelSelectorDemo.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 287,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "UserMenu.tsx",
+      "filePath": "components\\UserMenu.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 112,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "WorkflowManagerModal.tsx",
+      "filePath": "components\\WorkflowManagerModal.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 297,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "WorkflowPanel.tsx",
+      "filePath": "components\\WorkflowPanel.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 66,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    },
+    {
+      "componentName": "YOLOModelManager.tsx",
+      "filePath": "components\\YOLOModelManager.tsx",
+      "primaryLibrary": "heroui",
+      "usedLibraries": [
+        "heroui"
+      ],
+      "migrationStatus": "completed",
+      "priority": "low",
+      "estimatedEffort": 0,
+      "lineCount": 481,
+      "libraries": {
+        "heroui": true,
+        "nextui": false,
+        "antd": false,
+        "mui": false
+      }
+    }
+  ]
+}

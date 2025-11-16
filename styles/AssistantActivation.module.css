@@ -1,0 +1,594 @@
+/**
+ * Assistant Activation Styles
+ * 
+ * Styles for assistant activation feature including:
+ * - Highlight animation for newly added assistants
+ * - Button animations and ripple effects
+ * - Smooth transition effects
+ * 
+ * Requirements:
+ * - 3.2: Smooth animations for new assistants
+ * - 3.3: Highlight display for newly added assistants
+ * - 1.5: Button hover and activation effects
+ */
+
+/* ============================================
+   Task 7.1: Highlight Animation Styles
+   ============================================ */
+
+/* Highlight animation for newly added assistants (Requirement 3.3) */
+.highlighted {
+  animation: highlight-pulse 1s ease-in-out 3;
+  background: hsl(var(--heroui-primary) / 0.1) !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* Keyframe animation with pulsing glow effect */
+@keyframes highlight-pulse {
+  0%, 100% {
+    background: hsl(var(--heroui-primary) / 0.05);
+    box-shadow: 0 0 0 0 hsl(var(--heroui-primary) / 0.4);
+    transform: scale(1);
+  }
+  50% {
+    background: hsl(var(--heroui-primary) / 0.15);
+    box-shadow: 0 0 0 8px hsl(var(--heroui-primary) / 0);
+    transform: scale(1.02);
+  }
+}
+
+/* ============================================
+   Task 7.2: Button Click Animation
+   ============================================ */
+
+/* Activation button base styles (Requirement 1.5) */
+.activation-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+/* Ripple effect animation */
+.activation-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease-out, height 0.6s ease-out;
+  pointer-events: none;
+}
+
+/* Ripple expansion on click */
+.activation-button:active::before {
+  width: 300px;
+  height: 300px;
+  transition: width 0s, height 0s;
+}
+
+/* Hover state with elevation */
+.activation-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(var(--heroui-primary) / 0.3);
+}
+
+/* Active state - pressed down */
+.activation-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px hsl(var(--heroui-primary) / 0.2);
+}
+
+/* Button state styles with smooth transitions */
+.activation-button-added {
+  background: hsl(var(--heroui-success)) !important;
+  border-color: hsl(var(--heroui-success)) !important;
+  transition: all 0.3s ease;
+}
+
+.activation-button-added:hover {
+  background: hsl(var(--heroui-success) / 0.9) !important;
+  box-shadow: 0 4px 12px hsl(var(--heroui-success) / 0.3);
+  transform: translateY(-2px);
+}
+
+.activation-button-added::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.activation-button-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.activation-button-loading:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================
+   Task 7.3: Transition Effects
+   ============================================ */
+
+/* Smooth transition for assistant cards (Requirement 3.2) */
+.user-assistant-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  will-change: transform, opacity;
+}
+
+.user-assistant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px hsl(var(--heroui-foreground) / 0.1);
+}
+
+/* Fade-in slide animation for new assistants */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.user-assistant-card-new {
+  animation: fadeInSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Staggered animation for multiple items */
+.user-assistant-card:nth-child(1) { animation-delay: 0ms; }
+.user-assistant-card:nth-child(2) { animation-delay: 50ms; }
+.user-assistant-card:nth-child(3) { animation-delay: 100ms; }
+.user-assistant-card:nth-child(4) { animation-delay: 150ms; }
+.user-assistant-card:nth-child(5) { animation-delay: 200ms; }
+
+/* Smooth state transitions for buttons */
+.activation-button * {
+  transition: all 0.2s ease;
+}
+
+/* Icon rotation animation */
+@keyframes iconRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.activation-button-loading .anticon {
+  animation: iconRotate 1s linear infinite;
+}
+
+/* Scroll indicator for list */
+.scroll-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, hsl(var(--heroui-content1)), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-indicator-visible {
+  opacity: 1;
+}
+
+/* Loading state for assistant list */
+.assistant-list-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: hsl(var(--heroui-foreground) / 0.5);
+}
+
+/* Empty state for assistant list */
+.assistant-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: hsl(var(--heroui-foreground) / 0.5);
+}
+
+.assistant-list-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.assistant-list-empty-text {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.assistant-list-empty-hint {
+  font-size: 12px;
+  color: hsl(var(--heroui-foreground) / 0.4);
+}
+
+/* ============================================
+   Dark Mode Adjustments
+   ============================================ */
+
+.dark .highlighted {
+  background: hsl(var(--heroui-primary) / 0.15) !important;
+}
+
+@keyframes highlight-pulse-dark {
+  0%, 100% {
+    background: hsl(var(--heroui-primary) / 0.1);
+    box-shadow: 0 0 0 0 hsl(var(--heroui-primary) / 0.5);
+    transform: scale(1);
+  }
+  50% {
+    background: hsl(var(--heroui-primary) / 0.2);
+    box-shadow: 0 0 0 8px hsl(var(--heroui-primary) / 0);
+    transform: scale(1.02);
+  }
+}
+
+.dark .highlighted {
+  animation: highlight-pulse-dark 1s ease-in-out 3;
+}
+
+.dark .user-assistant-card:hover {
+  box-shadow: 0 2px 8px hsl(var(--heroui-foreground) / 0.2);
+}
+
+.dark .activation-button:hover {
+  box-shadow: 0 4px 12px hsl(var(--heroui-primary) / 0.4);
+}
+
+.dark .activation-button-added:hover {
+  box-shadow: 0 4px 12px hsl(var(--heroui-success) / 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-assistant-card {
+    padding: 8px;
+  }
+  
+  .activation-button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .assistant-list-empty {
+    padding: 30px 15px;
+  }
+  
+  .assistant-list-empty-icon {
+    font-size: 36px;
+  }
+}
+
+/* ============================================
+   Performance Optimizations
+   ============================================ */
+
+/* Use GPU acceleration for animations */
+.highlighted,
+.user-assistant-card,
+.activation-button {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .highlighted,
+  .user-assistant-card,
+  .activation-button,
+  .user-assistant-card-new {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .activation-button:hover,
+  .user-assistant-card:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================
+   Accessibility: Focus Indicators (Task 10.2)
+   ============================================ */
+
+/* Enhanced focus indicator for activation button */
+.activation-button:focus-visible {
+  outline: 3px solid hsl(var(--heroui-primary));
+  outline-offset: 3px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 4px hsl(var(--heroui-primary) / 0.2);
+  transition: outline-offset 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus indicator for added state */
+.activation-button-added:focus-visible {
+  outline-color: hsl(var(--heroui-success));
+  box-shadow: 0 0 0 4px hsl(var(--heroui-success) / 0.2);
+}
+
+/* Focus indicator for assistant cards */
+.user-assistant-card:focus-within {
+  outline: 2px solid hsl(var(--heroui-primary) / 0.6);
+  outline-offset: 2px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px hsl(var(--heroui-primary) / 0.1);
+  transition: outline-offset 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus indicator for modal buttons */
+:global(.ant-modal-content button:focus-visible) {
+  outline: 2px solid hsl(var(--heroui-primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px hsl(var(--heroui-primary) / 0.2);
+}
+
+/* Focus indicator for modal close button */
+:global(.ant-modal-close:focus-visible) {
+  outline: 2px solid hsl(var(--heroui-primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Ensure focus indicators are visible in all states */
+.activation-button:focus-visible:hover,
+.activation-button:focus-visible:active {
+  outline: 3px solid hsl(var(--heroui-primary));
+  outline-offset: 3px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .highlighted {
+    border: 3px solid hsl(var(--heroui-primary));
+  }
+  
+  .activation-button {
+    border-width: 2px;
+  }
+  
+  .activation-button:focus-visible {
+    outline-width: 4px;
+    outline-offset: 4px;
+  }
+  
+  .user-assistant-card:focus-within {
+    outline-width: 3px;
+  }
+}
+
+/* Dark mode focus indicators */
+.dark .activation-button:focus-visible {
+  outline-color: hsl(var(--heroui-primary) / 0.8);
+  box-shadow: 0 0 0 4px hsl(var(--heroui-primary) / 0.3);
+}
+
+.dark .activation-button-added:focus-visible {
+  outline-color: hsl(var(--heroui-success) / 0.8);
+  box-shadow: 0 0 0 4px hsl(var(--heroui-success) / 0.3);
+}
+
+.dark .user-assistant-card:focus-within {
+  outline-color: hsl(var(--heroui-primary) / 0.7);
+  box-shadow: 0 0 0 4px hsl(var(--heroui-primary) / 0.15);
+}
+
+/* ============================================
+   Additional Utility Animations
+   ============================================ */
+
+/* Bounce animation for success state */
+@keyframes successBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.activation-button-success {
+  animation: successBounce 0.3s ease-out;
+}
+
+/* Shake animation for error state */
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.activation-button-error {
+  animation: errorShake 0.3s ease-out;
+}
+
+/* Smooth opacity transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Slide transitions for list items */
+.slide-enter {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.slide-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.slide-exit-active {
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   Screen Reader Only Utility (Task 10.3)
+   ============================================ */
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focusable screen reader only elements */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ============================================
+   Keyboard Navigation Enhancements (Task 10.2)
+   ============================================ */
+
+/* Skip to content link for keyboard users */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: hsl(var(--heroui-primary));
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: 2px solid white;
+  outline-offset: -2px;
+}
+
+/* Enhanced keyboard navigation for modal */
+:global(.ant-modal-wrap:focus-within) {
+  outline: none;
+}
+
+/* Trap focus within modal */
+:global(.ant-modal-content) {
+  position: relative;
+}
+
+/* Ensure proper tab order */
+.activation-button,
+:global(.ant-modal-content button),
+:global(.ant-modal-close) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Visual feedback for keyboard navigation */
+.activation-button:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed hsl(var(--heroui-primary) / 0.5);
+  border-radius: 8px;
+  pointer-events: none;
+  animation: focusPulse 2s ease-in-out infinite;
+}
+
+@keyframes focusPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Remove focus pulse in high contrast mode */
+@media (prefers-contrast: high) {
+  .activation-button:focus-visible::after {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .activation-button,
+  .scroll-indicator,
+  .sr-only,
+  .skip-to-content {
+    display: none;
+  }
+  
+  .highlighted {
+    animation: none;
+    background: transparent !important;
+  }
+  
+  .user-assistant-card {
+    break-inside: avoid;
+  }
+}

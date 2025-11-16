@@ -1,7 +1,6 @@
 "use client";
 
-import { Card, CardBody } from "@nextui-org/react";
-import { Chip } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/card";
 import AnimatedList from './ui/AnimatedList';
 
 interface DronePositionPanelProps {

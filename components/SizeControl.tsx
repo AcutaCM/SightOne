@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Card, CardBody } from '@nextui-org/react';
+import { Input } from '@heroui/input';
+import { Button } from '@heroui/button';
+import { Card, CardBody } from '@heroui/card';
 
 interface SizeControlProps {
   width: number;

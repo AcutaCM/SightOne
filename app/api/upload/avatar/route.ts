@@ -5,22 +5,44 @@ import fs from 'fs/promises';
 
 export async function POST(request: NextRequest) {
   try {
-    const authorization = request.headers.get('authorization');
+    // 优先使用 Cookie 认证
+    const email = request.cookies.get('user_email')?.value;
+    let userId: string | undefined;
     
-    if (!authorization || !authorization.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { message: '未提供有效的认证token' },
-        { status: 401 }
-      );
+    if (email) {
+      // Cookie 认证：通过 email 查找用户
+      const user = userDatabase.getUserByEmail(email);
+      if (user) {
+        userId = user.id;
+      }
+    } else {
+      // 回退到 Bearer token 认证（向后兼容）
+      const authorization = request.headers.get('authorization');
+      
+      if (!authorization || !authorization.startsWith('Bearer ')) {
+        return NextResponse.json(
+          { message: '未提供有效的认证信息' },
+          { status: 401 }
+        );
+      }
+
+      const token = authorization.split(' ')[1];
+      const sessionData = userDatabase.getSessionByToken(token);
+      
+      if (!sessionData) {
+        return NextResponse.json(
+          { message: 'Token无效或已过期' },
+          { status: 401 }
+        );
+      }
+      
+      userId = sessionData.user.id;
     }
 
-    const token = authorization.split(' ')[1];
-    const sessionData = userDatabase.getSessionByToken(token);
-    
-    if (!sessionData) {
+    if (!userId) {
       return NextResponse.json(
-        { message: 'Token无效或已过期' },
-        { status: 401 }
+        { message: '用户不存在' },
+        { status: 404 }
       );
     }
 
@@ -54,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // 生成文件名
     const fileExtension = file.type.split('/')[1];
-    const fileName = `avatar_${sessionData.user.id}_${Date.now()}.${fileExtension}`;
+    const fileName = `avatar_${userId}_${Date.now()}.${fileExtension}`;
     
     // 确保上传目录存在
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
@@ -74,7 +96,7 @@ export async function POST(request: NextRequest) {
     const avatarUrl = `/uploads/${fileName}`;
     
     // 更新用户头像信息
-    const updatedUser = userDatabase.updateUser(sessionData.user.id, { avatar: avatarUrl });
+    const updatedUser = userDatabase.updateUser(userId, { avatar: avatarUrl });
     
     if (!updatedUser) {
       // 如果更新失败，删除已保存的文件

@@ -23,6 +23,7 @@ interface AuthContextType {
 
 interface LoginCredentials {
   email: string;
+  password?: string;
 }
 
 interface RegisterData {
@@ -39,69 +40,89 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // 检查本地存储的认证状态
+  // 检查Cookie中的认证状态（页面刷新后自动恢复登录）
   useEffect(() => {
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
-      // 验证token有效性
-      const response = await fetch('/api/auth/verify', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      // 通过 /api/auth/me 检查Cookie中的登录状态
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include' // 确保发送cookie
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        setUser(userData.user);
-      } else {
-        // Token无效，清除本地存储
-        localStorage.removeItem('authToken');
+        const data = await response.json();
+        
+        // 如果有user对象且有email，说明用户已登录
+        if (data.success && data.user && data.user.email) {
+          setUser({
+            id: data.user.id?.toString() || data.user.email,
+            username: data.user.username || data.user.email,
+            email: data.user.email,
+            name: data.user.name,
+            role: data.user.role || 'normal',
+          });
+        } else if (data.email) {
+          // 向后兼容旧格式
+          setUser({
+            id: data.email,
+            username: data.email,
+            email: data.email,
+            role: data.role || 'normal',
+          });
+        }
       }
     } catch (error) {
       console.error('认证检查失败:', error);
-      localStorage.removeItem('authToken');
+      // 出错时不清除状态，保持未登录状态即可
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: LoginCredentials & { password?: string }) => {
     try {
       const email = String(credentials.email || '')
         .replace(/^mailto:/i, '')
         .trim();
       if (!email) throw new Error('请输入邮箱');
+      
+      const password = credentials.password || '';
+      if (!password) throw new Error('请输入密码');
 
       const resp = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // 确保接收cookie
       });
+      
+      const data = await resp.json();
+      
       if (!resp.ok) {
-        const t = await resp.text().catch(() => '');
-        throw new Error(t || `登录失败(${resp.status})`);
+        throw new Error(data.error || `登录失败(${resp.status})`);
       }
 
-      // 登录成功后，通过 /api/auth/me 获取用户与角色
-      const me = await fetch('/api/auth/me').then(r => (r.ok ? r.json() : null)).catch(() => null);
-      const role = me?.role || 'normal';
+      if (!data.success) {
+        throw new Error(data.error || '登录失败');
+      }
 
-      // 统一前端 User 结构
-      setUser({
-        id: email,
-        username: email,
-        email,
-        role,
-      });
+      // 设置用户数据
+      const userData = {
+        id: data.user.id.toString(),
+        username: data.user.username,
+        email: data.user.email,
+        name: data.user.name,
+        role: data.user.role,
+      };
+      
+      setUser(userData);
+      
+      // 同时保存到localStorage作为备份（可选）
+      localStorage.setItem('lastLoggedInEmail', email);
+      
     } catch (error) {
       console.error('登录失败:', error);
       throw error;
@@ -110,17 +131,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterData) => {
     try {
-      // 保留原注册接口，但注册成功后按 email 自动登录
       const resp = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        credentials: 'include',
       });
+      
+      const responseData = await resp.json();
+      
       if (!resp.ok) {
-        const t = await resp.text().catch(() => '');
-        throw new Error(t || `注册失败(${resp.status})`);
+        throw new Error(responseData.error || `注册失败(${resp.status})`);
       }
-      await login({ email: data.email });
+
+      if (!responseData.success) {
+        throw new Error(responseData.error || '注册失败');
+      }
+
+      // 注册成功后自动设置用户数据（注册接口已经设置了JWT cookie）
+      const userData = {
+        id: responseData.user.id.toString(),
+        username: responseData.user.username,
+        email: responseData.user.email,
+        name: responseData.user.name,
+        role: responseData.user.role,
+      };
+      
+      setUser(userData);
+      localStorage.setItem('lastLoggedInEmail', responseData.user.email);
     } catch (error) {
       console.error('注册失败:', error);
       throw error;
@@ -130,7 +168,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       // 基于 Cookie 的退出登录，无需 Bearer 头
-      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      }).catch(() => {});
+      
+      // 清除localStorage中的备份
+      localStorage.removeItem('lastLoggedInEmail');
     } catch (error) {
       console.error('退出登录API调用失败:', error);
     } finally {

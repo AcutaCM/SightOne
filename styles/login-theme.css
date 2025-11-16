@@ -1,0 +1,163 @@
+/**
+ * Login Page Theme Variables
+ * CSS custom properties for dynamic theming
+ */
+
+:root {
+  /* Primary Colors */
+  --login-primary-50: 239 246 255;
+  --login-primary-100: 219 234 254;
+  --login-primary-200: 191 219 254;
+  --login-primary-300: 147 197 253;
+  --login-primary-400: 96 165 250;
+  --login-primary-500: 59 130 246;
+  --login-primary-600: 37 99 235;
+  --login-primary-700: 29 78 216;
+  --login-primary-800: 30 64 175;
+  --login-primary-900: 30 58 138;
+  
+  /* Gray Scale */
+  --login-gray-50: 249 250 251;
+  --login-gray-100: 243 244 246;
+  --login-gray-200: 229 231 235;
+  --login-gray-300: 209 213 219;
+  --login-gray-400: 156 163 175;
+  --login-gray-500: 107 114 128;
+  --login-gray-600: 75 85 99;
+  --login-gray-700: 55 65 81;
+  --login-gray-800: 31 41 55;
+  --login-gray-900: 17 24 39;
+  
+  /* Semantic Colors */
+  --login-success: 16 185 129;
+  --login-error: 239 68 68;
+  --login-warning: 245 158 11;
+  --login-info: 59 130 246;
+  
+  /* Spacing */
+  --login-spacing-xs: 0.25rem;
+  --login-spacing-sm: 0.5rem;
+  --login-spacing-md: 1rem;
+  --login-spacing-lg: 1.5rem;
+  --login-spacing-xl: 2rem;
+  --login-spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --login-radius-sm: 0.25rem;
+  --login-radius-md: 0.75rem;
+  --login-radius-lg: 1rem;
+  --login-radius-xl: 1.5rem;
+  
+  /* Transitions */
+  --login-transition-fast: 150ms;
+  --login-transition-base: 200ms;
+  --login-transition-slow: 300ms;
+  
+  /* Z-Index */
+  --login-z-background: 0;
+  --login-z-base: 1;
+  --login-z-overlay: 10;
+  --login-z-modal: 100;
+}
+
+/* Dark mode overrides */
+.dark {
+  /* Adjust colors for dark mode if needed */
+  --login-bg-card: 31 41 55;
+  --login-bg-overlay: 0 0 0 / 0.5;
+}
+
+/* Light mode */
+.light {
+  --login-bg-card: 255 255 255;
+  --login-bg-overlay: 0 0 0 / 0.3;
+}
+
+/* Utility classes for login page */
+.login-card-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.login-input-focus {
+  transition: all var(--login-transition-base) ease;
+}
+
+.login-input-focus:focus {
+  transform: scale(1.01);
+  border-color: rgb(var(--login-primary-500));
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--login-primary-500), 0.1);
+}
+
+.login-button-hover {
+  transition: all var(--login-transition-base) ease;
+}
+
+.login-button-hover:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.login-button-hover:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Gradient backgrounds */
+.login-gradient-bg {
+  background: linear-gradient(135deg, #1e40af 0%, #6366f1 50%, #7c3aed 100%);
+}
+
+.login-gradient-overlay {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+}
+
+/* Animation utilities */
+@keyframes login-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes login-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-fade-in {
+  animation: login-fade-in 0.3s ease-out;
+}
+
+.login-spin {
+  animation: login-spin 1s linear infinite;
+}
+
+/* Backdrop blur utilities */
+.login-backdrop-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.login-backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Feature card hover effect */
+.login-feature-card {
+  transition: all var(--login-transition-base) ease;
+}
+
+.login-feature-card:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}

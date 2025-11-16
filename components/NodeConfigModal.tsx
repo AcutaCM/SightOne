@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Switch } from "@heroui/switch";
+import { Textarea } from "@heroui/input";
+import { useTheme } from "next-themes";
+import AssistantSelector from './workflow/AssistantSelector';
+import { getModalPanelStyle } from '@/lib/panel-styles';
 
 interface NodeConfig {
   id: string;
@@ -27,6 +31,7 @@ const NodeConfigModal: React.FC<NodeConfigModalProps> = ({
   nodeConfig,
   onSave
 }) => {
+  const { theme, resolvedTheme } = useTheme();
   const [config, setConfig] = useState<NodeConfig | null>(null);
 
   useEffect(() => {
@@ -537,6 +542,264 @@ const NodeConfigModal: React.FC<NodeConfigModalProps> = ({
           </div>
         );
 
+      // PureChat AI 节点
+      case 'purechat_chat':
+        return (
+          <div className="space-y-4">
+            <AssistantSelector
+              value={params.assistantId || ''}
+              onChange={(assistantId) => updateParameter('assistantId', assistantId)}
+              isRequired={true}
+            />
+            <Textarea
+              label="提示词"
+              value={params.prompt || ''}
+              onChange={(e) => updateParameter('prompt', e.target.value)}
+              placeholder="输入发送给AI的提示词..."
+              description="描述你想让AI做什么"
+              minRows={3}
+              maxRows={6}
+              isRequired={true}
+            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">温度参数: {params.temperature || 0.7}</label>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                step="0.1"
+                value={params.temperature || 0.7}
+                onChange={(e) => updateParameter('temperature', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0 (精确)</span>
+                <span>2 (创造性)</span>
+              </div>
+              <p className="text-xs text-gray-500">控制AI响应的随机性和创造性</p>
+            </div>
+            <Input
+              label="最大Token数"
+              type="number"
+              value={params.maxTokens?.toString() || '1000'}
+              onChange={(e) => updateParameter('maxTokens', parseInt(e.target.value) || 1000)}
+              description="生成文本的最大长度 (100-4000)"
+              min={100}
+              max={4000}
+            />
+            <Input
+              label="输出变量名"
+              value={params.outputVariable || 'ai_response'}
+              onChange={(e) => updateParameter('outputVariable', e.target.value)}
+              description="存储AI响应的变量名"
+              placeholder="ai_response"
+              isRequired={true}
+            />
+          </div>
+        );
+
+      case 'purechat_image_analysis':
+        return (
+          <div className="space-y-4">
+            <AssistantSelector
+              value={params.assistantId || ''}
+              onChange={(assistantId) => updateParameter('assistantId', assistantId)}
+              isRequired={true}
+            />
+            <Select
+              label="图像来源"
+              selectedKeys={[params.imageSource || 'camera']}
+              onSelectionChange={(keys) => updateParameter('imageSource', Array.from(keys)[0])}
+              description="选择图像数据的来源"
+            >
+              <SelectItem key="camera">无人机摄像头</SelectItem>
+              <SelectItem key="upload">上传图片</SelectItem>
+              <SelectItem key="variable">变量引用</SelectItem>
+            </Select>
+            <Textarea
+              label="分析提示"
+              value={params.prompt || '请分析这张图片'}
+              onChange={(e) => updateParameter('prompt', e.target.value)}
+              placeholder="描述你想让AI分析什么..."
+              description="告诉AI你想从图像中了解什么"
+              minRows={3}
+              maxRows={6}
+              isRequired={true}
+            />
+            <Input
+              label="输出变量名"
+              value={params.outputVariable || 'image_analysis'}
+              onChange={(e) => updateParameter('outputVariable', e.target.value)}
+              description="存储分析结果的变量名"
+              placeholder="image_analysis"
+              isRequired={true}
+            />
+          </div>
+        );
+
+      case 'unipixel_segmentation':
+        return (
+          <div className="space-y-4">
+            <Select
+              label="图像来源"
+              selectedKeys={[params.imageSource || 'camera']}
+              onSelectionChange={(keys) => updateParameter('imageSource', Array.from(keys)[0])}
+              description="选择图像数据的来源"
+            >
+              <SelectItem key="camera">无人机摄像头</SelectItem>
+              <SelectItem key="upload">上传图片</SelectItem>
+              <SelectItem key="variable">变量引用</SelectItem>
+            </Select>
+            <Textarea
+              label="分割查询"
+              value={params.query || ''}
+              onChange={(e) => updateParameter('query', e.target.value)}
+              placeholder="例如: 草莓, 成熟的水果, 叶子..."
+              description="描述要分割的对象"
+              minRows={2}
+              maxRows={4}
+              isRequired={true}
+            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">置信度阈值: {params.confidence || 0.7}</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value={params.confidence || 0.7}
+                onChange={(e) => updateParameter('confidence', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0.1 (宽松)</span>
+                <span>1.0 (严格)</span>
+              </div>
+            </div>
+            <Input
+              label="采样帧数"
+              type="number"
+              value={params.sampleFrames?.toString() || '1'}
+              onChange={(e) => updateParameter('sampleFrames', parseInt(e.target.value) || 1)}
+              description="采样的视频帧数 (1-10)"
+              min={1}
+              max={10}
+            />
+            <Switch
+              isSelected={params.visualize !== false}
+              onValueChange={(value) => updateParameter('visualize', value)}
+            >
+              可视化分割结果
+            </Switch>
+            <Input
+              label="输出变量名"
+              value={params.outputVariable || 'segmentation_result'}
+              onChange={(e) => updateParameter('outputVariable', e.target.value)}
+              description="存储分割结果的变量名"
+              placeholder="segmentation_result"
+              isRequired={true}
+            />
+          </div>
+        );
+
+      case 'yolo_detection':
+        return (
+          <div className="space-y-4">
+            <Select
+              label="模型来源"
+              selectedKeys={[params.modelSource || 'builtin']}
+              onSelectionChange={(keys) => updateParameter('modelSource', Array.from(keys)[0])}
+              description="选择YOLO模型来源"
+            >
+              <SelectItem key="builtin">内置模型</SelectItem>
+              <SelectItem key="upload">上传模型</SelectItem>
+              <SelectItem key="url">URL加载</SelectItem>
+            </Select>
+            
+            {(params.modelSource === 'upload' || params.modelSource === 'url') && (
+              <Input
+                label={params.modelSource === 'url' ? '模型URL' : '模型路径'}
+                value={params.modelPath || ''}
+                onChange={(e) => updateParameter('modelPath', e.target.value)}
+                placeholder={params.modelSource === 'url' ? 'https://example.com/model.pt' : '/path/to/model.pt'}
+                description={params.modelSource === 'url' ? '输入模型文件的URL' : '输入模型文件的路径'}
+                isRequired={true}
+              />
+            )}
+            
+            <Select
+              label="图像来源"
+              selectedKeys={[params.imageSource || 'camera']}
+              onSelectionChange={(keys) => updateParameter('imageSource', Array.from(keys)[0])}
+              description="选择图像数据的来源"
+            >
+              <SelectItem key="camera">无人机摄像头</SelectItem>
+              <SelectItem key="upload">上传图片</SelectItem>
+              <SelectItem key="variable">变量引用</SelectItem>
+            </Select>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">置信度阈值: {params.confidence || 0.5}</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value={params.confidence || 0.5}
+                onChange={(e) => updateParameter('confidence', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0.1 (宽松)</span>
+                <span>1.0 (严格)</span>
+              </div>
+              <p className="text-xs text-gray-500">检测结果的最小置信度</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">IOU阈值: {params.iouThreshold || 0.45}</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.05"
+                value={params.iouThreshold || 0.45}
+                onChange={(e) => updateParameter('iouThreshold', parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>0.1</span>
+                <span>1.0</span>
+              </div>
+              <p className="text-xs text-gray-500">非极大值抑制(NMS)的IOU阈值</p>
+            </div>
+            
+            <Input
+              label="检测类别"
+              value={params.classes || ''}
+              onChange={(e) => updateParameter('classes', e.target.value)}
+              placeholder="例如: person,car,dog (留空检测全部)"
+              description="要检测的类别，用逗号分隔，留空检测全部类别"
+            />
+            
+            <Switch
+              isSelected={params.drawResults !== false}
+              onValueChange={(value) => updateParameter('drawResults', value)}
+            >
+              绘制检测结果
+            </Switch>
+            
+            <Input
+              label="输出变量名"
+              value={params.outputVariable || 'yolo_detections'}
+              onChange={(e) => updateParameter('outputVariable', e.target.value)}
+              description="存储检测结果的变量名"
+              placeholder="yolo_detections"
+              isRequired={true}
+            />
+          </div>
+        );
+
       default:
         return (
           <div className="space-y-4">
@@ -558,9 +821,18 @@ const NodeConfigModal: React.FC<NodeConfigModalProps> = ({
 
   if (!config) return null;
 
+  const modalStyle = useMemo(() => {
+    const currentTheme = (theme || resolvedTheme) as 'light' | 'dark' | undefined;
+    return getModalPanelStyle(currentTheme === 'light' ? 'light' : 'dark');
+  }, [theme, resolvedTheme]);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <ModalContent>
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      size="lg"
+    >
+      <ModalContent style={modalStyle}>
         <ModalHeader className="flex flex-col gap-1">
           <h3 className="text-xl font-bold">配置节点: {config.label}</h3>
           <p className="text-sm text-gray-500">设置节点的执行参数</p>

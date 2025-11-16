@@ -1,0 +1,23 @@
+/**
+ * AlignmentLines Styles
+ * 
+ * Styles for alignment guide lines.
+ */
+
+.alignmentLines {
+  pointer-events: none;
+  user-select: none;
+}
+
+.alignmentLine {
+  animation: fadeIn var(--wf-duration-fast) var(--wf-easing-out);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.8;
+  }
+}

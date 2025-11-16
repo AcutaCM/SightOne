@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import { Button } from '@heroui/button';
@@ -115,7 +115,7 @@ const DroneControlPanel: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white/10 backdrop-blur-md border border-white/20">
+    <Card className="w-full max-w-2xl mx-auto bg-white/10 backdrop-blur-[120px] border border-white/20">
       <CardHeader className="pb-2">
         <h3 className="text-lg font-semibold text-white">Tello 无人机控制面板</h3>
       </CardHeader>

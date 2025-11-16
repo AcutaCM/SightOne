@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
@@ -6,17 +6,27 @@ import { Badge } from "@heroui/badge";
 
 interface MissionPadPanelProps {
   isConnected: boolean;
-  onStartMission: () => void;
+  onStartMission: (params: { rounds: number; height: number; stayDuration: number }) => void;
   onStopMission: () => void;
+  missionActive?: boolean;
 }
 
 const MissionPadPanel: React.FC<MissionPadPanelProps> = ({
   isConnected,
   onStartMission,
   onStopMission,
+  missionActive = false,
 }) => {
+  const [rounds, setRounds] = useState<number>(3);
+  const [height, setHeight] = useState<number>(100);
+  const [stayDuration, setStayDuration] = useState<number>(5);
+
+  const handleStartMission = () => {
+    onStartMission({ rounds, height, stayDuration });
+  };
+
   return (
-    <Card className="h-full bg-background/60 backdrop-blur-sm border border-divider">
+    <Card className="h-full bg-content1 border-divider shadow-[0px_10px_50px_0px_rgba(0,0,0,0.1)]">
       <CardBody className="p-5 h-full flex flex-col">
         {/* 标题 */}
         <div className="mb-6">
@@ -40,15 +50,25 @@ const MissionPadPanel: React.FC<MissionPadPanelProps> = ({
               size="sm"
               radius="md"
               className="flex-1"
+              type="number"
+              value={rounds.toString()}
+              onChange={(e) => setRounds(Number(e.target.value) || 3)}
+              min={1}
+              max={10}
             />
             <Input
-              label="执行高度(m)"
+              label="执行高度(cm)"
               labelPlacement="inside"
               variant="bordered"
               color="primary"
               size="sm"
               radius="md"
               className="flex-1"
+              type="number"
+              value={height.toString()}
+              onChange={(e) => setHeight(Number(e.target.value) || 100)}
+              min={50}
+              max={200}
             />
           </div>
           
@@ -61,30 +81,35 @@ const MissionPadPanel: React.FC<MissionPadPanelProps> = ({
             size="sm"
             radius="md"
             className="w-full"
+            type="number"
+            value={stayDuration.toString()}
+            onChange={(e) => setStayDuration(Number(e.target.value) || 5)}
+            min={1}
+            max={20}
           />
         </div>
         
         {/* 按钮区域 */}
         <div className="flex gap-3 mt-6">
           <Button
-            color="primary"
+            color={missionActive ? "warning" : "primary"}
             variant="bordered"
             size="lg"
             radius="lg"
             className="flex-1 h-[48px] font-medium"
-            onPress={onStartMission}
-            isDisabled={!isConnected}
+            onPress={handleStartMission}
+            isDisabled={!isConnected || missionActive}
           >
-            开始任务
+            {missionActive ? "任务进行中..." : "开始任务"}
           </Button>
           <Button
-            color="primary"
+            color="danger"
             variant="bordered"
             size="lg"
             radius="lg"
             className="flex-1 h-[48px] font-medium"
             onPress={onStopMission}
-            isDisabled={!isConnected}
+            isDisabled={!isConnected || !missionActive}
           >
             停止任务
           </Button>
@@ -92,12 +117,12 @@ const MissionPadPanel: React.FC<MissionPadPanelProps> = ({
         
         {/* 状态徽章 */}
         <Badge
-          color="success"
+          color={missionActive ? "warning" : "success"}
           variant="shadow"
           size="sm"
           className="absolute top-4 right-4"
         >
-          5
+          {missionActive ? "运行中" : "就绪"}
         </Badge>
       </CardBody>
     </Card>

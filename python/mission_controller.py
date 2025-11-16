@@ -351,24 +351,43 @@ class MissionController:
 
     def execute_round_trip(self):
         """Execute a round trip from pad 1 to pad 6 and back"""
+        print("\n" + "="*60)
+        print("🚁 开始执行往返飞行任务 (PAD1 ↔ PAD6)")
+        print("="*60)
+        
         # Safety check: ensure drone is connected and flying
         if not self.drone.is_connected:
             self.optimized_status_callback("错误：无人机未连接")
             return False
 
+        # 显示当前检测到的卡片ID
+        current_pad = self.drone.mission_pad_id
+        if current_pad > 0:
+            if current_pad in [1, 6]:
+                print(f"📍 当前检测到挑战卡: {current_pad}")
+            else:
+                print(f"⚠️ 检测到无效卡片ID: {current_pad} (将被忽略，只接受1和6)")
+
         # 1. Ensure we're on pad 1
+        print("\n🎯 步骤1: 定位到挑战卡1")
         if not self.wait_for_pad(1, timeout=4):
             self.optimized_status_callback("错误：无法定位到挑战卡1")
-            return False
+            print("❌ 无法找到挑战卡1，尝试旋转搜索...")
+            if not self.find_pad_by_rotation(1):
+                print("❌ 旋转搜索也失败了")
+                return False
 
         # Position precisely on pad 1
+        print("📍 精确定位到挑战卡1...")
         self.precise_positioning_on_pad(1)
         self.optimized_status_callback(f"在挑战卡 1 停留 {self.stay_duration} 秒")
+        print(f"⏱️ 在PAD1停留 {self.stay_duration} 秒")
         # 上报位于PAD1
         self.emit_position(current_pad=1, x=0, y=0, z=self.mission_height, target_pad=1, progress=0.0, note='位于PAD1')
         time.sleep(self.stay_duration)
 
         # 2. Move right to find pad 6
+        print("\n🎯 步骤2: 向右移动寻找挑战卡6")
         found_pad6 = False
         for attempt in range(3):  # Try up to 3 times
             if self.stop_mission:
@@ -380,29 +399,46 @@ class MissionController:
                     self.optimized_status_callback("错误：无人机未在飞行状态")
                     return False
 
-                # Move right with reduced strength for more stable movement
-                self.drone.manual_control(25, 0, 0, 0)  # Reduced from 40 to 25
-                time.sleep(0.8)  # Reduced from 1.0 to 0.8 seconds
+                print(f"➡️ 尝试 {attempt + 1}/3: 向右移动...")
+                # Move right with increased distance for better search coverage
+                self.drone.manual_control(35, 0, 0, 0)  # 增加到35以扩大搜索范围
+                time.sleep(1.2)  # 增加到1.2秒以移动更远
                 self.drone.manual_control(0, 0, 0, 0)  # Stop movement
 
+                # 显示当前检测到的ID
+                current_pad = self.drone.mission_pad_id
+                if current_pad > 0:
+                    if current_pad in [1, 6]:
+                        print(f"   检测到卡片: {current_pad}")
+                    else:
+                        print(f"   ⚠️ 检测到无效ID: {current_pad} (忽略)")
+
                 # Wait for pad detection with increased timeout
+                print(f"   等待检测挑战卡6...")
                 if self.wait_for_pad(6, timeout=4):  # Increased timeout
                     found_pad6 = True
+                    print("✅ 成功找到挑战卡6!")
                     break
+                else:
+                    print(f"   ❌ 未找到挑战卡6，继续尝试...")
 
             except Exception as e:
                 self.optimized_status_callback(f"移动错误：{str(e)}")
+                print(f"❌ 移动错误: {e}")
                 break
 
         if found_pad6:
             # 3. Position precisely on pad 6
+            print("\n📍 精确定位到挑战卡6...")
             self.precise_positioning_on_pad(6)
             self.optimized_status_callback(f"在挑战卡 6 停留 {self.stay_duration} 秒")
+            print(f"⏱️ 在PAD6停留 {self.stay_duration} 秒")
             # 上报位于PAD6
             self.emit_position(current_pad=6, x=200, y=0, z=self.mission_height, target_pad=6, progress=50.0, note='位于PAD6')
             time.sleep(self.stay_duration)
 
             # 4. Move left to return to pad 1
+            print("\n🎯 步骤3: 向左移动返回挑战卡1")
             found_pad1 = False
             for attempt in range(3):  # Try up to 3 times
                 if self.stop_mission:
@@ -414,33 +450,52 @@ class MissionController:
                         self.optimized_status_callback("错误：无人机未在飞行状态")
                         return False
 
-                    # Move left with reduced strength for more stable movement
-                    self.drone.manual_control(-25, 0, 0, 0)  # Reduced from -40 to -25
-                    time.sleep(0.8)  # Reduced from 1.0 to 0.8 seconds
+                    print(f"⬅️ 尝试 {attempt + 1}/3: 向左移动...")
+                    # Move left with increased distance for better search coverage
+                    self.drone.manual_control(-35, 0, 0, 0)  # 增加到-35以扩大搜索范围
+                    time.sleep(1.2)  # 增加到1.2秒以移动更远
                     self.drone.manual_control(0, 0, 0, 0)  # Stop movement
 
+                    # 显示当前检测到的ID
+                    current_pad = self.drone.mission_pad_id
+                    if current_pad > 0:
+                        if current_pad in [1, 6]:
+                            print(f"   检测到卡片: {current_pad}")
+                        else:
+                            print(f"   ⚠️ 检测到无效ID: {current_pad} (忽略)")
+
                     # Wait for pad detection with increased timeout
+                    print(f"   等待检测挑战卡1...")
                     if self.wait_for_pad(1, timeout=4):  # Increased timeout
                         found_pad1 = True
+                        print("✅ 成功返回挑战卡1!")
                         break
+                    else:
+                        print(f"   ❌ 未找到挑战卡1，继续尝试...")
 
                 except Exception as e:
                     self.optimized_status_callback(f"返回移动错误：{str(e)}")
+                    print(f"❌ 返回移动错误: {e}")
                     break
 
             if found_pad1:
                 # 5. Position precisely on pad 1 again
+                print("\n📍 精确定位回到挑战卡1...")
                 self.precise_positioning_on_pad(1)
                 # 上报位于PAD1
                 self.emit_position(current_pad=1, x=0, y=0, z=self.mission_height, target_pad=1, progress=0.0, note='回到PAD1')
-                print("\nSuccessfully completed round trip!")
+                print("\n" + "="*60)
+                print("✅ 成功完成一轮往返飞行!")
+                print("="*60 + "\n")
                 return True
             else:
-                print("Could not find pad 1 on return trip")
+                print("\n❌ 返回时无法找到挑战卡1")
+                print("🔄 尝试旋转搜索...")
                 self.find_pad_by_rotation(1)  # Attempt to recover by rotation
                 return False
         else:
-            print("Could not find pad 6")
+            print("\n❌ 无法找到挑战卡6")
+            print("🔄 尝试旋转搜索挑战卡1以恢复...")
             # Try to recover by returning to pad 1
             self.find_pad_by_rotation(1)
             return False
@@ -459,21 +514,46 @@ class MissionController:
         """
         start_time = time.time()
         detection_count = 0
-        required_detections = 2  # Require multiple consistent detections
+        required_detections = 3  # 增加到3次连续检测，提高稳定性
+        consecutive_detections = []  # 记录连续检测的ID
         
         while time.time() - start_time < timeout and not self.stop_mission:
-            if self.drone.mission_pad_id == pad_id:
-                detection_count += 1
-                if detection_count >= required_detections:
-                    self.last_pad_id = pad_id
-                    print(f"Successfully detected pad {pad_id} (confirmed {detection_count} times)")
-                    return True
-            else:
-                detection_count = 0  # Reset if detection is lost
+            current_pad = self.drone.mission_pad_id
             
-            time.sleep(0.2)  # Slightly longer interval for more stable detection
+            # 只接受1号和6号卡，过滤其他错误ID
+            if current_pad not in [1, 6]:
+                consecutive_detections = []
+                detection_count = 0
+                time.sleep(0.2)
+                continue
+            
+            if current_pad == pad_id:
+                detection_count += 1
+                consecutive_detections.append(current_pad)
+                
+                # 保持最近5次检测记录
+                if len(consecutive_detections) > 5:
+                    consecutive_detections.pop(0)
+                
+                # 需要连续3次检测到相同ID
+                if detection_count >= required_detections:
+                    # 验证最近的检测都是同一个ID
+                    if len(consecutive_detections) >= required_detections:
+                        recent_ids = consecutive_detections[-required_detections:]
+                        if all(pid == pad_id for pid in recent_ids):
+                            self.last_pad_id = pad_id
+                            print(f"✅ Successfully detected pad {pad_id} (confirmed {detection_count} times, stable)")
+                            return True
+            else:
+                # 检测到不同的ID，重置计数
+                if current_pad in [1, 6]:
+                    print(f"⚠️ Detected pad {current_pad}, but waiting for pad {pad_id}")
+                detection_count = 0
+                consecutive_detections = []
+            
+            time.sleep(0.25)  # 稍微增加间隔，让检测更稳定
 
-        print(f"Could not detect pad {pad_id} consistently")
+        print(f"❌ Could not detect pad {pad_id} consistently (timeout after {timeout}s)")
         return False
 
     def find_pad_by_rotation(self, pad_id, max_rotations=4):
@@ -491,21 +571,45 @@ class MissionController:
                 return False
 
             # Check if pad is already detected before rotating
-            if self.drone.mission_pad_id == pad_id:
+            current_pad = self.drone.mission_pad_id
+            
+            # 只接受1号和6号卡
+            if current_pad == pad_id and current_pad in [1, 6]:
                 self.last_pad_id = pad_id
+                print(f"✅ Found pad {pad_id} before rotation")
                 return True
 
-            print(f"Rotation search for pad {pad_id}, attempt {i + 1}")
+            print(f"🔄 Rotation search for pad {pad_id}, attempt {i + 1}/{max_rotations}")
+            
+            # 显示当前检测到的ID（如果有）
+            if current_pad > 0:
+                if current_pad in [1, 6]:
+                    print(f"   Currently detecting pad {current_pad}")
+                else:
+                    print(f"   ⚠️ Ignoring invalid pad ID: {current_pad} (only 1 and 6 are valid)")
+            
             # Reduce rotation angle from 45 to 30 degrees for gentler movement
             self.drone.rotate(30)
-            time.sleep(1.5)  # Reduced wait time for faster response
+            time.sleep(1.5)  # Wait for rotation to complete
             
-            # Check again after rotation
-            time.sleep(0.5)  # Brief pause for detection
-            if self.drone.mission_pad_id == pad_id:
+            # Check again after rotation with multiple samples
+            time.sleep(0.5)  # Brief pause for detection to stabilize
+            
+            # 连续检测3次确认
+            detection_samples = []
+            for _ in range(3):
+                detected_id = self.drone.mission_pad_id
+                if detected_id in [1, 6]:
+                    detection_samples.append(detected_id)
+                time.sleep(0.2)
+            
+            # 如果多数检测结果是目标ID
+            if detection_samples and detection_samples.count(pad_id) >= 2:
                 self.last_pad_id = pad_id
+                print(f"✅ Found pad {pad_id} after rotation (confirmed by {detection_samples.count(pad_id)}/3 samples)")
                 return True
 
+        print(f"❌ Could not find pad {pad_id} after {max_rotations} rotations")
         return False
 
     def precise_positioning_on_pad(self, pad_id):

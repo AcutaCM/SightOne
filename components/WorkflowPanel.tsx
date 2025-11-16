@@ -5,6 +5,7 @@ import { Divider } from "@heroui/divider";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { useDisclosure } from "@heroui/use-disclosure";
 import WorkflowEditor from "./WorkflowEditor";
+import { getCardPanelStyle } from "@/lib/panel-styles";
 
 interface WorkflowPanelProps {
   isConnected: boolean;
@@ -15,23 +16,23 @@ const WorkflowPanel: React.FC<WorkflowPanelProps> = ({ isConnected }) => {
 
   return (
     <>
-      <Card className="h-full bg-black/40 border border-white/20">
+      <Card className="h-full" style={getCardPanelStyle()}>
         <CardHeader className="pb-2">
           <div className="flex flex-col w-full">
-            <h3 className="text-white font-bold text-lg flex items-center gap-2">
-              <i className="fas fa-project-diagram text-purple-400"></i>
+            <h3 className="text-foreground font-bold text-lg flex items-center gap-2">
+              <i className="fas fa-project-diagram text-purple-500"></i>
               工作流面板
             </h3>
-            <p className="text-white/70 text-sm">控制</p>
+            <p className="text-foreground/70 text-sm">控制</p>
           </div>
         </CardHeader>
-        <Divider className="bg-white/20" />
+        <Divider className="bg-divider" />
         <CardBody className="flex flex-col justify-between">
-          <p className="text-xs text-white/70">
+          <p className="text-xs text-foreground/70">
             通过可视化界面搭建、执行和监控无人机任务流。
           </p>
           <Button
-            className="w-full mt-4 bg-purple-600/80 hover:bg-purple-600 text-white"
+            className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white"
             onPress={onOpen}
             isDisabled={!isConnected}
             startContent={<i className="fas fa-sitemap"></i>}

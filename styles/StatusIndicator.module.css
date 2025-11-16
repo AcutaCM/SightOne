@@ -1,0 +1,229 @@
+/**
+ * StatusIndicator Styles
+ * 
+ * Styles for the universal status indicator component using dark mode design tokens.
+ * Implements transparency-based visual hierarchy with animations.
+ * 
+ * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5
+ */
+
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm, 12px);
+  transition: all var(--transition-normal, 250ms) var(--easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* Inline layout */
+.indicator.inline {
+  display: inline-flex;
+}
+
+/* Size variants */
+.indicator.sm {
+  gap: 8px;
+}
+
+.indicator.md {
+  gap: 12px;
+}
+
+.indicator.lg {
+  gap: 16px;
+}
+
+/* Icon wrapper */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--status-color);
+  transition: all var(--transition-fast, 150ms) var(--easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.icon {
+  transition: transform var(--transition-fast, 150ms) var(--easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* Message text */
+.message {
+  color: var(--status-color);
+  font-size: 14px;
+  line-height: 1.5;
+  transition: color var(--transition-fast, 150ms) var(--easing-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.indicator.sm .message {
+  font-size: 12px;
+}
+
+.indicator.lg .message {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ========================================
+   Success State (Requirement 8.1)
+   100% white opacity with subtle glow
+   ======================================== */
+
+.indicator.success .iconWrapper {
+  /* Subtle glow effect for success state */
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+}
+
+.indicator.success .icon {
+  animation: successPop 0.4s ease-out;
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   Warning State (Requirement 8.2)
+   80% white opacity
+   ======================================== */
+
+.indicator.warning .icon {
+  animation: warningPulse 2s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ========================================
+   Error State (Requirement 8.3)
+   90% white opacity
+   ======================================== */
+
+.indicator.error .icon {
+  animation: errorShake 0.5s ease-out;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+/* ========================================
+   Loading State (Requirements 8.4, 8.5)
+   60% white opacity with pulsing animation
+   ======================================== */
+
+.indicator.loading .icon {
+  animation: spin 1s linear infinite;
+}
+
+.indicator.loading .iconWrapper {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ========================================
+   Info State
+   70% white opacity
+   ======================================== */
+
+.indicator.info .icon {
+  animation: infoFadeIn 0.3s ease-out;
+}
+
+@keyframes infoFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   Hover Effects
+   ======================================== */
+
+.indicator:hover .icon {
+  transform: scale(1.1);
+}
+
+.indicator.loading:hover .icon {
+  animation: spin 0.6s linear infinite;
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+/* Ensure sufficient contrast for screen readers */
+.indicator[aria-live="polite"],
+.indicator[aria-live="assertive"] {
+  /* Screen reader announcements */
+}
+
+/* Focus styles for interactive indicators */
+.indicator:focus-visible {
+  outline: 2px solid var(--border-focus, rgba(255, 255, 255, 0.4));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .indicator {
+    gap: 8px;
+  }
+  
+  .indicator.lg {
+    gap: 12px;
+  }
+  
+  .message {
+    font-size: 13px;
+  }
+}

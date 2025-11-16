@@ -1,0 +1,215 @@
+/**
+ * CustomWorkflowNode Styles
+ * 
+ * Modern, theme-aware styles for custom workflow nodes.
+ * Uses CSS variables from the workflow theme system.
+ */
+
+.node {
+  position: relative;
+  min-width: 200px;
+  max-width: 300px;
+  background: var(--wf-node-bg);
+  border: 2px solid var(--wf-node-border);
+  border-radius: var(--wf-radius-lg);
+  box-shadow: var(--wf-shadow-md);
+  transition: all var(--wf-duration-normal) var(--wf-easing-default);
+  font-family: var(--wf-font-sans);
+  overflow: hidden;
+}
+
+/* Selected state with glow effect */
+.node.selected {
+  border-color: var(--border-focus);
+  box-shadow: var(--wf-shadow-glow-primary);
+  transform: translateY(-2px);
+  z-index: 10;
+  animation: nodeSelect var(--wf-duration-normal) var(--wf-easing-out);
+}
+
+@keyframes nodeSelect {
+  from {
+    transform: translateY(0) scale(0.98);
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(-2px) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Dragging state */
+.node.dragging {
+  opacity: 0.8;
+  cursor: grabbing;
+}
+
+/* Hover effect */
+.node:hover {
+  box-shadow: var(--wf-shadow-lg);
+}
+
+/* Connection Handles */
+.handle {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--wf-node-bg);
+  border-radius: 50%;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.handle:hover {
+  width: 16px;
+  height: 16px;
+  border-width: 3px;
+}
+
+/* Status Indicator (top-left corner) */
+.statusIndicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 4px;
+  border-radius: var(--wf-radius-sm);
+  background: var(--wf-node-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--wf-shadow-sm);
+}
+
+/* Unsaved Changes Indicator (top-right corner) */
+.unsavedIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--wf-node-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--wf-shadow-sm);
+}
+
+.unsavedDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--wf-status-warning);
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Title Bar */
+.titleBar {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm);
+  padding: var(--wf-spacing-md);
+  background: var(--node-category-color);
+  color: white;
+  font-weight: var(--wf-font-semibold);
+  font-size: var(--wf-text-sm);
+  min-height: 44px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Content Area */
+.content {
+  padding: var(--wf-spacing-md);
+  color: var(--wf-node-text);
+}
+
+.description {
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  line-height: var(--wf-leading-normal);
+  margin-bottom: var(--wf-spacing-sm);
+}
+
+
+
+/* Type Badge */
+.typeBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  background: var(--wf-panel-hover);
+  border: 1px solid var(--wf-node-border);
+  border-radius: var(--wf-radius-sm);
+  font-size: 10px;
+  color: var(--wf-panel-text-secondary);
+  font-weight: var(--wf-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] .node {
+  box-shadow: var(--wf-shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .node.selected {
+  box-shadow: var(--wf-shadow-glow-primary), 0 0 0 1px var(--wf-node-selected-border);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .node {
+    min-width: 160px;
+    max-width: 240px;
+  }
+
+  .titleBar {
+    padding: var(--wf-spacing-sm);
+    font-size: var(--wf-text-xs);
+  }
+
+  .content {
+    padding: var(--wf-spacing-sm);
+  }
+}
+
+/* Accessibility */
+.node:focus-within {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.parametersToggle:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}

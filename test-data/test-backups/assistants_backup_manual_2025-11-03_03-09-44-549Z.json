@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "timestamp": "2025-11-03T03:09:44.549Z",
+    "recordCount": 2
+  },
+  "assistants": [
+    {
+      "id": "test-2",
+      "title": "Test Assistant 2",
+      "desc": "Description 2",
+      "emoji": "🚀",
+      "prompt": "Prompt 2",
+      "isPublic": true,
+      "status": "published",
+      "author": "test-user",
+      "createdAt": "2025-11-03T03:09:44.546Z",
+      "version": 1
+    },
+    {
+      "id": "test-1",
+      "title": "Test Assistant 1",
+      "desc": "Description 1",
+      "emoji": "🤖",
+      "prompt": "Prompt 1",
+      "isPublic": false,
+      "status": "draft",
+      "author": "test-user",
+      "createdAt": "2025-11-03T03:09:44.545Z",
+      "version": 1
+    }
+  ]
+}

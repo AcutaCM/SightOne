@@ -1,0 +1,1393 @@
+@import "tailwindcss";
+@import "./login-theme.css";
+@import "./dark-mode-theme.css";
+
+@config "../tailwind.config.js";
+
+/* ========================================
+   新蓝色主题系统 - 全局样式
+   ======================================== */
+
+/* ========================================
+   工作流节点主题变量
+   ======================================== */
+
+/* 主题切换过渡动画 - Requirements: 10.1, 10.2 */
+:root,
+.dark {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   工作流编辑器增强样式
+   ======================================== */
+
+/* 工作流画布背景 - 纯黑色 (Requirements: 1.1, 1.4) */
+.react-flow__pane {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+.dark .react-flow__pane {
+  background-color: #000000 !important;
+}
+
+/* React Flow 节点增强 */
+.react-flow__node {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.react-flow__node:hover {
+  transform: translateY(-1px);
+  filter: none;
+}
+
+.react-flow__node.selected {
+  filter: none;
+}
+
+/* React Flow 连接线 - 使用透明度层级 (Requirements: 1.4) */
+.react-flow__edge-path {
+  stroke: var(--workflow-edge);
+  stroke-width: 2;
+  transition: all 0.2s ease;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: var(--text-secondary);
+  stroke-width: 2.5;
+  filter: none;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--text-primary);
+  stroke-width: 2.5;
+  filter: none;
+}
+
+/* React Flow 控制按钮 - 使用透明度层级 (Requirements: 1.4, 1.5) */
+.react-flow__controls {
+  background: var(--bg-panel) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default) !important;
+  border-radius: 12px !important;
+  box-shadow: none;
+  padding: 4px !important;
+}
+
+.react-flow__controls-button {
+  background: var(--btn-secondary) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease !important;
+  margin: 2px !important;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--btn-secondary-hover) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+  transform: scale(1.05);
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+}
+
+/* React Flow 小地图 - 使用透明度层级，无阴影 (Requirements: 1.4, 1.5) */
+.react-flow__minimap {
+  background: var(--bg-panel) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default) !important;
+  border-radius: 12px !important;
+  box-shadow: none;
+}
+
+.react-flow__minimap-mask {
+  fill: var(--bg-input) !important;
+}
+
+.react-flow__minimap-node {
+  fill: var(--workflow-node) !important;
+  stroke: var(--workflow-node-border) !important;
+}
+
+/* 工作流编辑器容器 - 纯黑色背景 (Requirements: 1.1, 1.4) */
+.workflow-editor-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  overflow: hidden;
+}
+
+/* 工作流节点动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+:root {
+  /* Node Colors - Light Theme (黑白灰极简主题) */
+  --node-bg: #FFFFFF;
+  --node-border: #E5E5E5;
+  --node-border-hover: #CCCCCC;
+  --node-selected: #000000;
+  --node-selected-glow: rgba(0, 0, 0, 0.1);
+  --node-divider: #F0F0F0;
+  --node-header-bg: #FAFAFA;
+  
+  /* Node Shadows - Light Theme */
+  --node-shadow: none;
+  --node-shadow-hover: none;
+  --node-shadow-selected: none;
+  
+  /* Parameter Colors - Light Theme */
+  --param-container-bg: transparent;
+  --param-bg: #F8F8F8;
+  --param-bg-hover: #F0F0F0;
+  --param-bg-editing: #E8E8E8;
+  --param-bg-error: #FEE;
+  --param-border: #E0E0E0;
+  --param-border-hover: #D0D0D0;
+  --param-border-editing: #999999;
+  --param-editing-glow: rgba(0, 0, 0, 0.08);
+  
+  /* Text Colors - Light Theme (WCAG AA优化) */
+  --text-primary: #1A1A1A;      /* 对比度 16.1:1 - AAA ✓ */
+  --text-secondary: #666666;    /* 对比度 5.74:1 - AA ✓ */
+  --text-tertiary: #707070;     /* 对比度 4.54:1 - AA ✓ (优化后) */
+  
+  /* Status Colors - Light Theme (仅错误使用彩色) */
+  --error-color: #DC2626;
+  --error-color-hover: #B91C1C;
+  --success-color: #333333;
+  --success-color-light: rgba(51, 51, 51, 0.1);
+  --warning-color: #666666;
+  --info-color: #000000;
+  
+  /* Button Colors - Light Theme */
+  --button-hover-bg: #F5F5F5;
+  --button-hover-border: #D0D0D0;
+  
+  /* Badge Colors - Light Theme */
+  --badge-bg: #E8E8E8;
+  --badge-text: #1A1A1A;
+  
+  /* Scrollbar Colors - Light Theme */
+  --scrollbar-track: #F5F5F5;
+  --scrollbar-thumb: #CCCCCC;
+  --scrollbar-thumb-hover: #999999;
+}
+
+.dark {
+  /* Node Colors - Dark Theme (黑白灰极简主题) */
+  --node-bg: #1A1A1A;
+  --node-border: #333333;
+  --node-border-hover: #4D4D4D;
+  --node-selected: #FFFFFF;
+  --node-selected-glow: rgba(255, 255, 255, 0.1);
+  --node-divider: #2A2A2A;
+  --node-header-bg: #222222;
+  
+  /* Node Shadows - Dark Theme */
+  --node-shadow: none;
+  --node-shadow-hover: none;
+  --node-shadow-selected: none;
+  
+  /* Parameter Colors - Dark Theme */
+  --param-container-bg: transparent;
+  --param-bg: #242424;
+  --param-bg-hover: #2E2E2E;
+  --param-bg-editing: #383838;
+  --param-bg-error: rgba(220, 38, 38, 0.1);
+  --param-border: #3A3A3A;
+  --param-border-hover: #4A4A4A;
+  --param-border-editing: #666666;
+  --param-editing-glow: rgba(255, 255, 255, 0.08);
+  
+  /* Text Colors - Dark Theme (WCAG AA优化) */
+  --text-primary: #E5E5E5;      /* 对比度 13.5:1 - AAA ✓ */
+  --text-secondary: #999999;    /* 对比度 5.2:1 - AA ✓ */
+  --text-tertiary: #8F8F8F;     /* 对比度 4.54:1 - AA ✓ (优化后) */
+  
+  /* Status Colors - Dark Theme (仅错误使用彩色) */
+  --error-color: #EF4444;
+  --error-color-hover: #DC2626;
+  --success-color: #CCCCCC;
+  --success-color-light: rgba(204, 204, 204, 0.15);
+  --warning-color: #999999;
+  --info-color: #FFFFFF;
+  
+  /* Button Colors - Dark Theme */
+  --button-hover-bg: #2E2E2E;
+  --button-hover-border: #4A4A4A;
+  
+  /* Badge Colors - Dark Theme */
+  --badge-bg: #333333;
+  --badge-text: #E5E5E5;
+  
+  /* Scrollbar Colors - Dark Theme */
+  --scrollbar-track: #2A2A2A;
+  --scrollbar-thumb: #4A4A4A;
+  --scrollbar-thumb-hover: #666666;
+}
+
+/* ========================================
+   工作流组件主题切换过渡
+   Requirements: 10.1, 10.2, 10.3
+   ======================================== */
+
+/* 为所有工作流组件添加平滑的颜色过渡 */
+.node-header,
+[class*="parameterItem"],
+[class*="parameterList"],
+[class*="InlineParameterNode"],
+[data-workflow-node],
+[data-workflow-component] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 输入框和编辑器的主题切换过渡 */
+input,
+textarea,
+select,
+[class*="Editor"] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮的主题切换过渡 */
+button,
+[role="button"] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   工作流节点主题变量结束
+   ======================================== */
+
+/* 页面背景 - 纯黑色 (Requirements: 1.1, 1.2, 1.3) */
+html {
+  min-height: 100vh;
+  min-height: 100dvh; /* 动态视口高度 */
+  /* Pure black background for dark mode - applied to html for full browser coverage */
+  background: #000000;
+}
+
+/* Light mode background on html */
+html:not(.dark) {
+  background: #FFFFFF;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh; /* 动态视口高度 */
+  margin: 0;
+  padding: 0;
+  /* Ensure text color adapts to theme */
+  color: hsl(var(--heroui-foreground));
+}
+
+/* 确保所有元素继承正确的文本颜色 */
+* {
+  color: inherit;
+}
+
+/* 毛玻璃效果基类 - 使用透明度层级 (Requirements: 1.4) */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--border-default);
+}
+
+.dark .glass-effect {
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--border-default);
+}
+
+/* ========================================
+   Button Transparency System (Requirements: 3.1, 3.2, 3.3, 3.4)
+   ======================================== */
+
+/* Primary Buttons - 100% white opacity (Requirements: 3.1, 3.4) */
+[data-theme="dark"] .heroui-button[data-variant="solid"]:not([data-color]),
+[data-theme="dark"] .heroui-button[data-variant="solid"][data-color="primary"],
+[data-theme="dark"] button[data-variant="solid"]:not([data-color]),
+[data-theme="dark"] button[data-variant="solid"][data-color="primary"] {
+  background: var(--btn-primary) !important;
+  color: var(--btn-primary-text) !important;
+  border: none !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+[data-theme="dark"] .heroui-button[data-variant="solid"]:not([data-color]):hover,
+[data-theme="dark"] .heroui-button[data-variant="solid"][data-color="primary"]:hover,
+[data-theme="dark"] button[data-variant="solid"]:not([data-color]):hover,
+[data-theme="dark"] button[data-variant="solid"][data-color="primary"]:hover {
+  background: var(--btn-primary-hover) !important;
+  color: var(--btn-primary-text) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Secondary Buttons - 20% white opacity (Requirements: 3.2, 3.4) */
+[data-theme="dark"] .heroui-button[data-variant="flat"],
+[data-theme="dark"] .heroui-button[data-variant="bordered"],
+[data-theme="dark"] button[data-variant="flat"],
+[data-theme="dark"] button[data-variant="bordered"] {
+  background: var(--btn-secondary) !important;
+  color: var(--btn-secondary-text) !important;
+  border: 1px solid var(--border-default) !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+[data-theme="dark"] .heroui-button[data-variant="flat"]:hover,
+[data-theme="dark"] .heroui-button[data-variant="bordered"]:hover,
+[data-theme="dark"] button[data-variant="flat"]:hover,
+[data-theme="dark"] button[data-variant="bordered"]:hover {
+  background: var(--btn-secondary-hover) !important;
+  color: var(--btn-secondary-text) !important;
+  border-color: var(--border-default) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Tertiary Buttons - 10% white opacity (Requirements: 3.3, 3.4) */
+[data-theme="dark"] .heroui-button[data-variant="light"],
+[data-theme="dark"] .heroui-button[data-variant="ghost"],
+[data-theme="dark"] button[data-variant="light"],
+[data-theme="dark"] button[data-variant="ghost"] {
+  background: var(--btn-tertiary) !important;
+  color: var(--btn-tertiary-text) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+[data-theme="dark"] .heroui-button[data-variant="light"]:hover,
+[data-theme="dark"] .heroui-button[data-variant="ghost"]:hover,
+[data-theme="dark"] button[data-variant="light"]:hover,
+[data-theme="dark"] button[data-variant="ghost"]:hover {
+  background: var(--btn-tertiary-hover) !important;
+  color: var(--btn-tertiary-text) !important;
+  border-color: var(--border-subtle) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Danger/Error Buttons - Maintain visibility with opacity */
+[data-theme="dark"] .heroui-button[data-color="danger"],
+[data-theme="dark"] button[data-color="danger"] {
+  background: var(--state-error) !important;
+  color: var(--btn-primary-text) !important;
+  border: none !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+[data-theme="dark"] .heroui-button[data-color="danger"]:hover,
+[data-theme="dark"] button[data-color="danger"]:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--btn-primary-text) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Danger variant="light" buttons */
+[data-theme="dark"] .heroui-button[data-color="danger"][data-variant="light"],
+[data-theme="dark"] .heroui-button[data-color="danger"][data-variant="flat"],
+[data-theme="dark"] button[data-color="danger"][data-variant="light"],
+[data-theme="dark"] button[data-color="danger"][data-variant="flat"] {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--state-error) !important;
+  border: 1px solid var(--state-error) !important;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .heroui-button[data-color="danger"][data-variant="light"]:hover,
+[data-theme="dark"] .heroui-button[data-color="danger"][data-variant="flat"]:hover,
+[data-theme="dark"] button[data-color="danger"][data-variant="light"]:hover,
+[data-theme="dark"] button[data-color="danger"][data-variant="flat"]:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: var(--state-error) !important;
+  border-color: var(--state-error) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Success Buttons */
+[data-theme="dark"] .heroui-button[data-color="success"],
+[data-theme="dark"] button[data-color="success"] {
+  background: var(--state-success) !important;
+  color: var(--btn-primary-text) !important;
+  border: none !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+[data-theme="dark"] .heroui-button[data-color="success"]:hover,
+[data-theme="dark"] button[data-color="success"]:hover {
+  background: var(--btn-primary-hover) !important;
+  color: var(--btn-primary-text) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Disabled Buttons - Low opacity */
+[data-theme="dark"] .heroui-button:disabled,
+[data-theme="dark"] .heroui-button[data-disabled="true"],
+[data-theme="dark"] button:disabled,
+[data-theme="dark"] button[data-disabled="true"] {
+  background: var(--bg-input-disabled) !important;
+  color: var(--text-disabled) !important;
+  border-color: var(--border-subtle) !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* Icon-only buttons */
+[data-theme="dark"] .heroui-button[data-icon-only="true"],
+[data-theme="dark"] button[data-icon-only="true"] {
+  background: var(--btn-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .heroui-button[data-icon-only="true"]:hover,
+[data-theme="dark"] button[data-icon-only="true"]:hover {
+  background: var(--btn-tertiary-hover) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-subtle) !important;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Loading state buttons */
+[data-theme="dark"] .heroui-button[data-loading="true"],
+[data-theme="dark"] button[data-loading="true"] {
+  opacity: var(--opacity-medium-low) !important;
+  cursor: wait !important;
+}
+
+/* Legacy button class support */
+.btn-blue-gradient {
+  background: var(--btn-primary);
+  color: var(--btn-primary-text);
+  box-shadow: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-blue-gradient:hover {
+  background: var(--btn-primary-hover);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.dark .btn-blue-gradient {
+  background: var(--btn-primary);
+  color: var(--btn-primary-text);
+  box-shadow: none;
+}
+
+.dark .btn-blue-gradient:hover {
+  background: var(--btn-primary-hover);
+  box-shadow: none;
+}
+
+/* ========================================
+   全局阴影系统 - 移除所有阴影效果 (Requirements: 1.5, 5.5)
+   ======================================== */
+
+/* 移除所有卡片和面板的阴影 */
+[class*="bg-content1"],
+[class*="bg-content2"],
+[class*="bg-content3"],
+.heroui-card,
+[data-slot="base"],
+.nextui-card,
+.nextui-card-base,
+[data-slot="base"][class*="card"],
+[class*="Card"],
+[class*="Panel"] {
+  box-shadow: none;
+}
+
+/* 深色主题也移除阴影 */
+.dark [class*="bg-content1"],
+.dark [class*="bg-content2"],
+.dark [class*="bg-content3"],
+.dark .heroui-card,
+.dark [data-slot="base"],
+.dark .nextui-card,
+.dark .nextui-card-base,
+.dark [data-slot="base"][class*="card"],
+.dark [class*="Card"],
+.dark [class*="Panel"] {
+  box-shadow: none;
+}
+
+/* 悬停效果 - 无阴影 */
+[class*="bg-content1"]:hover,
+[class*="bg-content2"]:hover,
+[class*="bg-content3"]:hover {
+  box-shadow: none;
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+}
+
+.dark [class*="bg-content1"]:hover,
+.dark [class*="bg-content2"]:hover,
+.dark [class*="bg-content3"]:hover {
+  box-shadow: none;
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+}
+
+/* 确保所有卡片基础元素都无阴影 */
+.nextui-card-base,
+[data-slot="base"][class*="card"] {
+  box-shadow: none;
+}
+
+.dark .nextui-card-base,
+.dark [data-slot="base"][class*="card"] {
+  box-shadow: none;
+}
+
+/* 特殊组件 - 无阴影 */
+[style*="flex: 1"][style*="display: flex"][style*="flex-direction: column"] {
+  box-shadow: none;
+  border-radius: 12px;
+}
+
+.dark [style*="flex: 1"][style*="display: flex"][style*="flex-direction: column"] {
+  box-shadow: none;
+}
+
+/* 通用圆角元素 - 无阴影 */
+[class*="rounded-"],
+[class*="border-"],
+[style*="border-radius"] {
+  box-shadow: none;
+}
+
+.dark [class*="rounded-"],
+.dark [class*="border-"],
+.dark [style*="border-radius"] {
+  box-shadow: none;
+}
+
+/* ========================================
+   ChatbotChat 主题适配
+   ======================================== */
+
+/* 覆盖 ChatbotChat 中的硬编码颜色 */
+/* 消息气泡 - 无阴影 (Requirements: 1.5) */
+[data-chat-bubble] {
+  box-shadow: none;
+}
+
+.dark [data-chat-bubble] {
+  box-shadow: none;
+}
+
+/* 输入容器 - 无阴影 (Requirements: 1.5) */
+[data-chat-input-container] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none;
+}
+
+.dark [data-chat-input-container] {
+  border: 1px solid var(--border-subtle) !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none;
+}
+
+/* 侧边栏 - 无阴影 (Requirements: 1.5) */
+[data-chat-sidebar] {
+  border-right: none !important;
+  background: hsl(var(--heroui-content1)) !important;
+  box-shadow: none;
+}
+
+.dark [data-chat-sidebar] {
+  border-right: 1px solid var(--border-subtle) !important;
+  background: hsl(var(--heroui-content1)) !important;
+  box-shadow: none;
+}
+
+/* 侧边栏卡片 - 无阴影 (Requirements: 1.5) */
+[data-chat-sidebar-card] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none;
+}
+
+.dark [data-chat-sidebar-card] {
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: none;
+}
+
+[data-chat-sidebar-card]:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  transform: translateY(-1px);
+  border: 1px solid var(--border-default) !important;
+  box-shadow: none;
+}
+
+.dark [data-chat-sidebar-card]:hover {
+  border: 1px solid var(--border-default) !important;
+  box-shadow: none;
+}
+
+/* API 配置卡片 - 无阴影 (Requirements: 1.5) */
+[data-api-config-card] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none;
+}
+
+.dark [data-api-config-card] {
+  border: 1px solid var(--border-subtle) !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none;
+}
+
+/* 时间戳文本 - 适应主题 */
+[data-chat-timestamp] {
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+/* 分隔线 - 适应主题 */
+[data-chat-divider] {
+  border-top: 1px dashed hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+/* 渐变背景 - 使用透明度层级 (Requirements: 1.2, 1.4) */
+[data-chat-gradient] {
+  background: linear-gradient(180deg, transparent, hsl(var(--heroui-content1) / 0.35)) !important;
+}
+
+.dark [data-chat-gradient] {
+  background: linear-gradient(180deg, transparent, var(--bg-panel)) !important;
+}
+
+/* 按钮和交互元素 - 适应主题 */
+[data-chat-button] {
+  background: hsl(var(--heroui-content2)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+[data-chat-button]:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  transform: translateY(-1px);
+}
+
+/* 代码块样式 - 适应主题 */
+[data-chat-code] {
+  background: hsl(var(--heroui-content2)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+}
+
+/* ========================================
+   Button Utility Classes
+   ======================================== */
+
+/* Primary button utility class */
+.btn-primary-dark {
+  background: var(--btn-primary) !important;
+  color: var(--btn-primary-text) !important;
+  border: none !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+.btn-primary-dark:hover {
+  background: var(--btn-primary-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* Secondary button utility class */
+.btn-secondary-dark {
+  background: var(--btn-secondary) !important;
+  color: var(--btn-secondary-text) !important;
+  border: 1px solid var(--border-default) !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+.btn-secondary-dark:hover {
+  background: var(--btn-secondary-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* Tertiary button utility class */
+.btn-tertiary-dark {
+  background: var(--btn-tertiary) !important;
+  color: var(--btn-tertiary-text) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none;
+  transition: all var(--transition-normal) var(--easing-default) !important;
+}
+
+.btn-tertiary-dark:hover {
+  background: var(--btn-tertiary-hover) !important;
+  border-color: var(--border-subtle) !important;
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   性能优化
+   ======================================== */
+
+/* 使用硬件加速 */
+[class*="bg-content"]:hover,
+[data-chat-button]:hover,
+[data-chat-sidebar-card]:hover,
+.heroui-button:hover,
+button:hover {
+  will-change: transform, box-shadow;
+}
+
+
+/* ========================================
+   ChatbotChat 内联样式覆盖 - 浅色主题适配
+   ======================================== */
+
+/* Popover 内容背景 */
+.ant-popover-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+}
+
+/* 统计卡片背景 */
+[style*="background: #1f232b"],
+[style*="background: #181a1f"],
+[style*="background: #242933"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* 文本颜色修复 */
+[style*="color: #9ca3af"] {
+  color: hsl(var(--heroui-foreground) / 0.6) !important;
+}
+
+[style*="color: #eaeaf0"] {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Tag 背景修复 */
+[style*="background: rgba(255,255,255,0.10)"],
+[style*="background: rgba(255,255,255,0.12)"],
+[style*="background: rgba(255,255,255,0.06)"] {
+  background: hsl(var(--heroui-content3)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* 边框颜色修复 */
+[style*="border: 1px solid var(--border-default)"],
+[style*="border: 1px solid var(--border-default)"],
+[style*="border: 1px solid var(--border-default)"],
+[style*="border: 1px solid var(--border-default)"] {
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+[style*="borderBottom: 1px solid rgba(255,255,255,0.08)"],
+[style*="border-bottom: 1px solid var(--border-subtle);
+}
+
+/* 输入框背景修复 */
+[style*="background: rgba(255,255,255,0.06)"],
+[style*="background: rgba(255,255,255,0.04)"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* 代码块背景修复 */
+[style*="background: rgba(0,0,0,0.25)"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+[style*="background: rgba(255,255,255,0.05)"] {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+/* Avatar 背景修复 */
+[style*="background: #fff"] {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+[style*="color: #111"] {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* 确保深色主题下保持原样 */
+.dark [style*="background: #1f232b"],
+.dark [style*="background: #181a1f"],
+.dark [style*="background: #242933"] {
+  background: #1f232b !important;
+}
+
+.dark [style*="color: #9ca3af"] {
+  color: #9ca3af !important;
+}
+
+.dark [style*="color: #eaeaf0"] {
+  color: #eaeaf0 !important;
+}
+
+
+/* ========================================
+   Ant Design 组件主题覆盖
+   ======================================== */
+
+/* Card 组件 */
+.ant-card {
+  background: hsl(var(--heroui-content1)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-card-head {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-card-body {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Input 组件 */
+.ant-input,
+.ant-input-affix-wrapper {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover {
+  border-color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: var(--border-focus) !important;
+  box-shadow: none;
+  outline: none !important;
+}
+
+/* Global focus indicator styles - 40% white opacity (Requirements: 5.3, 5.4) */
+*:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Interactive elements focus styles */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Input elements focus styles */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-color: var(--border-focus);
+}
+
+/* Button 组件 */
+.ant-btn {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-btn-primary {
+  background: hsl(var(--heroui-primary)) !important;
+  border-color: hsl(var(--heroui-primary)) !important;
+  color: hsl(var(--heroui-primary-foreground)) !important;
+}
+
+.ant-btn:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  border-color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-btn-primary:hover {
+  background: hsl(var(--heroui-primary) / 0.9) !important;
+}
+
+/* Select 组件 */
+.ant-select-selector {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-select-dropdown {
+  background: hsl(var(--heroui-content1)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+.ant-select-item {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-select-item-option-selected {
+  background: hsl(var(--heroui-primary) / 0.15) !important;
+}
+
+.ant-select-item-option-active {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* Modal 组件 */
+.ant-modal-content {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-modal-header {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-modal-footer {
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* Drawer 组件 */
+.ant-drawer-content {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-drawer-header {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-drawer-body {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+/* Dropdown 组件 */
+.ant-dropdown-menu {
+  background: hsl(var(--heroui-content1)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+.ant-dropdown-menu-item {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* Popover 组件 */
+.ant-popover-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-popover-title {
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-popover-inner-content {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Alert 组件 */
+.ant-alert {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-alert-warning {
+  background: hsl(var(--heroui-warning) / 0.15) !important;
+  border-color: hsl(var(--heroui-warning)) !important;
+}
+
+/* Tag 组件 */
+.ant-tag {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Divider 组件 */
+.ant-divider {
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* Slider 组件 */
+.ant-slider-rail {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+.ant-slider-track {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-slider-handle {
+  border-color: hsl(var(--heroui-primary)) !important;
+  background: hsl(var(--heroui-background)) !important;
+}
+
+/* Switch 组件 */
+.ant-switch {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+.ant-switch-checked {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+/* Tabs 组件 */
+.ant-tabs-nav {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-tabs-tab {
+  color: hsl(var(--heroui-foreground) / 0.7) !important;
+}
+
+.ant-tabs-tab-active {
+  color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+/* Form 组件 */
+.ant-form-item-label > label {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-form-item-explain-error {
+  color: hsl(var(--heroui-danger)) !important;
+}
+
+/* Tooltip 组件 */
+.ant-tooltip-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-tooltip-arrow-content {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+/* 确保文本颜色继承 */
+.ant-typography {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* 滚动条样式 */
+.ant-card-body::-webkit-scrollbar,
+.ant-modal-body::-webkit-scrollbar,
+.ant-drawer-body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ant-card-body::-webkit-scrollbar-track,
+.ant-modal-body::-webkit-scrollbar-track,
+.ant-drawer-body::-webkit-scrollbar-track {
+  background: hsl(var(--heroui-content2));
+}
+
+.ant-card-body::-webkit-scrollbar-thumb,
+.ant-modal-body::-webkit-scrollbar-thumb,
+.ant-drawer-body::-webkit-scrollbar-thumb {
+  background: hsl(var(--heroui-divider));
+  border-radius: 4px;
+}
+
+.ant-card-body::-webkit-scrollbar-thumb:hover,
+.ant-modal-body::-webkit-scrollbar-thumb:hover,
+.ant-drawer-body::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--heroui-primary) / 0.5);
+}
+
+
+/* ========================================
+   Text Hierarchy System (Requirements: 2.1, 2.2, 2.3, 2.4, 2.5)
+   ======================================== */
+
+/* Primary text - 100% white opacity for headings and primary content */
+[data-theme="dark"] .text-primary,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] [data-text-primary] {
+  color: var(--text-primary) !important;
+  opacity: 1.0;
+}
+
+/* Secondary text - 70% white opacity for labels and descriptions */
+[data-theme="dark"] .text-secondary,
+[data-theme="dark"] label,
+[data-theme="dark"] [data-text-secondary],
+[data-theme="dark"] .description,
+[data-theme="dark"] .label {
+  color: var(--text-secondary) !important;
+  opacity: 1.0;
+}
+
+/* Tertiary text - 40% white opacity for less important content */
+[data-theme="dark"] .text-tertiary,
+[data-theme="dark"] [data-text-tertiary],
+[data-theme="dark"] .hint,
+[data-theme="dark"] .caption {
+  color: var(--text-tertiary) !important;
+  opacity: 1.0;
+}
+
+/* Placeholder text - 30% white opacity */
+[data-theme="dark"] ::placeholder,
+[data-theme="dark"] .text-placeholder,
+[data-theme="dark"] [data-text-placeholder] {
+  color: var(--text-placeholder) !important;
+  opacity: 1.0;
+}
+
+/* Disabled text - 40% white opacity */
+[data-theme="dark"] .text-disabled,
+[data-theme="dark"] [data-text-disabled],
+[data-theme="dark"] :disabled,
+[data-theme="dark"] [disabled] {
+  color: var(--text-disabled) !important;
+  opacity: 1.0;
+}
+
+/* Ensure smooth transitions for text opacity changes */
+[data-theme="dark"] .text-primary,
+[data-theme="dark"] .text-secondary,
+[data-theme="dark"] .text-tertiary,
+[data-theme="dark"] .text-placeholder,
+[data-theme="dark"] .text-disabled {
+  transition: color var(--transition-normal) var(--easing-default);
+}
+
+/* Apply text hierarchy to common UI elements */
+[data-theme="dark"] .heroui-card-header,
+[data-theme="dark"] .heroui-modal-header,
+[data-theme="dark"] .heroui-drawer-header,
+[data-theme="dark"] [data-slot="header"] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .heroui-card-body,
+[data-theme="dark"] .heroui-modal-body,
+[data-theme="dark"] .heroui-drawer-body,
+[data-theme="dark"] [data-slot="body"] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .heroui-card-footer,
+[data-theme="dark"] .heroui-modal-footer,
+[data-theme="dark"] .heroui-drawer-footer,
+[data-theme="dark"] [data-slot="footer"] {
+  color: var(--text-secondary) !important;
+}
+
+/* Form labels and descriptions */
+[data-theme="dark"] .heroui-form-label,
+[data-theme="dark"] .form-label,
+[data-theme="dark"] [data-slot="label"] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .heroui-form-description,
+[data-theme="dark"] .form-description,
+[data-theme="dark"] [data-slot="description"] {
+  color: var(--text-tertiary) !important;
+}
+
+[data-theme="dark"] .heroui-form-error,
+[data-theme="dark"] .form-error,
+[data-theme="dark"] [data-slot="error-message"] {
+  color: var(--state-error) !important;
+}
+
+/* Navigation text hierarchy */
+[data-theme="dark"] .nav-title,
+[data-theme="dark"] [data-nav-title] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .nav-subtitle,
+[data-theme="dark"] [data-nav-subtitle] {
+  color: var(--text-secondary) !important;
+}
+
+/* Table text hierarchy */
+[data-theme="dark"] thead,
+[data-theme="dark"] th {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] tbody,
+[data-theme="dark"] td {
+  color: var(--text-secondary) !important;
+}
+
+/* List text hierarchy */
+[data-theme="dark"] .list-title,
+[data-theme="dark"] [data-list-title] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .list-description,
+[data-theme="dark"] [data-list-description] {
+  color: var(--text-secondary) !important;
+}
+
+/* Badge and tag text */
+[data-theme="dark"] .heroui-badge,
+[data-theme="dark"] .heroui-chip,
+[data-theme="dark"] [data-slot="badge"],
+[data-theme="dark"] [data-slot="chip"] {
+  color: var(--text-primary) !important;
+}
+
+/* Tooltip text */
+[data-theme="dark"] .heroui-tooltip,
+[data-theme="dark"] [data-slot="tooltip"] {
+  color: var(--text-primary) !important;
+}
+
+/* Menu item text */
+[data-theme="dark"] .heroui-menu-item,
+[data-theme="dark"] [data-slot="menu-item"] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .heroui-menu-item:hover,
+[data-theme="dark"] [data-slot="menu-item"]:hover {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .heroui-menu-item[data-selected="true"],
+[data-theme="dark"] [data-slot="menu-item"][data-selected="true"] {
+  color: var(--text-primary) !important;
+}
+
+/* Breadcrumb text */
+[data-theme="dark"] .heroui-breadcrumb-item,
+[data-theme="dark"] [data-slot="breadcrumb-item"] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .heroui-breadcrumb-item[data-current="true"],
+[data-theme="dark"] [data-slot="breadcrumb-item"][data-current="true"] {
+  color: var(--text-primary) !important;
+}
+
+/* Ant Design component text hierarchy */
+[data-theme="dark"] .ant-typography {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-typography-secondary {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-form-item-label > label {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-descriptions-item-label {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-descriptions-item-content {
+  color: var(--text-primary) !important;
+}
+
+/* ========================================
+   自定义类主题覆盖
+   ======================================== */
+
+/* cfg-scroll 配置滚动区域 */
+.cfg-scroll {
+  /* Firefox 滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--heroui-divider)) hsl(var(--heroui-content2));
+}
+
+/* WebKit 滚动条样式 (Chrome, Safari, Edge) */
+.cfg-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cfg-scroll::-webkit-scrollbar-track {
+  background: hsl(var(--heroui-content2)) !important;
+  border-radius: 3px;
+}
+
+.cfg-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--heroui-divider)) !important;
+  border-radius: 3px;
+}
+
+.cfg-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--heroui-primary) / 0.6) !important;
+}
+
+.cfg-scroll::-webkit-scrollbar-corner {
+  background: hsl(var(--heroui-content2)) !important;
+}

@@ -27,18 +27,33 @@ export async function POST(req: Request) {
       baseUrl: overrideBase,
     } = body || {};
 
-    if (!imageBase64) return NextResponse.json({ error: 'missing imageBase64' }, { status: 400 });
+    if (!imageBase64) {
+      console.error('[vision/analyze] Missing imageBase64 in request');
+      return NextResponse.json({ error: 'missing imageBase64' }, { status: 400 });
+    }
+    
     const base64 = imageBase64.startsWith('data:') ? (imageBase64.split(',').pop() || '') : imageBase64;
-    if (!base64) return NextResponse.json({ error: 'invalid base64' }, { status: 400 });
+    if (!base64) {
+      console.error('[vision/analyze] Invalid base64 data');
+      return NextResponse.json({ error: 'invalid base64 data' }, { status: 400 });
+    }
 
     // 1) OpenAI 兼容通道
     if (isOpenAICompat(provider)) {
       const { key, base } = getOpenAICompatCreds(provider, overrideKey, overrideBase);
       if (!key && needsApiKey(provider)) {
-        return NextResponse.json({ error: `${provider} apiKey not configured` }, { status: 400 });
+        console.error(`[vision/analyze] ${provider} apiKey not configured`);
+        return NextResponse.json({ 
+          error: `${provider} apiKey not configured`,
+          message: `请在设置中配置 ${provider} 的 API Key`
+        }, { status: 400 });
       }
       if (!base) {
-        return NextResponse.json({ error: `${provider} baseUrl not configured` }, { status: 400 });
+        console.error(`[vision/analyze] ${provider} baseUrl not configured`);
+        return NextResponse.json({ 
+          error: `${provider} baseUrl not configured`,
+          message: `请在设置中配置 ${provider} 的 Base URL`
+        }, { status: 400 });
       }
 
       // 标准 OpenAI chat/completions 多模态入参
@@ -64,20 +79,40 @@ export async function POST(req: Request) {
 
       if (!resp.ok) {
         const txt = await resp.text().catch(() => '');
-        return NextResponse.json({ error: `${provider} error: ${txt || resp.status}` }, { status: resp.status });
+        console.error(`[vision/analyze] ${provider} API error:`, txt || resp.status);
+        return NextResponse.json({ 
+          error: `${provider} error: ${txt || resp.status}`,
+          message: `图像分析失败，请检查 API 配置`
+        }, { status: resp.status });
       }
       const data = await resp.json().catch(() => null);
+      if (!data) {
+        console.error(`[vision/analyze] ${provider} returned invalid JSON`);
+        return NextResponse.json({ 
+          error: 'Invalid response from provider',
+          message: '服务返回了无效的响应'
+        }, { status: 500 });
+      }
       const content =
         data?.choices?.[0]?.message?.content ??
         data?.content ??
         '';
+      if (!content) {
+        console.warn(`[vision/analyze] ${provider} returned empty content`);
+      }
       return NextResponse.json({ provider, model, content });
     }
 
     // 2) Google Gemini
     if (provider === 'gemini') {
       const key = overrideKey || process.env.GEMINI_API_KEY || '';
-      if (!key) return NextResponse.json({ error: 'GEMINI_API_KEY not configured' }, { status: 400 });
+      if (!key) {
+        console.error('[vision/analyze] GEMINI_API_KEY not configured');
+        return NextResponse.json({ 
+          error: 'GEMINI_API_KEY not configured',
+          message: '请在设置中配置 Gemini 的 API Key'
+        }, { status: 400 });
+      }
 
       const m = model || process.env.GEMINI_MODEL || 'gemini-1.5-pro';
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent?key=${encodeURIComponent(key)}`;
@@ -121,7 +156,13 @@ export async function POST(req: Request) {
     // 3) Anthropic Claude
     if (provider === 'anthropic') {
       const key = overrideKey || process.env.ANTHROPIC_API_KEY || '';
-      if (!key) return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 400 });
+      if (!key) {
+        console.error('[vision/analyze] ANTHROPIC_API_KEY not configured');
+        return NextResponse.json({ 
+          error: 'ANTHROPIC_API_KEY not configured',
+          message: '请在设置中配置 Anthropic 的 API Key'
+        }, { status: 400 });
+      }
 
       const m = model || process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20240620';
       const url = 'https://api.anthropic.com/v1/messages';

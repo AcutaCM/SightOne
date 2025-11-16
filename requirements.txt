@@ -1,52 +1,68 @@
 # 基础科学计算库
 numpy>=1.21.0
 opencv-python>=4.5.0
-
 # 阿里云AI服务
 dashscope>=1.10.0
-
 # 无人机控制
 djitellopy>=2.4.0
-
 # QR码检测
 pyzbar>=0.1.9
-
 # 异步Web服务
 websockets>=10.0
 aiohttp>=3.8.0
-
 # 图像处理
 Pillow>=8.0.0
-
 # 数据处理
 pandas>=1.3.0
-
 # 日期时间处理
 python-dateutil>=2.8.0
-
 # JSON配置
 jsonschema>=4.0.0
-
 # 系统工具
 psutil>=5.8.0
-
 # 串口通信（如果需要）
 pyserial>=3.5
-
 # 日志记录
 loguru>=0.6.0
-
 # 多线程处理
 concurrent-futures>=3.1.1
-
 # 数学计算
 scipy>=1.7.0
-
 # 机器学习（如果需要）
 scikit-learn>=1.0.0
-
 # HTTP请求
 requests>=2.25.0
-
 # 环境变量管理
 python-dotenv>=0.19.0
+websockets>=11.0.0
+asyncio
+# Tello智能代理依赖
+djitellopy>=2.5.0
+Pillow>=10.0.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+djitellopy>=2.4.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+websockets>=11.0
+python-dotenv>=1.0.0
+openai>=1.30.0
+# Azure OpenAI 可选
+azure-identity>=1.13.0
+azure-keyvault-secrets>=4.7.0
+# 已移除: azure-ai-vision-imageanalysis
+azure-identity>=1.15.0
+azure-keyvault-secrets>=4.7.0
+openai>=1.30.0
+
+# 配置和工具
+python-dotenv>=1.0.0
+pydantic[email]>=2.5.0
+pydantic-settings>=2.0.0
+click>=8.1.0
+
+# 开发和测试
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0

@@ -9,7 +9,7 @@ interface AppInfoPanelProps {
 
 export default function AppInfoPanel({ className = "" }: AppInfoPanelProps) {
   return (
-    <Card className={`w-full h-full bg-background/60 backdrop-blur-[15px] border border-divider ${className}`}>
+    <Card className={`w-full h-full bg-content1 border-divider ${className}`}>
       <CardBody className="p-0 relative">
         {/* 主要内容容器 */}
         <div className="relative p-[5%]">
@@ -24,7 +24,7 @@ export default function AppInfoPanel({ className = "" }: AppInfoPanelProps) {
                <div className="absolute inset-0 flex items-center justify-center">
                  <Image
                    src="/logo.svg"
-                   alt="TTtalent Logo"
+                   alt="SIGHTONE Logo"
                    width={30}
                    height={23}
                    className="object-contain"
@@ -37,14 +37,14 @@ export default function AppInfoPanel({ className = "" }: AppInfoPanelProps) {
               {/* 主标题 */}
               <div className="mb-[0.5%]">
                 <h2 className="text-foreground text-[1.125rem] font-bold leading-[1.75rem] font-inter">
-                  TTtalent
+                  SIGHTONE
                 </h2>
               </div>
               
               {/* 副标题 */}
               <div className="mb-[3%]">
                 <p className="text-foreground/60 text-[1rem] font-medium leading-[1.5rem] font-inter">
-                  TTtalentDev
+                  瞰析智能科技
                 </p>
               </div>
             </div>
@@ -53,7 +53,7 @@ export default function AppInfoPanel({ className = "" }: AppInfoPanelProps) {
           {/* 应用描述 */}
           <div className="mb-[5%]">
             <p className="text-foreground text-[1rem] font-normal leading-[1.5rem] font-inter">
-              TTtalentPLF是结合物联网、遥感与人工智能，为农田提供从监测、分析到执行的一体化管理平台。
+              SIGHTONE瞰析人工智能分析平台是结合物联网、遥感与人工智能，为农田提供从监测、分析到执行的一体化管理平台。
             </p>
           </div>
           

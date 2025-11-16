@@ -50,7 +50,7 @@ export default function QRScanPanel({
     : "等待扫描...";
 
   return (
-    <Card className="w-full h-full bg-background/60 backdrop-blur-[120px] border border-divider rounded-[5%] z-10 relative">
+    <Card className="w-full h-full bg-background/60 backdrop-blur-[120px] border border-divider rounded-[5%] z-10 relative shadow-[0px_10px_50px_0px_rgba(0,0,0,0.1)]">
       <CardBody className="p-0 relative overflow-hidden">
         {/* Document Icon */}
         <div className="absolute top-[8%] left-[7.5%] w-[13.5%] h-[13.5%]">

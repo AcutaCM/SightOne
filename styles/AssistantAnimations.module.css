@@ -1,0 +1,558 @@
+/**
+ * Assistant Settings Sidebar Animations
+ * 
+ * This module provides smooth, performant animations for the assistant settings sidebar.
+ * All animations are optimized for 60fps performance using GPU-accelerated properties.
+ * 
+ * Requirements: 4.1 - User Experience Optimization
+ */
+
+/* ========================================
+   Drawer Slide-in Animation (300ms)
+   ======================================== */
+
+.drawerEnter {
+  animation: slideIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.drawerExit {
+  animation: slideOut 250ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   Overlay Fade-in Animation
+   ======================================== */
+
+.overlayEnter {
+  animation: fadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.overlayExit {
+  animation: fadeOut 250ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   Form Field Focus Animations
+   ======================================== */
+
+.fieldFocus {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fieldFocus:focus-within {
+  transform: scale(1.01);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Input field glow effect on focus */
+.inputGlow {
+  position: relative;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inputGlow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3));
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.inputGlow:focus-within::before {
+  opacity: 1;
+}
+
+/* Label animation on focus */
+.labelFloat {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.labelFloat:focus-within label,
+.labelFloat.hasValue label {
+  transform: translateY(-8px) scale(0.85);
+  color: rgb(59, 130, 246);
+}
+
+/* ========================================
+   Loading State Animations
+   ======================================== */
+
+.loadingPulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loadingSkeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Spinner animation */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button loading state */
+.buttonLoading {
+  position: relative;
+  pointer-events: none;
+}
+
+.buttonLoading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ========================================
+   Content Transitions
+   ======================================== */
+
+.contentFadeIn {
+  animation: contentFadeIn 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contentSlideIn {
+  animation: contentSlideIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes contentSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   Tag Animations
+   ======================================== */
+
+.tagEnter {
+  animation: tagEnter 200ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.tagExit {
+  animation: tagExit 150ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes tagEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tagExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* ========================================
+   Error State Animations
+   ======================================== */
+
+.errorShake {
+  animation: shake 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+.errorPulse {
+  animation: errorPulse 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 1);
+  }
+}
+
+/* ========================================
+   Success State Animations
+   ======================================== */
+
+.successBounce {
+  animation: successBounce 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes successBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.successCheckmark {
+  animation: successCheckmark 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes successCheckmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ========================================
+   Draft Recovery Animations
+   ======================================== */
+
+.draftHighlight {
+  animation: draftHighlight 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes draftHighlight {
+  0% {
+    background-color: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ========================================
+   Modal Animations
+   ======================================== */
+
+.modalEnter {
+  animation: modalEnter 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.modalExit {
+  animation: modalExit 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+}
+
+/* ========================================
+   Character Counter Animations
+   ======================================== */
+
+.counterUpdate {
+  animation: counterUpdate 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes counterUpdate {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.counterWarning {
+  animation: counterWarning 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes counterWarning {
+  0%, 100% {
+    color: rgb(234, 179, 8);
+  }
+  50% {
+    color: rgb(239, 68, 68);
+  }
+}
+
+/* ========================================
+   Emoji Picker Animations
+   ======================================== */
+
+.emojiPickerEnter {
+  animation: emojiPickerEnter 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.emojiPickerExit {
+  animation: emojiPickerExit 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes emojiPickerEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes emojiPickerExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+}
+
+.emojiHover {
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.emojiHover:hover {
+  transform: scale(1.2);
+}
+
+/* ========================================
+   Performance Optimizations
+   ======================================== */
+
+/* Use GPU acceleration for smooth animations */
+.gpuAccelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .drawerEnter,
+  .drawerExit,
+  .overlayEnter,
+  .overlayExit,
+  .fieldFocus,
+  .inputGlow,
+  .labelFloat,
+  .loadingPulse,
+  .loadingSkeleton,
+  .spinner,
+  .buttonLoading,
+  .contentFadeIn,
+  .contentSlideIn,
+  .tagEnter,
+  .tagExit,
+  .errorShake,
+  .errorPulse,
+  .successBounce,
+  .successCheckmark,
+  .draftHighlight,
+  .modalEnter,
+  .modalExit,
+  .counterUpdate,
+  .counterWarning,
+  .emojiPickerEnter,
+  .emojiPickerExit,
+  .emojiHover,
+  .staggerItem,
+  .hoverLift,
+  .hoverGlow {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   Stagger Animations for Lists
+   ======================================== */
+
+.staggerItem {
+  opacity: 0;
+  animation: staggerFadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.staggerItem:nth-child(1) { animation-delay: 0ms; }
+.staggerItem:nth-child(2) { animation-delay: 50ms; }
+.staggerItem:nth-child(3) { animation-delay: 100ms; }
+.staggerItem:nth-child(4) { animation-delay: 150ms; }
+.staggerItem:nth-child(5) { animation-delay: 200ms; }
+.staggerItem:nth-child(n+6) { animation-delay: 250ms; }
+
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Hover Effects
+   ======================================== */
+
+.hoverLift {
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hoverLift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hoverGlow {
+  position: relative;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hoverGlow::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+  opacity: 0;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  filter: blur(12px);
+}
+
+.hoverGlow:hover::after {
+  opacity: 1;
+}

@@ -1,0 +1,224 @@
+/**
+ * Workflow Editor Layout - Redesigned
+ * Three-column layout with collapsible sidebars
+ */
+
+.layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background: var(--workflow-canvas-bg);
+  overflow: hidden;
+  transition: background-color var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+/* Left Sidebar - Node Library */
+.leftSidebar {
+  flex-shrink: 0;
+  width: var(--workflow-sidebar-width);
+  height: 100%;
+  background: var(--workflow-panel-bg);
+  border-right: 1px solid var(--workflow-panel-border);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--workflow-duration-normal) var(--workflow-easing),
+              transform var(--workflow-duration-normal) var(--workflow-easing);
+  position: relative;
+  z-index: var(--workflow-z-panel);
+}
+
+.leftSidebar.collapsed {
+  width: var(--workflow-sidebar-collapsed);
+}
+
+.leftSidebar.collapsed .sidebarContent {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Center Canvas Area */
+.canvasArea {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--workflow-canvas-bg);
+}
+
+/* Right Sidebar - Control Panel */
+.rightSidebar {
+  flex-shrink: 0;
+  width: var(--workflow-control-panel-width);
+  height: 100%;
+  background: var(--workflow-panel-bg);
+  border-left: 1px solid var(--workflow-panel-border);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--workflow-duration-normal) var(--workflow-easing),
+              transform var(--workflow-duration-normal) var(--workflow-easing);
+  position: relative;
+  z-index: var(--workflow-z-panel);
+}
+
+.rightSidebar.collapsed {
+  width: var(--workflow-control-panel-collapsed);
+}
+
+.rightSidebar.collapsed .sidebarContent {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sidebar Content */
+.sidebarContent {
+  flex: 1;
+  overflow: hidden;
+  transition: opacity var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+/* Resize Handle */
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color var(--workflow-duration-fast) var(--workflow-easing);
+  z-index: var(--workflow-z-toolbar);
+}
+
+.resizeHandle:hover,
+.resizeHandle.active {
+  background: var(--workflow-status-running);
+}
+
+.leftSidebar .resizeHandle {
+  right: -2px;
+}
+
+.rightSidebar .resizeHandle {
+  left: -2px;
+}
+
+/* Collapse Button */
+.collapseButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  background: var(--workflow-panel-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--workflow-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+  z-index: var(--workflow-z-toolbar);
+  box-shadow: none;
+}
+
+.collapseButton:hover {
+  background: var(--workflow-panel-hover);
+  box-shadow: none;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.leftSidebar .collapseButton {
+  right: -12px;
+}
+
+.rightSidebar .collapseButton {
+  left: -12px;
+}
+
+.collapseButton svg {
+  width: 16px;
+  height: 16px;
+  color: var(--workflow-text-secondary);
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.collapsed .collapseButton svg {
+  transform: rotate(180deg);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .leftSidebar {
+    width: 240px;
+  }
+  
+  .rightSidebar {
+    width: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .leftSidebar,
+  .rightSidebar {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: var(--workflow-z-modal);
+    box-shadow: none;
+  }
+  
+  .leftSidebar {
+    left: 0;
+    transform: translateX(-100%);
+  }
+  
+  .leftSidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+  
+  .rightSidebar {
+    right: 0;
+    transform: translateX(100%);
+  }
+  
+  .rightSidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+  
+  .canvasArea {
+    width: 100%;
+  }
+}
+
+/* Mobile Overlay */
+.mobileOverlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileOverlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: calc(var(--workflow-z-modal) - 1);
+    animation: workflow-fade-in var(--workflow-duration-fast) var(--workflow-easing);
+  }
+  
+  .mobileOverlay.hidden {
+    display: none;
+  }
+}
+
+/* Theme Transition */
+.layout.themeTransition * {
+  transition: background-color var(--workflow-duration-normal) var(--workflow-easing),
+              border-color var(--workflow-duration-normal) var(--workflow-easing),
+              color var(--workflow-duration-normal) var(--workflow-easing) !important;
+}

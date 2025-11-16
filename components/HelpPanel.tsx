@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@heroui/button";
 import Meteors from "@/components/ui/meteors";
+import { usePanelStyles } from "@/hooks/usePanelStyles";
 
 interface HelpPanelProps {
   onViewHelp: () => void;
@@ -10,6 +11,7 @@ const HelpPanel: React.FC<HelpPanelProps> = ({ onViewHelp }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { cardStyle } = usePanelStyles();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -65,9 +67,9 @@ const HelpPanel: React.FC<HelpPanelProps> = ({ onViewHelp }) => {
       onMouseLeave={handleMouseLeave}
     >
       {/* 背景 */}
-      <div className="absolute inset-0 rounded-[15px] overflow-hidden" style={{ transform: 'translateZ(20px)' }}>
-        {/* 星空背景 */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a23] via-[#1a1a3a] to-[#2a2a4a]"></div>
+      <div className="absolute inset-0 rounded-[15px] overflow-hidden" style={{ transform: 'translateZ(20px)', ...cardStyle }}>
+        {/* 移除彩色背景渐变，使用纯黑背景 */}
+        <div className="absolute inset-0" style={{ backgroundColor: '#000000' }}></div>
         
         {/* 流星效果 */}
         <div className="absolute inset-0">
@@ -97,10 +99,10 @@ const HelpPanel: React.FC<HelpPanelProps> = ({ onViewHelp }) => {
         
         {/* 文本 */}
         <div className="mb-8 flex-1">
-          <h3 className="text-white font-bold text-[14px] leading-[20px] mb-2">
+          <h3 className="text-primary-foreground font-bold text-[14px] leading-[20px] mb-2">
             需要帮助？
           </h3>
-          <p className="text-white font-normal text-[12px] leading-[12px] opacity-90">
+          <p className="text-primary-foreground font-normal text-[12px] leading-[12px] opacity-90">
             请查看我们的帮助文档
           </p>
         </div>
@@ -111,7 +113,7 @@ const HelpPanel: React.FC<HelpPanelProps> = ({ onViewHelp }) => {
             variant="faded"
             size="lg"
             radius="lg"
-            className="w-[300px] h-[66px] bg-gradient-to-br from-[#060b28]/74 to-[#0a0e23]/71 backdrop-blur-[10px] border-0 text-white font-bold text-[16px] hover:opacity-80 transition-opacity"
+            className="w-[300px] h-[66px] bg-content1 border-divider text-foreground font-bold text-[16px] hover:opacity-80 transition-opacity"
             onPress={onViewHelp}
           >
             查看

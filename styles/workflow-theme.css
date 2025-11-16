@@ -1,0 +1,302 @@
+/**
+ * Workflow Theme CSS Variables
+ * 
+ * This file defines the CSS variable system for dynamic theme switching.
+ * Variables are applied by the useWorkflowTheme hook and can be used
+ * throughout the workflow components.
+ */
+
+/* Root element with workflow theme */
+[data-workflow-theme] {
+  /* Canvas colors */
+  --wf-canvas-bg: #f8fafc;
+  --wf-canvas-grid: #e2e8f0;
+  --wf-canvas-grid-dot: #cbd5e1;
+  
+  /* Node colors */
+  --wf-node-bg: #ffffff;
+  --wf-node-border: rgba(255, 255, 255, 0.1);
+  --wf-node-text: #0f172a;
+  --wf-node-shadow: none;
+  --wf-node-selected-border: rgba(255, 255, 255, 0.4);
+  --wf-node-selected-glow: rgba(59, 130, 246, 0.15);
+  
+  /* Edge colors */
+  --wf-edge-default: #94a3b8;
+  --wf-edge-selected: #3b82f6;
+  --wf-edge-animated: #10b981;
+  
+  /* Panel colors */
+  --wf-panel-bg: #ffffff;
+  --wf-panel-border: rgba(255, 255, 255, 0.1);
+  --wf-panel-text: #0f172a;
+  --wf-panel-text-secondary: #64748b;
+  --wf-panel-hover: #f1f5f9;
+  
+  /* Status colors */
+  --wf-status-idle: #94a3b8;
+  --wf-status-running: #3b82f6;
+  --wf-status-success: #10b981;
+  --wf-status-error: #ef4444;
+  --wf-status-warning: #f59e0b;
+  
+  /* Category colors */
+  --wf-category-basic: #8b5cf6;
+  --wf-category-movement: #3b82f6;
+  --wf-category-detection: #10b981;
+  --wf-category-ai: #f59e0b;
+  --wf-category-logic: #ec4899;
+  --wf-category-data: #06b6d4;
+  --wf-category-challenge: #ef4444;
+  
+  /* Spacing */
+  --wf-spacing-xs: 4px;
+  --wf-spacing-sm: 8px;
+  --wf-spacing-md: 12px;
+  --wf-spacing-lg: 16px;
+  --wf-spacing-xl: 24px;
+  --wf-spacing-2xl: 32px;
+  --wf-spacing-3xl: 48px;
+  
+  /* Border radius */
+  --wf-radius-sm: 8px;
+  --wf-radius-md: 12px;
+  --wf-radius-lg: 16px;
+  --wf-radius-xl: 20px;
+  --wf-radius-full: 9999px;
+  
+  /* Shadows - Reduced intensity */
+  --wf-shadow-sm: none;
+  --wf-shadow-md: none;
+  --wf-shadow-lg: none;
+  --wf-shadow-xl: none;
+  --wf-shadow-glow: none;
+  --wf-shadow-glow-primary: none;
+  --wf-shadow-glow-success: none;
+  --wf-shadow-glow-error: none;
+  
+  /* Animation durations */
+  --wf-duration-fast: 150ms;
+  --wf-duration-normal: 300ms;
+  --wf-duration-slow: 500ms;
+  
+  /* Animation easings */
+  --wf-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --wf-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --wf-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --wf-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography */
+  --wf-font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --wf-font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  --wf-text-xs: 0.75rem;
+  --wf-text-sm: 0.875rem;
+  --wf-text-base: 1rem;
+  --wf-text-lg: 1.125rem;
+  --wf-text-xl: 1.25rem;
+  --wf-text-2xl: 1.5rem;
+  --wf-font-normal: 400;
+  --wf-font-medium: 500;
+  --wf-font-semibold: 600;
+  --wf-font-bold: 700;
+  --wf-leading-tight: 1.25;
+  --wf-leading-normal: 1.5;
+  --wf-leading-relaxed: 1.75;
+}
+
+/* Dark theme overrides */
+[data-workflow-theme="dark"] {
+  /* Canvas colors */
+  --wf-canvas-bg: #0a0f1e;
+  --wf-canvas-grid: #1e293b;
+  --wf-canvas-grid-dot: #334155;
+  
+  /* Node colors */
+  --wf-node-bg: #111827;
+  --wf-node-border: rgba(255, 255, 255, 0.1);
+  --wf-node-text: #f1f5f9;
+  --wf-node-shadow: none;
+  --wf-node-selected-border: rgba(255, 255, 255, 0.4);
+  --wf-node-selected-glow: rgba(59, 130, 246, 0.2);
+  
+  /* Edge colors */
+  --wf-edge-default: #64748b;
+  --wf-edge-selected: #3b82f6;
+  --wf-edge-animated: #10b981;
+  
+  /* Panel colors */
+  --wf-panel-bg: #111827;
+  --wf-panel-border: rgba(255, 255, 255, 0.1);
+  --wf-panel-text: #f1f5f9;
+  --wf-panel-text-secondary: #94a3b8;
+  --wf-panel-hover: #1f2937;
+  
+  /* Status colors */
+  --wf-status-idle: #64748b;
+  --wf-status-running: #3b82f6;
+  --wf-status-success: #10b981;
+  --wf-status-error: #ef4444;
+  --wf-status-warning: #f59e0b;
+  
+  /* Category colors */
+  --wf-category-basic: #a78bfa;
+  --wf-category-movement: #60a5fa;
+  --wf-category-detection: #34d399;
+  --wf-category-ai: #fbbf24;
+  --wf-category-logic: #f472b6;
+  --wf-category-data: #22d3ee;
+  --wf-category-challenge: #f87171;
+  
+  /* Shadows - Reduced intensity */
+  --wf-shadow-sm: none;
+  --wf-shadow-md: none;
+  --wf-shadow-lg: none;
+  --wf-shadow-xl: none;
+  --wf-shadow-glow: none;
+  --wf-shadow-glow-primary: none;
+  --wf-shadow-glow-success: none;
+  --wf-shadow-glow-error: none;
+}
+
+/* Utility classes for workflow components */
+.wf-panel {
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--border-default);
+  color: var(--wf-panel-text);
+}
+
+.wf-node {
+  background-color: var(--wf-node-bg);
+  border: 1px solid var(--wf-node-border);
+  color: var(--wf-node-text);
+  box-shadow: none;
+}
+
+.wf-node-selected {
+  border-color: var(--wf-node-selected-border);
+  box-shadow: none;
+}
+
+.wf-canvas {
+  background-color: var(--wf-canvas-bg);
+}
+
+.wf-text-secondary {
+  color: var(--wf-panel-text-secondary);
+}
+
+.wf-hover:hover {
+  background-color: var(--wf-panel-hover);
+}
+
+/* Status indicators */
+.wf-status-idle {
+  color: var(--wf-status-idle);
+}
+
+.wf-status-running {
+  color: var(--wf-status-running);
+}
+
+.wf-status-success {
+  color: var(--wf-status-success);
+}
+
+.wf-status-error {
+  color: var(--wf-status-error);
+}
+
+.wf-status-warning {
+  color: var(--wf-status-warning);
+}
+
+/* Category colors */
+.wf-category-basic {
+  color: var(--wf-category-basic);
+}
+
+.wf-category-movement {
+  color: var(--wf-category-movement);
+}
+
+.wf-category-detection {
+  color: var(--wf-category-detection);
+}
+
+.wf-category-ai {
+  color: var(--wf-category-ai);
+}
+
+.wf-category-logic {
+  color: var(--wf-category-logic);
+}
+
+.wf-category-data {
+  color: var(--wf-category-data);
+}
+
+.wf-category-challenge {
+  color: var(--wf-category-challenge);
+}
+
+/* Smooth transitions for theme changes */
+.wf-theme-transition {
+  transition: 
+    background-color var(--wf-duration-normal) var(--wf-easing-default),
+    color var(--wf-duration-normal) var(--wf-easing-default),
+    border-color var(--wf-duration-normal) var(--wf-easing-default),
+    box-shadow var(--wf-duration-normal) var(--wf-easing-default);
+}
+
+/* Animation utilities */
+.wf-fade-in {
+  animation: wf-fade-in var(--wf-duration-normal) var(--wf-easing-default);
+}
+
+.wf-slide-in-left {
+  animation: wf-slide-in-left var(--wf-duration-normal) var(--wf-easing-default);
+}
+
+.wf-slide-in-right {
+  animation: wf-slide-in-right var(--wf-duration-normal) var(--wf-easing-default);
+}
+
+@keyframes wf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wf-slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes wf-slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  :root {
+    --wf-spacing-lg: 12px;
+    --wf-spacing-xl: 16px;
+    --wf-spacing-2xl: 24px;
+  }
+}

@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
 
     // 连接到Python后端WebSocket服务器
     try {
-      // 使用动态导入来避免构造函数问题
-      const WebSocket = (await import('ws')).default;
-      const ws = new WebSocket('ws://localhost:8765');
+      // 使用动态导入在 Node 环境获取构造函数
+      const { WebSocket } = await import('ws');
+      const ws = new WebSocket('ws://localhost:3002');
       
       await new Promise<void>((resolve, reject) => {
         ws.on('open', () => {

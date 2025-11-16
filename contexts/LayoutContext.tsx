@@ -125,6 +125,12 @@ const DEFAULT_LAYOUTS: Record<string, ComponentLayout> = {
     position: { x: 1680, y: 980 },
     size: { width: 420, height: 560 },
   },
+  // Tello 工作流面板 - 中央大面板
+  'tello-workflow-panel': {
+    id: 'tello-workflow-panel',
+    position: { x: 300, y: 150 },
+    size: { width: 900, height: 600 },
+  },
 };
 
 // 兼容老版本 key 的迁移映射
@@ -154,6 +160,7 @@ const DEFAULT_VISIBLE_COMPONENTS = [
   // 系统信息
   'app-info',                // 应用信息
   'help-panel'               // 帮助面板
+  // 注意：tello-workflow-panel 默认不可见，需要通过组件选择器添加
 ];
 
 export const LayoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

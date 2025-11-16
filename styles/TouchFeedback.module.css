@@ -1,0 +1,401 @@
+/**
+ * Touch Feedback Animations
+ * 
+ * Provides visual feedback for touch interactions:
+ * - Tap feedback
+ * - Active state animations
+ * - Ripple effects
+ * - Touch target optimization
+ * 
+ * Requirements: 14.4, 14.5
+ */
+
+/* ========================================
+   Touch Target Base Styles
+   ======================================== */
+
+.touchTarget {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Minimum touch target size (44x44px) */
+@media (max-width: 767px) {
+  .touchTarget {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   Touch Feedback States
+   ======================================== */
+
+/* Active state - when touch starts */
+.touchActive {
+  transform: scale(0.96);
+  opacity: 0.8;
+  transition: transform 100ms ease, opacity 100ms ease;
+}
+
+/* Release state - when touch ends */
+.touchRelease {
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 200ms ease;
+}
+
+/* ========================================
+   Ripple Effect
+   ======================================== */
+
+.rippleContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  animation: rippleAnimation 600ms ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleAnimation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Dark mode ripple */
+.dark .ripple {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   Button Touch Feedback
+   ======================================== */
+
+.touchButton {
+  position: relative;
+  overflow: hidden;
+  transition: all 150ms ease;
+}
+
+.touchButton:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .touchButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) {
+  .touchButton:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ========================================
+   Card Touch Feedback
+   ======================================== */
+
+.touchCard {
+  position: relative;
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+.touchCard:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+@media (hover: hover) {
+  .touchCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@media (hover: none) {
+  .touchCard:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ========================================
+   Icon Touch Feedback
+   ======================================== */
+
+.touchIcon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+}
+
+.touchIcon:active {
+  transform: scale(0.9);
+}
+
+@media (max-width: 767px) {
+  .touchIcon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ========================================
+   Long Press Feedback
+   ======================================== */
+
+.longPressTarget {
+  position: relative;
+}
+
+.longPressTarget::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid hsl(var(--heroui-primary));
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 200ms ease;
+}
+
+.longPressActive::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ========================================
+   Swipe Feedback
+   ======================================== */
+
+.swipeContainer {
+  position: relative;
+  touch-action: pan-y;
+}
+
+.swipeIndicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.swipeIndicatorLeft {
+  left: 0;
+}
+
+.swipeIndicatorRight {
+  right: 0;
+}
+
+.swipeActive .swipeIndicator {
+  opacity: 1;
+}
+
+/* ========================================
+   Touch Highlight
+   ======================================== */
+
+.touchHighlight {
+  position: relative;
+}
+
+.touchHighlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+
+.touchHighlight:active::after {
+  opacity: 1;
+}
+
+.dark .touchHighlight::after {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   Smooth Scrolling
+   ======================================== */
+
+.touchScroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar on mobile */
+@media (max-width: 767px) {
+  .touchScroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .touchScroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ========================================
+   Pull to Refresh Indicator
+   ======================================== */
+
+.pullToRefresh {
+  position: relative;
+}
+
+.pullIndicator {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 200ms ease;
+}
+
+.pullActive .pullIndicator {
+  top: 10px;
+  opacity: 1;
+}
+
+/* ========================================
+   Touch Gesture Animations
+   ======================================== */
+
+@keyframes touchPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.touchPulse {
+  animation: touchPulse 1s ease-in-out infinite;
+}
+
+@keyframes touchBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.touchBounce {
+  animation: touchBounce 0.5s ease-in-out;
+}
+
+/* ========================================
+   Haptic Feedback Class
+   ======================================== */
+
+.hapticFeedback {
+  /* This class can be used to trigger haptic feedback via JavaScript */
+  /* The actual haptic feedback is triggered using the Vibration API */
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+/* Focus indicators for keyboard navigation */
+.touchTarget:focus-visible {
+  outline: 2px solid hsl(var(--heroui-primary));
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .touchActive {
+    outline: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .touchActive,
+  .touchRelease,
+  .touchButton,
+  .touchCard,
+  .touchIcon,
+  .ripple,
+  .swipeIndicator,
+  .touchHighlight::after,
+  .pullIndicator {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ========================================
+   Touch Device Detection
+   ======================================== */
+
+/* Apply touch-specific styles only on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .touchOptimized {
+    /* Larger touch targets */
+    padding: 12px;
+  }
+  
+  .touchOptimizedButton {
+    min-height: 48px;
+    padding: 14px 20px;
+  }
+  
+  .touchOptimizedIcon {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+/* ========================================
+   Safe Area Support (iOS)
+   ======================================== */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  .touchSafeArea {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

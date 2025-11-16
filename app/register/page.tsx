@@ -132,7 +132,7 @@ export default function RegisterPage() {
               <div className="flex items-center gap-3 mb-8">
                 <Image 
                   src="/logo.svg" 
-                  alt="TTtalentDronePLF Logo" 
+                  alt="SIGHTONE Logo" 
                   width={48} 
                   height={48} 
                   className="text-blue-500"
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                 <div>
                   <h1 className="text-4xl lg:text-6xl font-bold text-white mb-2">
                     <TextType 
-                      text={["TTtalentDronePLF"]}
+                      text={["SIGHTONE"]}
                       typingSpeed={75}
                       pauseDuration={1500}
                       showCursor={true}
@@ -148,7 +148,7 @@ export default function RegisterPage() {
                     />
                   </h1>
                   <p className="text-xl text-blue-300 font-medium">
-                    智能无人机分析平台
+                    瞰析人工智能分析平台
                   </p>
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                     <div className="p-3 rounded-full">
                       <Image 
                         src="/logo.svg" 
-                        alt="TTtalentDronePLF Logo" 
+                        alt="SIGHTONE Logo" 
                         width={32} 
                         height={32} 
                         className="text-purple-400"
@@ -259,7 +259,7 @@ export default function RegisterPage() {
                     classNames={{
                       base: "w-full",
                       input: "text-white",
-                      inputWrapper: "bg-white/10 border-white/20 hover:bg-white/15 data-[hover=true]:bg-white/15 group-data-[focus=true]:bg-white/15",
+                      inputWrapper: "bg-white/5 border-white/10 hover:bg-white/[0.07] data-[hover=true]:bg-white/[0.07] group-data-[focus=true]:bg-white/10 group-data-[focus=true]:border-white/40 transition-all duration-250",
                       label: "text-white/80"
                     }}
                     isRequired
@@ -274,7 +274,7 @@ export default function RegisterPage() {
                     classNames={{
                       base: "w-full",
                       input: "text-white",
-                      inputWrapper: "bg-white/10 border-white/20 hover:bg-white/15 data-[hover=true]:bg-white/15 group-data-[focus=true]:bg-white/15",
+                      inputWrapper: "bg-white/5 border-white/10 hover:bg-white/[0.07] data-[hover=true]:bg-white/[0.07] group-data-[focus=true]:bg-white/10 group-data-[focus=true]:border-white/40 transition-all duration-250",
                       label: "text-white/80"
                     }}
                     isRequired
@@ -289,7 +289,7 @@ export default function RegisterPage() {
                     classNames={{
                       base: "w-full",
                       input: "text-white",
-                      inputWrapper: "bg-white/10 border-white/20 hover:bg-white/15 data-[hover=true]:bg-white/15 group-data-[focus=true]:bg-white/15",
+                      inputWrapper: "bg-white/5 border-white/10 hover:bg-white/[0.07] data-[hover=true]:bg-white/[0.07] group-data-[focus=true]:bg-white/10 group-data-[focus=true]:border-white/40 transition-all duration-250",
                       label: "text-white/80"
                     }}
                     isRequired
@@ -304,7 +304,7 @@ export default function RegisterPage() {
                     classNames={{
                       base: "w-full",
                       input: "text-white",
-                      inputWrapper: "bg-white/10 border-white/20 hover:bg-white/15 data-[hover=true]:bg-white/15 group-data-[focus=true]:bg-white/15",
+                      inputWrapper: "bg-white/5 border-white/10 hover:bg-white/[0.07] data-[hover=true]:bg-white/[0.07] group-data-[focus=true]:bg-white/10 group-data-[focus=true]:border-white/40 transition-all duration-250",
                       label: "text-white/80"
                     }}
                     endContent={
@@ -332,7 +332,7 @@ export default function RegisterPage() {
                     classNames={{
                       base: "w-full",
                       input: "text-white",
-                      inputWrapper: "bg-white/10 border-white/20 hover:bg-white/15 data-[hover=true]:bg-white/15 group-data-[focus=true]:bg-white/15",
+                      inputWrapper: "bg-white/5 border-white/10 hover:bg-white/[0.07] data-[hover=true]:bg-white/[0.07] group-data-[focus=true]:bg-white/10 group-data-[focus=true]:border-white/40 transition-all duration-250",
                       label: "text-white/80"
                     }}
                     endContent={
@@ -404,7 +404,7 @@ export default function RegisterPage() {
         <div className="absolute bottom-0 left-0 w-full">
           <div className="bg-black/30 backdrop-blur-sm py-2">
             <p className="text-center text-white/60 text-xs">
-              © {new Date().getFullYear()} TTtalentDronePLF. Developed by TTtalentDev Team. All rights reserved.
+              © {new Date().getFullYear()} SIGHTONE瞰析人工智能分析平台. All rights reserved.
             </p>
           </div>
         </div>

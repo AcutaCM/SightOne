@@ -1,0 +1,177 @@
+/**
+ * NodeLibraryFooter Styles
+ * 
+ * Styles for the node library footer component.
+ */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wf-spacing-md);
+  padding: var(--wf-spacing-md) var(--wf-spacing-lg);
+  border-top: 1px solid var(--wf-panel-border);
+  background-color: var(--wf-panel-bg);
+}
+
+/* Statistics section */
+.statsSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-xs);
+  min-width: 0;
+}
+
+.mainStat {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm);
+}
+
+.statText {
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  line-height: var(--wf-leading-normal);
+}
+
+.filterBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--wf-spacing-xs);
+  font-size: 0.65rem;
+  font-weight: var(--wf-font-medium);
+  color: var(--wf-node-selected-border);
+  background-color: var(--wf-node-selected-glow);
+  border-radius: var(--wf-radius-sm);
+  line-height: 1;
+}
+
+/* Additional statistics */
+.additionalStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wf-spacing-sm);
+}
+
+.additionalStat {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  font-size: 0.7rem;
+}
+
+.additionalStatLabel {
+  color: var(--wf-panel-text-secondary);
+}
+
+.additionalStatValue {
+  color: var(--wf-panel-text);
+  font-weight: var(--wf-font-medium);
+}
+
+/* Actions section */
+.actionsSection {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-sm);
+  color: var(--wf-panel-text-secondary);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.actionButton:hover:not(:disabled) {
+  background-color: var(--wf-panel-hover);
+  border-color: var(--border-focus);
+  color: var(--wf-panel-text);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actionIcon {
+  flex-shrink: 0;
+  transition: transform var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Spinning animation for refresh icon */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility */
+.actionButton:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+    gap: var(--wf-spacing-sm);
+  }
+  
+  .statsSection {
+    gap: 4px;
+  }
+  
+  .statText {
+    font-size: 0.7rem;
+  }
+  
+  .filterBadge {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+  
+  .additionalStats {
+    display: none;
+  }
+  
+  .actionButton {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .actionIcon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Dark theme adjustments */
+.container[data-theme="dark"] .actionButton {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.container[data-theme="dark"] .actionButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}

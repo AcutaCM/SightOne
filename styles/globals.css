@@ -1,3 +1,1023 @@
 @import "tailwindcss";
+@import "./login-theme.css";
 
-@config "../tailwind.config.js"
+@config "../tailwind.config.js";
+
+/* ========================================
+   Modal Overlay Z-Index Fix
+   ======================================== */
+
+/* 修复助理设置侧边栏Modal的遮罩层z-index */
+/* .modal-overlay-fix {
+  z-index: 900 !important;
+} */
+
+/* Modal内容在遮罩层之上 */
+[data-slot="base"][class*="modal"],
+.heroui-modal-content {
+  z-index: 950 !important;
+}
+
+/* 确保侧边栏始终在最顶层，不被任何元素遮挡 */
+[data-sidebar],
+.sidebar,
+nav[role="navigation"] {
+  z-index: 9999 !important;
+  position: relative;
+}
+
+/* ========================================
+   新蓝色主题系统 - 全局样式
+   ======================================== */
+
+/* ========================================
+   工作流节点主题变量
+   ======================================== */
+
+/* 主题切换过渡动画 - Requirements: 10.1, 10.2 */
+:root,
+.dark {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 工作流节点动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* 通知动画 */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root {
+  /* Node Colors - Light Theme (黑白灰极简主题) */
+  --node-bg: #FFFFFF;
+  --node-border: #E5E5E5;
+  --node-border-hover: #CCCCCC;
+  --node-selected: #000000;
+  --node-selected-glow: rgba(0, 0, 0, 0.1);
+  --node-divider: #F0F0F0;
+  --node-header-bg: #FAFAFA;
+  
+  /* Node Shadows - Light Theme */
+  --node-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  --node-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  --node-shadow-selected: 0 8px 24px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+  /* Parameter Colors - Light Theme */
+  --param-container-bg: transparent;
+  --param-bg: #F8F8F8;
+  --param-bg-hover: #F0F0F0;
+  --param-bg-editing: #E8E8E8;
+  --param-bg-error: #FEE;
+  --param-border: #E0E0E0;
+  --param-border-hover: #D0D0D0;
+  --param-border-editing: #999999;
+  --param-editing-glow: rgba(0, 0, 0, 0.08);
+  
+  /* Text Colors - Light Theme (WCAG AA优化) */
+  --text-primary: #1A1A1A;      /* 对比度 16.1:1 - AAA ✓ */
+  --text-secondary: #666666;    /* 对比度 5.74:1 - AA ✓ */
+  --text-tertiary: #707070;     /* 对比度 4.54:1 - AA ✓ (优化后) */
+  
+  /* Status Colors - Light Theme (仅错误使用彩色) */
+  --error-color: #DC2626;
+  --error-color-hover: #B91C1C;
+  --success-color: #333333;
+  --success-color-light: rgba(51, 51, 51, 0.1);
+  --warning-color: #666666;
+  --info-color: #000000;
+  
+  /* Button Colors - Light Theme */
+  --button-hover-bg: #F5F5F5;
+  --button-hover-border: #D0D0D0;
+  
+  /* Badge Colors - Light Theme */
+  --badge-bg: #E8E8E8;
+  --badge-text: #1A1A1A;
+  
+  /* Scrollbar Colors - Light Theme */
+  --scrollbar-track: #F5F5F5;
+  --scrollbar-thumb: #CCCCCC;
+  --scrollbar-thumb-hover: #999999;
+}
+
+.dark {
+  /* Node Colors - Dark Theme (黑白灰极简主题) */
+  --node-bg: #1A1A1A;
+  --node-border: #333333;
+  --node-border-hover: #4D4D4D;
+  --node-selected: #FFFFFF;
+  --node-selected-glow: rgba(255, 255, 255, 0.1);
+  --node-divider: #2A2A2A;
+  --node-header-bg: #222222;
+  
+  /* Node Shadows - Dark Theme */
+  --node-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --node-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+
+/* ========================================
+   Input Field Styles - Dark Mode
+   Task 7: Update input field components
+   ======================================== */
+
+/* Default input styles - 5% white opacity (Requirement 9.1) */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="search"],
+.dark input[type="tel"],
+.dark input[type="url"],
+.dark textarea,
+.dark select {
+  background-color: var(--bg-input, rgba(255, 255, 255, 0.05));
+  border-color: var(--border-default, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, rgba(255, 255, 255, 1.0));
+  transition: background-color var(--transition-normal, 250ms) var(--transition-easing, cubic-bezier(0.4, 0, 0.2, 1)),
+              border-color var(--transition-normal, 250ms) var(--transition-easing, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/* Placeholder text - 30% white opacity */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-placeholder, rgba(255, 255, 255, 0.3));
+  opacity: 1;
+}
+
+/* Focus states - 10% white opacity (Requirements 9.2, 9.5) */
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus,
+.dark input[type="password"]:focus,
+.dark input[type="number"]:focus,
+.dark input[type="search"]:focus,
+.dark input[type="tel"]:focus,
+.dark input[type="url"]:focus,
+.dark textarea:focus,
+.dark select:focus {
+  background-color: var(--bg-input-focus, rgba(255, 255, 255, 0.10));
+  border-color: var(--border-focus, rgba(255, 255, 255, 0.4));
+  outline: none;
+}
+
+/* Hover states - subtle transition */
+.dark input[type="text"]:hover:not(:focus):not(:disabled),
+.dark input[type="email"]:hover:not(:focus):not(:disabled),
+.dark input[type="password"]:hover:not(:focus):not(:disabled),
+.dark input[type="number"]:hover:not(:focus):not(:disabled),
+.dark input[type="search"]:hover:not(:focus):not(:disabled),
+.dark input[type="tel"]:hover:not(:focus):not(:disabled),
+.dark input[type="url"]:hover:not(:focus):not(:disabled),
+.dark textarea:hover:not(:focus):not(:disabled),
+.dark select:hover:not(:focus):not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Disabled states - 3% white opacity (Requirement 9.3) */
+.dark input[type="text"]:disabled,
+.dark input[type="email"]:disabled,
+.dark input[type="password"]:disabled,
+.dark input[type="number"]:disabled,
+.dark input[type="search"]:disabled,
+.dark input[type="tel"]:disabled,
+.dark input[type="url"]:disabled,
+.dark textarea:disabled,
+.dark select:disabled {
+  background-color: var(--bg-input-disabled, rgba(255, 255, 255, 0.03));
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.08));
+  color: var(--text-disabled, rgba(255, 255, 255, 0.4));
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Error states - 60% white opacity border (Requirement 9.4) */
+.dark input[type="text"].error,
+.dark input[type="email"].error,
+.dark input[type="password"].error,
+.dark input[type="number"].error,
+.dark input[type="search"].error,
+.dark input[type="tel"].error,
+.dark input[type="url"].error,
+.dark textarea.error,
+.dark select.error,
+.dark input[type="text"][aria-invalid="true"],
+.dark input[type="email"][aria-invalid="true"],
+.dark input[type="password"][aria-invalid="true"],
+.dark input[type="number"][aria-invalid="true"],
+.dark input[type="search"][aria-invalid="true"],
+.dark input[type="tel"][aria-invalid="true"],
+.dark input[type="url"][aria-invalid="true"],
+.dark textarea[aria-invalid="true"],
+.dark select[aria-invalid="true"] {
+  border-color: var(--border-error, rgba(255, 255, 255, 0.6));
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Error state focus - maintain error border */
+.dark input.error:focus,
+.dark textarea.error:focus,
+.dark select.error:focus,
+.dark input[aria-invalid="true"]:focus,
+.dark textarea[aria-invalid="true"]:focus,
+.dark select[aria-invalid="true"]:focus {
+  border-color: var(--border-error, rgba(255, 255, 255, 0.6));
+  background-color: var(--bg-input-focus, rgba(255, 255, 255, 0.10));
+}
+
+/* HeroUI Input component overrides for dark mode */
+.dark [data-slot="input-wrapper"] {
+  background-color: var(--bg-input, rgba(255, 255, 255, 0.05)) !important;
+  border-color: var(--border-default, rgba(255, 255, 255, 0.1)) !important;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dark [data-slot="input-wrapper"]:hover:not([data-focus="true"]):not([data-disabled="true"]) {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark [data-slot="input-wrapper"][data-focus="true"] {
+  background-color: var(--bg-input-focus, rgba(255, 255, 255, 0.10)) !important;
+  border-color: var(--border-focus, rgba(255, 255, 255, 0.4)) !important;
+}
+
+.dark [data-slot="input-wrapper"][data-disabled="true"] {
+  background-color: var(--bg-input-disabled, rgba(255, 255, 255, 0.03)) !important;
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.08)) !important;
+  opacity: 1 !important;
+}
+
+.dark [data-slot="input-wrapper"][data-invalid="true"] {
+  border-color: var(--border-error, rgba(255, 255, 255, 0.6)) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark [data-slot="input-wrapper"][data-invalid="true"][data-focus="true"] {
+  border-color: var(--border-error, rgba(255, 255, 255, 0.6)) !important;
+  background-color: var(--bg-input-focus, rgba(255, 255, 255, 0.10)) !important;
+}
+  --node-shadow-selected: 0 12px 32px rgba(0, 0, 0, 0.5), 0 6px 16px rgba(0, 0, 0, 0.4);
+  
+  /* Parameter Colors - Dark Theme */
+  --param-container-bg: transparent;
+  --param-bg: #242424;
+  --param-bg-hover: #2E2E2E;
+  --param-bg-editing: #383838;
+  --param-bg-error: rgba(220, 38, 38, 0.1);
+  --param-border: #3A3A3A;
+  --param-border-hover: #4A4A4A;
+  --param-border-editing: #666666;
+  --param-editing-glow: rgba(255, 255, 255, 0.08);
+  
+  /* Text Colors - Dark Theme (WCAG AA优化) */
+  --text-primary: #E5E5E5;      /* 对比度 13.5:1 - AAA ✓ */
+  --text-secondary: #999999;    /* 对比度 5.2:1 - AA ✓ */
+  --text-tertiary: #8F8F8F;     /* 对比度 4.54:1 - AA ✓ (优化后) */
+  
+  /* Status Colors - Dark Theme (仅错误使用彩色) */
+  --error-color: #EF4444;
+  --error-color-hover: #DC2626;
+  --success-color: #CCCCCC;
+  --success-color-light: rgba(204, 204, 204, 0.15);
+  --warning-color: #999999;
+  --info-color: #FFFFFF;
+  
+  /* Button Colors - Dark Theme */
+  --button-hover-bg: #2E2E2E;
+  --button-hover-border: #4A4A4A;
+  
+  /* Badge Colors - Dark Theme */
+  --badge-bg: #333333;
+  --badge-text: #E5E5E5;
+  
+  /* Scrollbar Colors - Dark Theme */
+  --scrollbar-track: #2A2A2A;
+  --scrollbar-thumb: #4A4A4A;
+  --scrollbar-thumb-hover: #666666;
+}
+
+/* ========================================
+   工作流组件主题切换过渡
+   Requirements: 10.1, 10.2, 10.3
+   ======================================== */
+
+/* 为所有工作流组件添加平滑的颜色过渡 */
+.node-header,
+[class*="parameterItem"],
+[class*="parameterList"],
+[class*="InlineParameterNode"],
+[data-workflow-node],
+[data-workflow-component] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 输入框和编辑器的主题切换过渡 */
+input,
+textarea,
+select,
+[class*="Editor"] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮的主题切换过渡 */
+button,
+[role="button"] {
+  transition: 
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   工作流节点主题变量结束
+   ======================================== */
+
+/* 页面基础设置 */
+html, body {
+  min-height: 100vh;
+  min-height: 100dvh; /* 动态视口高度 */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Pure black background removed - transparent by default */
+  /* Ensure text color adapts to theme */
+  color: hsl(var(--heroui-foreground));
+}
+
+/* 确保所有元素继承正确的文本颜色 */
+* {
+  color: inherit;
+}
+
+/* 毛玻璃效果基类 */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-effect {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 蓝色渐变按钮 */
+.btn-blue-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-blue-gradient:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.dark .btn-blue-gradient {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+.dark .btn-blue-gradient:hover {
+  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+}
+
+/* ========================================
+   全局阴影系统 - 简化版
+   ======================================== */
+
+/* 移除所有默认阴影和边框 */
+[class*="bg-content1"],
+[class*="bg-content2"],
+[class*="bg-content3"],
+.heroui-card,
+[data-slot="base"],
+.nextui-card,
+.nextui-card-base,
+[data-slot="base"][class*="card"],
+[class*="Card"],
+[class*="Panel"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 深色主题 - 移除阴影和边框 */
+.dark [class*="bg-content1"],
+.dark [class*="bg-content2"],
+.dark [class*="bg-content3"],
+.dark .heroui-card,
+.dark [data-slot="base"],
+.dark .nextui-card,
+.dark .nextui-card-base,
+.dark [data-slot="base"][class*="card"],
+.dark [class*="Card"],
+.dark [class*="Panel"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 移除悬停效果 */
+[class*="bg-content1"]:hover,
+[class*="bg-content2"]:hover,
+[class*="bg-content3"]:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  border: none !important;
+}
+
+.dark [class*="bg-content1"]:hover,
+.dark [class*="bg-content2"]:hover,
+.dark [class*="bg-content3"]:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  border: none !important;
+}
+
+/* 移除卡片基础元素阴影 */
+.nextui-card-base,
+[data-slot="base"][class*="card"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dark .nextui-card-base,
+.dark [data-slot="base"][class*="card"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 移除特殊组件阴影 */
+[style*="flex: 1"][style*="display: flex"][style*="flex-direction: column"] {
+  box-shadow: none !important;
+}
+
+.dark [style*="flex: 1"][style*="display: flex"][style*="flex-direction: column"] {
+  box-shadow: none !important;
+}
+
+/* 移除通用圆角元素阴影 */
+[class*="rounded-"],
+[class*="border-"],
+[style*="border-radius"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dark [class*="rounded-"],
+.dark [class*="border-"],
+.dark [style*="border-radius"] {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ========================================
+   ChatbotChat 主题适配 - 简化版
+   ======================================== */
+
+/* 移除消息气泡阴影 */
+[data-chat-bubble] {
+  box-shadow: none !important;
+}
+
+.dark [data-chat-bubble] {
+  box-shadow: none !important;
+}
+
+/* 输入容器 - 移除边框和阴影 */
+[data-chat-input-container] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none !important;
+}
+
+.dark [data-chat-input-container] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none !important;
+}
+
+/* 侧边栏 - 移除边框和阴影 */
+[data-chat-sidebar] {
+  border-right: none !important;
+  background: hsl(var(--heroui-content1)) !important;
+  box-shadow: none !important;
+}
+
+.dark [data-chat-sidebar] {
+  border-right: none !important;
+  background: hsl(var(--heroui-content1)) !important;
+  box-shadow: none !important;
+}
+
+/* 侧边栏卡片 - 移除边框和阴影 */
+[data-chat-sidebar-card] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none !important;
+}
+
+.dark [data-chat-sidebar-card] {
+  box-shadow: none !important;
+}
+
+[data-chat-sidebar-card]:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.dark [data-chat-sidebar-card]:hover {
+  box-shadow: none !important;
+}
+
+/* API 配置卡片 - 移除边框和阴影 */
+[data-api-config-card] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none !important;
+}
+
+.dark [data-api-config-card] {
+  border: none !important;
+  background: hsl(var(--heroui-content2)) !important;
+  box-shadow: none !important;
+}
+
+/* 时间戳文本 - 适应主题 */
+[data-chat-timestamp] {
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+/* 分隔线 - 适应主题 */
+[data-chat-divider] {
+  border-top: 1px dashed hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+/* 渐变背景 - 适应主题 */
+[data-chat-gradient] {
+  background: linear-gradient(180deg, transparent, hsl(var(--heroui-content1) / 0.35)) !important;
+}
+
+.dark [data-chat-gradient] {
+  background: linear-gradient(180deg, transparent, hsl(var(--heroui-content1) / 0.5)) !important;
+}
+
+/* 按钮和交互元素 - 适应主题 */
+[data-chat-button] {
+  background: hsl(var(--heroui-content2)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+[data-chat-button]:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  transform: translateY(-1px);
+}
+
+/* 代码块样式 - 适应主题 */
+[data-chat-code] {
+  background: hsl(var(--heroui-content2)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+}
+
+/* ========================================
+   性能优化
+   ======================================== */
+
+/* 使用硬件加速 */
+[class*="bg-content"]:hover,
+[data-chat-button]:hover,
+[data-chat-sidebar-card]:hover {
+  will-change: transform, box-shadow;
+}
+
+
+/* ========================================
+   ChatbotChat 内联样式覆盖 - 浅色主题适配
+   ======================================== */
+
+/* Popover 内容背景 */
+.ant-popover-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  border: 1px solid hsl(var(--heroui-divider)) !important;
+}
+
+/* 统计卡片背景 */
+[style*="background: #1f232b"],
+[style*="background: #181a1f"],
+[style*="background: #242933"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* 文本颜色修复 */
+[style*="color: #9ca3af"] {
+  color: hsl(var(--heroui-foreground) / 0.6) !important;
+}
+
+[style*="color: #eaeaf0"] {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Tag 背景修复 */
+[style*="background: rgba(255,255,255,0.10)"],
+[style*="background: rgba(255,255,255,0.12)"],
+[style*="background: rgba(255,255,255,0.06)"] {
+  background: hsl(var(--heroui-content3)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* 移除边框 */
+[style*="border: 1px solid rgba(255,255,255,0.14)"],
+[style*="border: 1px solid rgba(255,255,255,0.12)"],
+[style*="border: 1px solid rgba(255,255,255,0.16)"],
+[style*="border: 1px solid rgba(255,255,255,0.08)"] {
+  border: none !important;
+}
+
+[style*="borderBottom: 1px solid rgba(255,255,255,0.08)"],
+[style*="border-bottom: 1px solid rgba(255,255,255,0.08)"] {
+  border-bottom: none !important;
+}
+
+/* 输入框背景修复 */
+[style*="background: rgba(255,255,255,0.06)"],
+[style*="background: rgba(255,255,255,0.04)"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* 代码块背景修复 */
+[style*="background: rgba(0,0,0,0.25)"] {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+[style*="background: rgba(255,255,255,0.05)"] {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+/* Avatar 背景修复 */
+[style*="background: #fff"] {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+[style*="color: #111"] {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* 确保深色主题下保持原样 */
+.dark [style*="background: #1f232b"],
+.dark [style*="background: #181a1f"],
+.dark [style*="background: #242933"] {
+  background: #1f232b !important;
+}
+
+.dark [style*="color: #9ca3af"] {
+  color: #9ca3af !important;
+}
+
+.dark [style*="color: #eaeaf0"] {
+  color: #eaeaf0 !important;
+}
+
+
+/* ========================================
+   Ant Design 组件主题覆盖
+   ======================================== */
+
+/* Card 组件 - 移除边框 */
+.ant-card {
+  background: hsl(var(--heroui-content1)) !important;
+  border: none !important;
+  color: hsl(var(--heroui-foreground)) !important;
+  box-shadow: none !important;
+}
+
+.ant-card-head {
+  background: hsl(var(--heroui-content2)) !important;
+  border: none !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-card-body {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Input 组件 */
+.ant-input,
+.ant-input-affix-wrapper {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+  color: hsl(var(--heroui-foreground) / 0.5) !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover {
+  border-color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: hsl(var(--heroui-primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--heroui-primary) / 0.2) !important;
+}
+
+/* Button 组件 */
+.ant-btn {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-btn-primary {
+  background: hsl(var(--heroui-primary)) !important;
+  border-color: hsl(var(--heroui-primary)) !important;
+  color: hsl(var(--heroui-primary-foreground)) !important;
+}
+
+.ant-btn:hover {
+  background: hsl(var(--heroui-content3)) !important;
+  border-color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-btn-primary:hover {
+  background: hsl(var(--heroui-primary) / 0.9) !important;
+}
+
+/* Select 组件 */
+.ant-select-selector {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-select-dropdown {
+  background: hsl(var(--heroui-content1)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+.ant-select-item {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-select-item-option-selected {
+  background: hsl(var(--heroui-primary) / 0.15) !important;
+}
+
+.ant-select-item-option-active {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* Modal 组件 */
+.ant-modal-content {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-modal-header {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-modal-footer {
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* Drawer 组件 */
+.ant-drawer-content {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-drawer-header {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-drawer-body {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+/* Dropdown 组件 */
+.ant-dropdown-menu {
+  background: hsl(var(--heroui-content1)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+.ant-dropdown-menu-item {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: hsl(var(--heroui-content2)) !important;
+}
+
+/* Popover 组件 */
+.ant-popover-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-popover-title {
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-popover-inner-content {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Alert 组件 */
+.ant-alert {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-alert-warning {
+  background: hsl(var(--heroui-warning) / 0.15) !important;
+  border-color: hsl(var(--heroui-warning)) !important;
+}
+
+/* Tag 组件 */
+.ant-tag {
+  background: hsl(var(--heroui-content2)) !important;
+  border-color: hsl(var(--heroui-divider)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* Divider 组件 */
+.ant-divider {
+  border-color: hsl(var(--heroui-divider)) !important;
+}
+
+/* Slider 组件 */
+.ant-slider-rail {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+.ant-slider-track {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-slider-handle {
+  border-color: hsl(var(--heroui-primary)) !important;
+  background: hsl(var(--heroui-background)) !important;
+}
+
+/* Switch 组件 */
+.ant-switch {
+  background: hsl(var(--heroui-content3)) !important;
+}
+
+.ant-switch-checked {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+/* Tabs 组件 */
+.ant-tabs-nav {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-tabs-tab {
+  color: hsl(var(--heroui-foreground) / 0.7) !important;
+}
+
+.ant-tabs-tab-active {
+  color: hsl(var(--heroui-primary)) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: hsl(var(--heroui-primary)) !important;
+}
+
+/* Form 组件 */
+.ant-form-item-label > label {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-form-item-explain-error {
+  color: hsl(var(--heroui-danger)) !important;
+}
+
+/* Tooltip 组件 */
+.ant-tooltip-inner {
+  background: hsl(var(--heroui-content1)) !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+.ant-tooltip-arrow-content {
+  background: hsl(var(--heroui-content1)) !important;
+}
+
+/* 确保文本颜色继承 */
+.ant-typography {
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+/* 滚动条样式 */
+.ant-card-body::-webkit-scrollbar,
+.ant-modal-body::-webkit-scrollbar,
+.ant-drawer-body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ant-card-body::-webkit-scrollbar-track,
+.ant-modal-body::-webkit-scrollbar-track,
+.ant-drawer-body::-webkit-scrollbar-track {
+  background: hsl(var(--heroui-content2));
+}
+
+.ant-card-body::-webkit-scrollbar-thumb,
+.ant-modal-body::-webkit-scrollbar-thumb,
+.ant-drawer-body::-webkit-scrollbar-thumb {
+  background: hsl(var(--heroui-divider));
+  border-radius: 4px;
+}
+
+.ant-card-body::-webkit-scrollbar-thumb:hover,
+.ant-modal-body::-webkit-scrollbar-thumb:hover,
+.ant-drawer-body::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--heroui-primary) / 0.5);
+}
+
+
+/* ========================================
+   自定义类主题覆盖
+   ======================================== */
+
+/* cfg-scroll 配置滚动区域 */
+.cfg-scroll {
+  /* Firefox 滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--heroui-divider)) hsl(var(--heroui-content2));
+}
+
+/* WebKit 滚动条样式 (Chrome, Safari, Edge) */
+.cfg-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.cfg-scroll::-webkit-scrollbar-track {
+  background: hsl(var(--heroui-content2)) !important;
+  border-radius: 3px;
+}
+
+.cfg-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--heroui-divider)) !important;
+  border-radius: 3px;
+}
+
+.cfg-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--heroui-primary) / 0.6) !important;
+}
+
+.cfg-scroll::-webkit-scrollbar-corner {
+  background: hsl(var(--heroui-content2)) !important;
+}

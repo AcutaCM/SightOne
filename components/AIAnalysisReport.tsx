@@ -1,173 +1,336 @@
 'use client';
 
-import React, {useMemo} from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Button } from '@nextui-org/react';
-import AnimatedList from './ui/AnimatedList';
+import { 
+  FileTextOutlined,
+  FilePdfOutlined,
+  FileMarkdownOutlined,
+  DownloadOutlined,
+  CloudUploadOutlined,
+  ExperimentOutlined
+} from '@ant-design/icons';
+import { Image } from 'antd';
+
+interface DiagnosisReport {
+  id: string;
+  plant_id: number;
+  timestamp: string;
+  original_image: string;
+  mask_image?: string;
+  mask_prompt?: string;
+  markdown_report: string;
+  summary: string;
+  severity: 'low' | 'medium' | 'high';
+  diseases: string[];
+  recommendations: string[];
+  ai_model: string;
+  confidence: number;
+  processing_time: number;
+}
 
 interface AIAnalysisReportProps {
-  analysisResults?: any[];
-  onExportCSV?: () => void;
-  onExportJSON?: () => void;
-  onClear?: () => void;
+  report?: DiagnosisReport | null;
+  onExportHTML?: () => void;
+  onExportPDF?: () => void;
 }
 
 export default function AIAnalysisReport({
-  analysisResults = [],
-  onExportCSV,
-  onExportJSON,
-  onClear
+  report,
+  onExportHTML,
+  onExportPDF
 }: AIAnalysisReportProps) {
-  const latest = analysisResults[0];
+  const [latestReport, setLatestReport] = useState<DiagnosisReport | null>(report || null);
 
-  const stats = useMemo(() => {
-    if (!analysisResults.length) return null;
-    const s = analysisResults.reduce((acc, r) => {
-      acc.total++;
-      acc.conf += r.confidence || 0;
-      acc.health += r.analysis?.healthScore || 0;
-      if (r.analysis?.diseaseDetected) acc.disease++;
-      acc.plants += r.analysis?.plantCount || 0;
-      acc.mature += r.analysis?.matureStrawberries || 0;
-      acc.immature += r.analysis?.immatureStrawberries || 0;
-      return acc;
-    }, {total:0, conf:0, health:0, disease:0, plants:0, mature:0, immature:0});
-    return {
-      total: s.total,
-      avgConf: s.conf / s.total,
-      avgHealth: s.health / s.total,
-      diseaseRate: s.total ? (s.disease / s.total) * 100 : 0,
-      plants: s.plants,
-      mature: s.mature,
-      immature: s.immature
+  // 监听诊断完成事件
+  useEffect(() => {
+    const handleDiagnosisComplete = (event: CustomEvent<DiagnosisReport>) => {
+      console.log('AIAnalysisReport收到诊断报告:', event.detail);
+      setLatestReport(event.detail);
     };
-  }, [analysisResults]);
+
+    window.addEventListener('diagnosis_complete' as any, handleDiagnosisComplete as EventListener);
+
+    return () => {
+      window.removeEventListener('diagnosis_complete' as any, handleDiagnosisComplete as EventListener);
+    };
+  }, []);
+
+  // 如果外部传入report,使用外部的
+  useEffect(() => {
+    if (report) {
+      setLatestReport(report);
+    }
+  }, [report]);
+
+  const displayReport = latestReport;
+
+  if (!displayReport) {
+    return (
+      <div className="relative w-full h-full overflow-hidden">
+        <div className="absolute inset-0 rounded-[20px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" />
+        <div className="relative z-10 h-full w-full flex items-center justify-center">
+          <div className="text-center text-white/60">
+            <FileTextOutlined style={{ fontSize: 48, marginBottom: 16 }} />
+            <p className="text-lg">暂无诊断报告</p>
+            <p className="text-sm mt-2">启动诊断工作流后，报告将显示在这里</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* 背景渐变 */}
-      <div className="absolute inset-0 rounded-[20px] bg-gradient-to-b from-[rgba(6,11,40,0.74)] to-[rgba(10,14,35,0.71)] backdrop-blur-[120px]" />
+      {/* 深色背景 */}
+      <div className="absolute inset-0 rounded-[20px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" />
 
-      {/* 内容 */}
-      <div className="relative z-10 h-full w-full p-5 text-white">
-        {/* 标题区 */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">AI分析管理器</h2>
-            <p className="text-white/60 text-xs">AI Analysis Manager</p>
-          </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant="flat" onPress={onExportJSON}>导出JSON</Button>
-            <Button size="sm" variant="flat" onPress={onExportCSV}>导出CSV</Button>
-            <Button size="sm" color="danger" variant="flat" onPress={onClear}>清空</Button>
+      {/* 内容区域 */}
+      <div className="relative z-10 h-full w-full overflow-y-auto">
+        {/* 头部 */}
+        <div className="sticky top-0 z-20 bg-gray-900/95 backdrop-blur-sm border-b border-white/10 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileTextOutlined style={{ fontSize: 24, color: '#60a5fa' }} />
+              <div>
+                <h2 className="text-xl font-bold text-white">AI分析报告</h2>
+                <p className="text-xs text-white/60">Professional Agricultural AI Analysis Report</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<DownloadOutlined />}
+                onPress={onExportHTML}
+                className="bg-white/10 text-white hover:bg-white/20"
+              >
+                导出HTML
+              </Button>
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<CloudUploadOutlined />}
+                onPress={onExportPDF}
+                className="bg-white/10 text-white hover:bg-white/20"
+              >
+                导出PDF
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-3 h-px bg-white/30" />
-
-        {!latest ? (
-          <div className="h-[calc(100%-64px)] flex items-center justify-center text-white/70">
-            暂无分析结果
-          </div>
-        ) : (
-          <div className="mt-4 grid grid-cols-12 gap-3 h-[calc(100%-64px)]">
-            {/* 左侧：最新一次诊断 */}
-            <div className="col-span-7 min-w-0">
-              <h3 className="text-2xl font-light">病害诊断</h3>
-
-              <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
-                <InfoItem label="健康评分" value={(latest.analysis?.healthScore ?? 0).toFixed(1)} />
-                <InfoItem label="置信度" value={`${((latest.confidence ?? 0)*100).toFixed(1)}%`} />
-                <InfoItem label="是否检测到病害" value={latest.analysis?.diseaseDetected ? '是' : '否'} />
-                <InfoItem label="植株数量" value={latest.analysis?.plantCount ?? 0} />
-                <InfoItem label="成熟草莓" value={latest.analysis?.matureStrawberries ?? 0} />
-                <InfoItem label="未熟草莓" value={latest.analysis?.immatureStrawberries ?? 0} />
+        {/* 主要内容 */}
+        <div className="px-6 py-6 space-y-6">
+          {/* 标题卡片 */}
+          <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl p-6 border border-white/10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                <ExperimentOutlined style={{ fontSize: 20, color: '#60a5fa' }} />
               </div>
-
-              {latest.recommendations?.length ? null : null}
-
-              <div className="mt-4">
-                <h4 className="text-sm text-white/80 mb-2">专业建议</h4>
-                <AnimatedList
-                  items={latest.analysis?.recommendations || []}
-                  renderItem={(rec, idx) => (
-                    <div className="text-xs text-white/90 bg-white/10 rounded-md px-2 py-1 mx-1 my-1">
-                      {rec}
-                    </div>
-                  )}
-                  maxHeight="112px"
-                  itemHeight={32}
-                  showGradients={true}
-                  enableArrowNavigation={false}
-                  className="pr-1"
-                  emptyState={
-                    <div className="text-xs text-white/60">暂无建议</div>
-                  }
-                />
-              </div>
-
-              {latest.imageUrl && (
-                <div className="mt-4">
-                  <h4 className="text-sm text-white/80 mb-2">图像预览</h4>
-                  <img src={latest.imageUrl} alt="analysis" className="w-full rounded-lg border border-white/20" />
-                </div>
-              )}
+              <h3 className="text-2xl font-bold text-white">专业农作物AI分析报告</h3>
             </div>
+            <p className="text-white/80 text-sm">{displayReport.ai_model}</p>
+            <p className="text-white/60 text-xs mt-1">
+              分析ID: {displayReport.id} | {new Date(displayReport.timestamp).toLocaleString('zh-CN')}
+            </p>
+          </div>
 
-            {/* 右侧：统计与历史 */}
-            <div className="col-span-5 min-w-0">
-              <div className="rounded-xl border border-white/15 bg-white/5 p-3">
-                <h4 className="text-sm text-white/80">统计概览</h4>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                  <InfoItem small label="总样本" value={stats?.total ?? 0} />
-                  <InfoItem small label="平均置信度" value={`${((stats?.avgConf ?? 0)*100).toFixed(1)}%`} />
-                  <InfoItem small label="平均健康分" value={(stats?.avgHealth ?? 0).toFixed(1)} />
-                  <InfoItem small label="病害率" value={`${(stats?.diseaseRate ?? 0).toFixed(1)}%`} />
-                  <InfoItem small label="总植株" value={stats?.plants ?? 0} />
-                  <InfoItem small label="成熟/未熟" value={`${stats?.mature ?? 0}/${stats?.immature ?? 0}`} />
-                </div>
+          {/* 基本信息 */}
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-blue-500/20 rounded flex items-center justify-center">
+                <span className="text-blue-400 text-sm">ℹ️</span>
               </div>
-
-              <div className="mt-3 rounded-xl border border-white/15 bg-white/5 p-3 h-[calc(100%-130px)]">
-                <h4 className="text-sm text-white/80 mb-2">历史记录</h4>
-                <AnimatedList
-                  items={analysisResults.slice(0,20)}
-                  renderItem={(r, i) => (
-                    <div className="flex items-center justify-between text-xs bg-white/8 rounded-md px-2 py-1 mx-1 my-1">
-                      <div className="truncate max-w-[55%]" title={r.timestamp}>
-                        {new Date(r.timestamp).toLocaleString('zh-CN')}
-                      </div>
-                      <div className="flex gap-3 text-white/90">
-                        <span>健康 {r.analysis?.healthScore?.toFixed?.(1) ?? r.analysis?.healthScore ?? '-'}</span>
-                        <span>置信 {((r.confidence ?? 0)*100).toFixed(0)}%</span>
-                        <span className={r.analysis?.diseaseDetected? 'text-red-300':'text-green-300'}>
-                          {r.analysis?.diseaseDetected? '病害':'正常'}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  maxHeight="calc(100% - 24px)"
-                  itemHeight={40}
-                  showGradients={true}
-                  enableArrowNavigation={false}
-                  className="pr-1"
-                  emptyState={
-                    <div className="text-white/60 text-xs">暂无记录</div>
-                  }
-                />
-              </div>
+              <h4 className="text-lg font-semibold text-white">基本信息</h4>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoRow label="植株ID:" value={`TEST-QR-${displayReport.plant_id}`} valueColor="text-green-400" />
+              <InfoRow label="分析时间:" value={new Date(displayReport.timestamp).toLocaleString('zh-CN')} valueColor="text-green-400" />
+              <InfoRow label="分析类型:" value="专业农业AI" valueColor="text-green-400" />
+              <InfoRow label="AI服务:" value={displayReport.ai_model} valueColor="text-green-400" />
             </div>
           </div>
-        )}
+
+          {/* 作物识别 */}
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-green-500/20 rounded flex items-center justify-center">
+                <span className="text-green-400 text-sm">🌱</span>
+              </div>
+              <h4 className="text-lg font-semibold text-white">作物识别</h4>
+            </div>
+            <div className="space-y-3">
+              <InfoRow label="识别结果:" value={displayReport.diseases.length > 0 ? displayReport.diseases.join(', ') : '未知'} valueColor="text-white/80" />
+              <InfoRow label="置信度:" value={`${(displayReport.confidence * 100).toFixed(0)}%`} valueColor="text-white/80" />
+              <InfoRow label="特征描述:" value={displayReport.summary} valueColor="text-white/80" />
+            </div>
+          </div>
+
+          {/* 生长状态 */}
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-yellow-500/20 rounded flex items-center justify-center">
+                <span className="text-yellow-400 text-sm">📊</span>
+              </div>
+              <h4 className="text-lg font-semibold text-white">生长状态</h4>
+            </div>
+            <div className="space-y-3">
+              <InfoRow label="健康状况:" value={displayReport.severity === 'low' ? '良好' : displayReport.severity === 'medium' ? '一般' : '需要关注'} valueColor={displayReport.severity === 'low' ? 'text-green-400' : displayReport.severity === 'medium' ? 'text-yellow-400' : 'text-red-400'} />
+              <InfoRow label="生长阶段:" value="成熟期" valueColor="text-white/80" />
+              <InfoRow label="处理时间:" value={`${displayReport.processing_time.toFixed(2)}秒`} valueColor="text-white/80" />
+            </div>
+          </div>
+
+          {/* 图像对比 */}
+          {(displayReport.original_image || displayReport.mask_image) && (
+            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 bg-purple-500/20 rounded flex items-center justify-center">
+                  <span className="text-purple-400 text-sm">🖼️</span>
+                </div>
+                <h4 className="text-lg font-semibold text-white">图像对比</h4>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {displayReport.original_image && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-white/60">原始图像</p>
+                    <div className="relative rounded-lg overflow-hidden border border-white/20">
+                      <Image
+                        src={displayReport.original_image.startsWith('data:') ? displayReport.original_image : `data:image/png;base64,${displayReport.original_image}`}
+                        alt="原始图像"
+                        className="w-full h-auto"
+                        preview={{
+                          mask: <div className="text-white">点击预览</div>
+                        }}
+                        onError={(e) => {
+                          console.error('原始图像加载失败:', displayReport.original_image?.substring(0, 100));
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {displayReport.mask_image && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-white/60">
+                      病害遮罩图
+                      {displayReport.mask_prompt && (
+                        <span className="ml-2 text-xs">({displayReport.mask_prompt})</span>
+                      )}
+                    </p>
+                    <div className="relative rounded-lg overflow-hidden border border-white/20">
+                      <Image
+                        src={displayReport.mask_image.startsWith('data:') ? displayReport.mask_image : `data:image/png;base64,${displayReport.mask_image}`}
+                        alt="遮罩图"
+                        className="w-full h-auto"
+                        preview={{
+                          mask: <div className="text-white">点击预览</div>
+                        }}
+                        onError={(e) => {
+                          console.error('遮罩图加载失败:', displayReport.mask_image?.substring(0, 100));
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* AI诊断结果 (Markdown) */}
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-red-500/20 rounded flex items-center justify-center">
+                <FileMarkdownOutlined style={{ fontSize: 14, color: '#f87171' }} />
+              </div>
+              <h4 className="text-lg font-semibold text-white">详细诊断结果</h4>
+            </div>
+            <div className="bg-gray-950/50 rounded-lg p-4 border border-white/10">
+              <div className="prose prose-sm prose-invert max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h1: ({node, ...props}) => <h1 className="text-white text-2xl font-bold mb-4" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="text-white text-xl font-bold mb-3 mt-6" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="text-white text-lg font-semibold mb-2 mt-4" {...props} />,
+                    h4: ({node, ...props}) => <h4 className="text-white text-base font-semibold mb-2 mt-3" {...props} />,
+                    p: ({node, ...props}) => <p className="text-white/90 mb-3 leading-relaxed" {...props} />,
+                    ul: ({node, ...props}) => <ul className="text-white/90 mb-3 ml-4 list-disc" {...props} />,
+                    ol: ({node, ...props}) => <ol className="text-white/90 mb-3 ml-4 list-decimal" {...props} />,
+                    li: ({node, ...props}) => <li className="text-white/90 mb-1" {...props} />,
+                    strong: ({node, ...props}) => <strong className="text-white font-bold" {...props} />,
+                    em: ({node, ...props}) => <em className="text-blue-400" {...props} />,
+                    a: ({node, ...props}) => <a className="text-blue-400 hover:text-blue-300 underline" {...props} />,
+                    code: ({node, ...props}) => (
+                      <code
+                        className="bg-gray-800 text-green-400 px-1.5 py-0.5 rounded text-sm"
+                        {...props}
+                      />
+                    ),
+                    pre: ({node, ...props}) => (
+                      <pre
+                        className="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto mb-4"
+                        {...props}
+                      />
+                    ),
+                    blockquote: ({node, ...props}) => (
+                      <blockquote
+                        className="border-l-4 border-blue-500 pl-4 italic text-white/80 my-4"
+                        {...props}
+                      />
+                    ),
+                    table: ({node, ...props}) => (
+                      <div className="overflow-x-auto mb-4">
+                        <table className="min-w-full border border-white/20" {...props} />
+                      </div>
+                    ),
+                    th: ({node, ...props}) => (
+                      <th className="border border-white/20 px-4 py-2 bg-white/10 text-white font-semibold" {...props} />
+                    ),
+                    td: ({node, ...props}) => (
+                      <td className="border border-white/20 px-4 py-2 text-white/90" {...props} />
+                    )
+                  }}
+                >
+                  {displayReport.markdown_report}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+
+          {/* 建议措施 */}
+          {displayReport.recommendations && displayReport.recommendations.length > 0 && (
+            <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 bg-green-500/20 rounded flex items-center justify-center">
+                  <span className="text-green-400 text-sm">💡</span>
+                </div>
+                <h4 className="text-lg font-semibold text-white">建议措施</h4>
+              </div>
+              <ul className="space-y-2">
+                {displayReport.recommendations.map((rec, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-white/90">
+                    <span className="text-green-400 mt-1">•</span>
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function InfoItem({label, value, small}:{label:string; value:any; small?:boolean}){
+function InfoRow({ label, value, valueColor = 'text-white' }: { label: string; value: string | number; valueColor?: string }) {
   return (
-    <div className={`rounded-lg border border-white/15 bg-white/5 ${small? 'px-2 py-1':'px-3 py-2'}`}>
-      <div className={`text-white/60 ${small? 'text-[10px]':'text-xs'}`}>{label}</div>
-      <div className={`${small? 'text-sm':'text-base'} font-semibold`}>{value}</div>
+    <div className="flex items-center justify-between">
+      <span className="text-white/60 text-sm">{label}</span>
+      <span className={`text-sm font-medium ${valueColor}`}>{value}</span>
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { Progress } from "@heroui/progress";
 interface ChallengeCruisePanelProps {
   isConnected: boolean;
   cruiseActive: boolean;
-  onStartCruise: (params: CruiseParams) => void;
+  onStartCruise: (params: CruiseParams) => void | Promise<void>;
   onStopCruise: () => void;
   cruiseProgress?: number;
   currentRound?: number;
@@ -34,14 +34,23 @@ const ChallengeCruisePanel: React.FC<ChallengeCruisePanelProps> = ({
   const [rounds, setRounds] = useState("3");
   const [height, setHeight] = useState("100");
   const [stayDuration, setStayDuration] = useState("3");
+  const [isStarting, setIsStarting] = useState(false);
 
-  const handleStartCruise = () => {
+  const handleStartCruise = async () => {
     const params: CruiseParams = {
       rounds: parseInt(rounds) || 3,
       height: parseInt(height) || 100,
       stayDuration: parseInt(stayDuration) || 3,
     };
-    onStartCruise(params);
+    
+    try {
+      setIsStarting(true);
+      await onStartCruise(params);
+    } catch (error) {
+      console.error('Failed to start cruise:', error);
+    } finally {
+      setIsStarting(false);
+    }
   };
 
   const isValidRounds = parseInt(rounds) >= 1 && parseInt(rounds) <= 10;
@@ -103,10 +112,11 @@ const ChallengeCruisePanel: React.FC<ChallengeCruisePanelProps> = ({
           <Button
             className="w-full bg-blue-600/80 hover:bg-blue-600 text-white"
             onPress={handleStartCruise}
-            isDisabled={!isConnected || cruiseActive || !isFormValid}
-            startContent={<i className="fas fa-play"></i>}
+            isDisabled={!isConnected || cruiseActive || !isFormValid || isStarting}
+            isLoading={isStarting}
+            startContent={!isStarting && <i className="fas fa-play"></i>}
           >
-            开始巡航
+            {isStarting ? '正在起飞...' : '开始巡航'}
           </Button>
           
           <Button

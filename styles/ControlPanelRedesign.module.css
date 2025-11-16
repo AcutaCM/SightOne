@@ -1,0 +1,433 @@
+/**
+ * Control Panel - Redesigned
+ * Workflow execution control and monitoring
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--workflow-panel-bg);
+}
+
+/* Header */
+.header {
+  padding: var(--workflow-spacing-lg);
+  border-bottom: 1px solid var(--workflow-panel-border);
+  background: var(--workflow-panel-bg);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--workflow-text-primary);
+  margin-bottom: var(--workflow-spacing-md);
+}
+
+/* Status Indicators */
+.statusIndicators {
+  display: flex;
+  gap: var(--workflow-spacing-sm);
+  margin-bottom: var(--workflow-spacing-md);
+}
+
+.statusIndicator {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--workflow-spacing-sm);
+  background: var(--workflow-canvas-bg);
+  border-radius: var(--workflow-radius-sm);
+  border: 1px solid var(--workflow-panel-border);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: var(--workflow-spacing-sm);
+  animation: workflow-pulse 2s ease-in-out infinite;
+}
+
+.statusDot.connected {
+  background: var(--workflow-status-success);
+}
+
+.statusDot.disconnected {
+  background: var(--workflow-status-error);
+  animation: none;
+}
+
+.statusLabel {
+  font-size: 12px;
+  color: var(--workflow-text-secondary);
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--workflow-spacing-sm);
+}
+
+.primaryButton {
+  width: 100%;
+  padding: var(--workflow-spacing-md) var(--workflow-spacing-lg);
+  border: none;
+  border-radius: var(--workflow-radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--workflow-spacing-sm);
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+  box-shadow: var(--workflow-shadow-sm);
+}
+
+.runButton {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.runButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--workflow-shadow-glow-success);
+}
+
+.runButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.stopButton {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.stopButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--workflow-shadow-glow-error);
+}
+
+.stopButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.secondaryButtons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--workflow-spacing-sm);
+}
+
+.secondaryButton {
+  padding: var(--workflow-spacing-sm);
+  border: 1px solid var(--workflow-panel-border);
+  border-radius: var(--workflow-radius-sm);
+  background: var(--workflow-panel-bg);
+  color: var(--workflow-text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--workflow-panel-hover);
+  border-color: var(--workflow-node-selected);
+  transform: translateY(-1px);
+}
+
+.secondaryButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.secondaryButton span {
+  font-size: 11px;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Output Tabs */
+.outputSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 1px solid var(--workflow-panel-border);
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--workflow-panel-border);
+  background: var(--workflow-panel-bg);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--workflow-spacing-md);
+  border: none;
+  background: transparent;
+  color: var(--workflow-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.tab:hover {
+  color: var(--workflow-text-primary);
+  background: var(--workflow-panel-hover);
+}
+
+.tab.active {
+  color: var(--workflow-status-running);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--workflow-status-running);
+  animation: workflow-slide-in-left var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.tabContent {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Log List */
+.logList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--workflow-spacing-sm);
+}
+
+.logEntry {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--workflow-spacing-sm);
+  margin-bottom: var(--workflow-spacing-xs);
+  border-radius: var(--workflow-radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  animation: workflow-slide-in-right var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.logEntry:hover {
+  background: var(--workflow-panel-hover);
+}
+
+.logIcon {
+  width: 16px;
+  height: 16px;
+  margin-right: var(--workflow-spacing-sm);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.logContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.logTimestamp {
+  font-size: 11px;
+  color: var(--workflow-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.logMessage {
+  color: var(--workflow-text-primary);
+  word-wrap: break-word;
+}
+
+.logEntry.info .logIcon {
+  color: var(--workflow-status-running);
+}
+
+.logEntry.success .logIcon {
+  color: var(--workflow-status-success);
+}
+
+.logEntry.warning .logIcon {
+  color: var(--workflow-status-warning);
+}
+
+.logEntry.error .logIcon {
+  color: var(--workflow-status-error);
+}
+
+/* Empty State */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--workflow-spacing-3xl);
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--workflow-text-tertiary);
+  margin-bottom: var(--workflow-spacing-md);
+}
+
+.emptyText {
+  font-size: 14px;
+  color: var(--workflow-text-secondary);
+  margin-bottom: var(--workflow-spacing-sm);
+}
+
+.emptyHint {
+  font-size: 12px;
+  color: var(--workflow-text-tertiary);
+}
+
+/* Log Actions */
+.logActions {
+  display: flex;
+  gap: var(--workflow-spacing-sm);
+  padding: var(--workflow-spacing-sm);
+  border-top: 1px solid var(--workflow-panel-border);
+  background: var(--workflow-panel-bg);
+}
+
+.logActionButton {
+  flex: 1;
+  padding: var(--workflow-spacing-sm);
+  border: 1px solid var(--workflow-panel-border);
+  border-radius: var(--workflow-radius-sm);
+  background: var(--workflow-panel-bg);
+  color: var(--workflow-text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.logActionButton:hover {
+  background: var(--workflow-panel-hover);
+  border-color: var(--workflow-node-selected);
+}
+
+.logActionButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Result List */
+.resultList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--workflow-spacing-sm);
+}
+
+.resultCard {
+  padding: var(--workflow-spacing-md);
+  margin-bottom: var(--workflow-spacing-sm);
+  background: var(--workflow-node-bg);
+  border: 1px solid var(--workflow-node-border);
+  border-radius: var(--workflow-radius-md);
+  animation: workflow-scale-in var(--workflow-duration-normal) var(--workflow-easing);
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--workflow-spacing-sm);
+}
+
+.resultNodeName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--workflow-text-primary);
+}
+
+.resultTimestamp {
+  font-size: 11px;
+  color: var(--workflow-text-tertiary);
+}
+
+.resultContent {
+  font-size: 13px;
+  color: var(--workflow-text-secondary);
+  line-height: 1.5;
+}
+
+.resultType {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-top: var(--workflow-spacing-sm);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--workflow-status-running);
+  font-size: 11px;
+  border-radius: var(--workflow-radius-full);
+}
+
+/* Scrollbar */
+.logList,
+.resultList {
+  scrollbar-width: thin;
+  scrollbar-color: var(--workflow-text-tertiary) transparent;
+}
+
+.logList::-webkit-scrollbar,
+.resultList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.logList::-webkit-scrollbar-track,
+.resultList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.logList::-webkit-scrollbar-thumb,
+.resultList::-webkit-scrollbar-thumb {
+  background: var(--workflow-text-tertiary);
+  border-radius: var(--workflow-radius-full);
+}
+
+.logList::-webkit-scrollbar-thumb:hover,
+.resultList::-webkit-scrollbar-thumb:hover {
+  background: var(--workflow-text-secondary);
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--workflow-spacing-lg);
+}
+
+.loadingSpinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--workflow-panel-border);
+  border-top-color: var(--workflow-status-running);
+  border-radius: 50%;
+  animation: workflow-spin 0.6s linear infinite;
+}

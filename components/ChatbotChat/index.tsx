@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, startTransition } from "react";
+import React, { useEffect, useRef, useState, startTransition, useMemo, useCallback, memo } from "react";
 import { Card, Input, Button, Avatar, Tag, Select, Slider, Switch, Drawer, Form, Divider, Row, Col, Dropdown, Alert, Popover, message, Modal, Tabs } from "antd";
 import { SendOutlined, UploadOutlined, ThunderboltOutlined, CodeOutlined, SmileOutlined, GlobalOutlined, SettingOutlined, ShareAltOutlined, LayoutOutlined, RedoOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusOutlined, RobotOutlined, MessageOutlined, FolderOpenOutlined, SkinOutlined, GithubOutlined, BookOutlined, CompassOutlined, HomeOutlined, TeamOutlined, ApiOutlined, ExperimentOutlined, AppstoreOutlined, UserOutlined, ImportOutlined, HistoryOutlined, QuestionCircleOutlined, BulbOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { SidebarClose, SidebarOpen, Plus as LucidePlus, Share2, LayoutGrid, RotateCcw, Upload as LucideUpload, Zap, Code as LucideCode, Smile as LucideSmile, Globe, Settings as LucideSettings, Send as LucideSend } from "lucide-react";
@@ -9,6 +9,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import { useChatContext } from "@/contexts/ChatContext";
+import TelloIntelligentAgentChat from './TelloIntelligentAgentChat';
 
 type Role = "user" | "assistant";
 
@@ -18,6 +20,7 @@ interface Message {
   content: string;
   typing?: boolean;
   thinking?: string;
+  isImage?: boolean; // 标记该消息是否为纯图片
 }
 
 type Assistant = {
@@ -46,15 +49,121 @@ const Bubble = styled.div<{ isUser: boolean }>`
   max-width: 72%;
   padding: 12px 14px;
   border-radius: 16px;
-  background: ${p => (p.isUser ? 'linear-gradient(180deg,#1677ff,#155bd4)' : 'rgba(255,255,255,0.06)')};
-  color: ${p => (p.isUser ? '#fff' : 'rgba(255,255,255,0.95)')};
-  border: ${p => (p.isUser ? 'none' : '1px solid rgba(255,255,255,0.16)')};
-  box-shadow: ${p => (p.isUser ? '0 6px 18px rgba(22,119,255,0.28)' : '0 4px 14px rgba(0,0,0,0.18)')};
+  background: ${p => (p.isUser ? 'hsl(var(--heroui-primary))' : 'hsl(var(--heroui-content2))')};
+  color: ${p => (p.isUser ? 'hsl(var(--heroui-primary-foreground))' : 'hsl(var(--heroui-foreground))')};
+  border: ${p => (p.isUser ? 'none' : '1px solid hsl(var(--heroui-divider))')};
+  box-shadow: ${p => (p.isUser ? '0 6px 18px hsl(var(--heroui-primary) / 0.3)' : '0 4px 14px hsl(var(--heroui-content1) / 0.8)')};
   line-height: 1.6;
   word-break: break-word;
   overflow-wrap: anywhere;
   position: relative;
 `;
+
+// ===== 性能优化: Memoized Message Components =====
+interface MessageBubbleProps {
+  message: Message;
+  isUser: boolean;
+  thinkingChain: boolean;
+  markdownComponents: any;
+  assistantAvatar?: React.ReactNode;
+  userAvatar?: string;
+}
+
+const MessageBubble = memo<MessageBubbleProps>(({ message: m, isUser, thinkingChain, markdownComponents, assistantAvatar, userAvatar }) => {
+  return (
+    <MessageRow isUser={isUser}>
+      {!isUser ? (
+        <RowContent>
+          {assistantAvatar}
+          <Bubble isUser={false}>
+            {thinkingChain && !!m.thinking && (
+              <div
+                style={{
+                  marginBottom: 8,
+                  padding: '8px 10px',
+                  borderRadius: 10,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  color: '#c9ccd3',
+                  fontSize: 12,
+                  whiteSpace: 'pre-wrap'
+                }}
+              >
+                <div style={{ opacity: 0.7, marginBottom: 4 }}>思考过程</div>
+                <div>{m.thinking}</div>
+              </div>
+            )}
+
+            {m.isImage ? (
+              <img 
+                src={m.content}
+                alt="segmentation result"
+                style={{ 
+                  maxWidth: '100%', 
+                  height: 'auto', 
+                  borderRadius: '8px', 
+                  display: 'block'
+                }} 
+              />
+            ) : m.content ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={markdownComponents}
+              >
+                {m.content}
+              </ReactMarkdown>
+            ) : m.typing ? (
+              <div style={{ whiteSpace: 'pre-wrap' }}>
+                <span className="typing"><span>.</span><span>.</span><span>.</span></span>
+              </div>
+            ) : null}
+          </Bubble>
+        </RowContent>
+      ) : (
+        <RowContent isUser>
+          <Bubble isUser>
+            {(() => {
+              const raw = String(m.content || '');
+              const match = raw.match(/!\[upload\]\(([^)]+)\)/i);
+              const imgUrl = match?.[1] || '';
+              const rest = match ? raw.replace(match[0], '').trimStart() : raw;
+              return (
+                <>
+                  {imgUrl && imgUrl.startsWith('data:') && (
+                    <img
+                      src={imgUrl}
+                      alt="upload"
+                      style={{ maxWidth: '100%', borderRadius: 10, border: '1px solid rgba(255,255,255,0.16)', display: 'block', margin: '6px 0 10px' }}
+                      onError={() => {}}
+                    />
+                  )}
+                  {rest && (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeHighlight]}
+                      components={markdownComponents}
+                    >
+                      {rest}
+                    </ReactMarkdown>
+                  )}
+                </>
+              );
+            })()}
+          </Bubble>
+          {userAvatar && <Avatar size={32} src={userAvatar} />}
+        </RowContent>
+      )}
+    </MessageRow>
+  );
+}, (prevProps, nextProps) => {
+  // 自定义比较函数:只有消息内容变化时才重新渲染
+  return prevProps.message.id === nextProps.message.id &&
+         prevProps.message.content === nextProps.message.content &&
+         prevProps.message.typing === nextProps.message.typing &&
+         prevProps.message.thinking === nextProps.message.thinking &&
+         prevProps.thinkingChain === nextProps.thinkingChain;
+});
 
 // 输入区（仿 Lobe UI ChatInputArea）
 const InputHeader = styled.div`
@@ -69,9 +178,9 @@ const ChatHeader = styled.div`
   justify-content: space-between;
   gap: 8px;
   padding: 12px 16px;
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 1px solid hsl(var(--heroui-divider));
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  background: hsl(var(--heroui-content2));
   margin-bottom: 12px;
 `;
 const HeaderTitle = styled.div`
@@ -84,7 +193,7 @@ const TitleMain = styled.div`
   font-size: 16px;
 `;
 const TitleDesc = styled.div`
-  color: #9ca3af;
+  color: hsl(var(--heroui-foreground) / 0.6);
   font-size: 12px;
 `;
 
@@ -94,7 +203,7 @@ const PageHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 10px 4px 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid hsl(var(--heroui-divider));
   margin-bottom: 8px;
 `;
 
@@ -110,16 +219,20 @@ const BadgeLine = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #9ca3af;
+  color: hsl(var(--heroui-foreground) / 0.5);
   font-size: 12px;
 `;
 
 const InputContainer = styled.div`
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid hsl(var(--heroui-divider));
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  background: hsl(var(--heroui-content2));
   padding: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 6px 16px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(var(--heroui-content1));
+  
+  .dark & {
+    box-shadow: 0 6px 16px hsl(0 0% 0% / 0.24), inset 0 1px 0 hsl(var(--heroui-content1));
+  }
 `;
 
 const InputFooter = styled.div`
@@ -128,8 +241,8 @@ const InputFooter = styled.div`
   justify-content: space-between;
   gap: 8px;
   padding-top: 6px;
-  border-top: 1px dashed rgba(255,255,255,0.14);
-  color: #9ca3af;
+  border-top: 1px dashed hsl(var(--heroui-divider));
+  color: hsl(var(--heroui-foreground) / 0.5);
   font-size: 12px;
 `;
 
@@ -145,8 +258,12 @@ const InputBarWrap = styled.div`
   bottom: 0;
   z-index: 10;
   padding-top: 8px;
-  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.35));
+  background: linear-gradient(180deg, transparent, hsl(var(--heroui-content1) / 0.35));
   backdrop-filter: blur(6px);
+  
+  .dark & {
+    background: linear-gradient(180deg, transparent, hsl(var(--heroui-content1) / 0.5));
+  }
 `;
 
 const RecommendWrap = styled.div<{ visible: boolean }>`
@@ -164,30 +281,34 @@ const LeftMenuBar = styled.div`
   min-width: 56px;
   max-width: 56px;
   height: 100%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
-  border-right: 1px solid rgba(255,255,255,0.08);
+  background: hsl(var(--heroui-content1));
+  border-right: 1px solid hsl(var(--heroui-divider));
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(var(--heroui-content1));
   padding: 8px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  
+  .dark & {
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.25), inset 0 1px 0 hsl(var(--heroui-content1));
+  }
 `;
 
 const LeftMenuItem = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(255,255,255,0.95);
+  background: hsl(var(--heroui-content2));
+  border: 1px solid hsl(var(--heroui-divider));
+  color: hsl(var(--heroui-foreground));
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all .2s ease;
-  &:hover { background: rgba(255,255,255,0.10); transform: translateY(-1px); }
+  &:hover { background: hsl(var(--heroui-content3)); transform: translateY(-1px); }
   &:active { transform: translateY(0); }
 `;
 
@@ -212,11 +333,15 @@ const ApiConfigWrap = styled.div`
 `;
 
 const ApiConfigCard = styled.div`
-  border: 1px solid rgba(255,255,255,0.14);
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid hsl(var(--heroui-divider));
+  background: hsl(var(--heroui-content2));
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(var(--heroui-content1));
+  
+  .dark & {
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.25), inset 0 1px 0 hsl(var(--heroui-content1));
+  }
 `;
 
 /* 布局与侧边栏 */
@@ -232,19 +357,27 @@ const Sidebar = styled.aside<{ collapsed: boolean }>`
   min-width: ${p => (p.collapsed ? '0px' : '280px')};
   max-width: ${p => (p.collapsed ? '0px' : '280px')};
   height: 100%;
-  border-right: 1px solid rgba(255,255,255,0.08);
+  border-right: 1px solid hsl(var(--heroui-divider));
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+  background: hsl(var(--heroui-content1));
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(var(--heroui-content1));
   padding: ${p => (p.collapsed ? '0' : '8px')};
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
   transition: width .24s ease, min-width .24s ease, max-width .24s ease, padding .24s ease;
+  
+  .dark & {
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.25), inset 0 1px 0 hsl(var(--heroui-content1));
+  }
 `;
 
 const SidebarContent = styled.div<{ collapsed: boolean }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   opacity: ${p => (p.collapsed ? 0 : 1)};
   transform: translateX(${p => (p.collapsed ? '-8px' : '0')});
   transition: opacity .18s ease, transform .24s ease;
@@ -255,11 +388,13 @@ const SidebarHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+  z-index: 10;
 `;
 
 const SidebarCard = styled.div`
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.05);
+  border: 1px solid hsl(var(--heroui-divider));
+  background: hsl(var(--heroui-content2));
   border-radius: 12px;
   padding: 10px;
   display: flex;
@@ -267,11 +402,11 @@ const SidebarCard = styled.div`
   gap: 10px;
   cursor: pointer;
   transition: all .2s ease;
-  &:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+  &:hover { background: hsl(var(--heroui-content3)); transform: translateY(-1px); }
   &:active { transform: translateY(0); }
 `;
 
-/* 精简样式：不再显示“你/助手”标签，依靠左右对齐与头像区分 */
+/* 精简样式：不再显示"你/助手"标签，依靠左右对齐与头像区分 */
 
 /**
  * 纯聊天界面（气泡样式）：
@@ -281,9 +416,17 @@ const SidebarCard = styled.div`
  * 后续可接入 /api/chat-proxy 实现模型可切换与流式响应
  */
 const PureChat: React.FC = () => {
+  // Get assistant list and current assistant from ChatContext
+  const { assistantList, setAssistantList, currentAssistant, setCurrentAssistant } = useChatContext();
+  
   const [chatSessions, setChatSessions] = useState<Record<string, Message[]>>({});
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  
+  // 优化输入框性能:使用useCallback避免每次渲染创建新函数
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  }, []);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const autoScrollRef = useRef<boolean>(true);
@@ -315,7 +458,7 @@ const PureChat: React.FC = () => {
     setShowGoBottom(!near);
   };
   
-  // 采用 TT-chat 的“底部哨兵可见=吸底”策略（仅挂载一次）
+  // 采用 TT-chat 的"底部哨兵可见=吸底"策略（仅挂载一次）
   useEffect(() => {
     const el = messagesRef.current;
     const sentinel = bottomRef.current;
@@ -430,7 +573,7 @@ const PureChat: React.FC = () => {
     setAssistantSettingsMap((prev: Record<string, any>) => ({ ...prev, [k]: { ...(prev[k] || {}), ...partial } }));
   };
 
-  // 根据厂商动态拉取模型列表并填充“模型”下拉框
+  // 根据厂商动态拉取模型列表并填充"模型"下拉框
   useEffect(() => {
     let canceled = false;
     (async () => {
@@ -472,10 +615,65 @@ const PureChat: React.FC = () => {
   // 应用详情页
   const [showAppDetail, setShowAppDetail] = useState<boolean>(false);
   const [selectedApp, setSelectedApp] = useState<Assistant | null>(null);
-  const defaultAssistant: Assistant = { title: "Just Chat", desc: "Default List", emoji: "🦄" };
-  const [assistantList, setAssistantList] = useState<Assistant[]>([defaultAssistant]);
-  const [currentAssistant, setCurrentAssistant] = useState<Assistant | null>(defaultAssistant);
+  // 优化提示词功能
+  const [optimizingPrompt, setOptimizingPrompt] = useState<boolean>(false);
+  // Note: assistantList and currentAssistant are now managed by ChatContext
   const messages = chatSessions[currentAssistant?.title || ''] || [];
+
+  // ===== 性能优化: Memoized ReactMarkdown components配置 =====
+  const markdownComponents = useMemo(() => ({
+    img: ({ node, ...props }: any) => (
+      <img 
+        {...props} 
+        style={{ 
+          maxWidth: '100%', 
+          height: 'auto', 
+          borderRadius: '8px', 
+          margin: '10px 0',
+          display: 'block'
+        }} 
+        alt={props.alt || 'image'}
+      />
+    ),
+    p: ({ node, ...props }: any) => <p {...props} style={{ marginBottom: '1em', wordBreak: 'break-word' }} />,
+    a: ({ node, ...props }: any) => <a {...props} style={{ color: '#90caf9', textDecoration: 'underline' }} />,
+    ul: ({ node, ...props }: any) => <ul {...props} style={{ paddingLeft: '20px', listStyleType: 'disc' }} />,
+    ol: ({ node, ...props }: any) => <ol {...props} style={{ paddingLeft: '20px' }} />,
+    li: ({ node, ...props }: any) => <li {...props} style={{ marginBottom: '0.5em' }} />,
+    code(props: any) { 
+      const { inline, className, children } = props;
+      const match = /language-(\w+)/.exec(className || '');
+      return !inline ? (
+        <div style={{ position: 'relative', background: 'rgba(0,0,0,0.25)', borderRadius: '8px', margin: '1em 0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px', background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <span style={{ color: '#9ca3af', fontSize: '12px' }}>{match ? match[1] : ''}</span>
+            <Button size="small" type="text" style={{ color: '#9ca3af' }} onClick={() => {
+              navigator.clipboard.writeText(String(children).replace(/\n$/, ''));
+              message.success('Copied!');
+            }}>Copy</Button>
+          </div>
+          <pre style={{ margin: 0, padding: '12px', overflowX: 'auto', fontFamily: 'monospace', lineHeight: 1.5 }}>
+            <code className={className} {...props}>
+              {children}
+            </code>
+          </pre>
+        </div>
+      ) : (
+        <code className={className} {...props} style={{
+          background: 'rgba(255,255,255,0.15)',
+          padding: '2px 6px',
+          borderRadius: '4px',
+          fontFamily: 'monospace',
+        }}>
+          {children}
+        </code>
+      );
+    },
+    table: ({ node, ...props }: any) => <table {...props} style={{ width: '100%', borderCollapse: 'collapse', margin: '1em 0' }} />,
+    thead: ({ node, ...props }: any) => <thead {...props} style={{ background: 'rgba(255,255,255,0.1)' }} />,
+    th: ({ node, ...props }: any) => <th {...props} style={{ border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', textAlign: 'left' }} />,
+    td: ({ node, ...props }: any) => <td {...props} style={{ border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px' }} />,
+  }), []); // 空依赖数组,只创建一次
 
   const updateCurrentMessages = (updater: (prevMessages: Message[]) => Message[]) => {
     if (!currentAssistant) return;
@@ -488,12 +686,12 @@ const PureChat: React.FC = () => {
     });
   };
 
-  // 当某助手会话为空时，插入一条“开场消息”
+  // 当某助手会话为空时，插入一条"开场消息"
   const ensureOpeningForAssistant = (title: string) => {
     const customOpening = (assistantSettingsMap?.[title]?.openingMessage || "").trim();
     const openingMap: Record<string, string> = {
       "Tello智能代理": "你好，我是 Tello 智能代理。请用自然语言下达指令，例如：起飞、向前 50 厘米、顺时针旋转 90 度、开始视频。",
-      "海龟汤主持人": "欢迎来到海龟汤游戏！我是你的主持人，将引导你通过提问逐步揭示谜题背后的真相。你可以用“是”“否”“无关”来提问，我们开始吧！",
+      "海龟汤主持人": "欢迎来到海龟汤游戏！我是你的主持人，将引导你通过提问逐步揭示谜题背后的真相。你可以用 是/否/无关 来提问, 我们开始吧！",
       "Just Chat": "Hi! 我是通用聊天助手，可以帮助你写作、翻译、总结与代码问题。今天想聊点什么？"
     };
     const opening = customOpening || openingMap[title] || "你好，我是你的助手。请告诉我你需要什么帮助！";
@@ -595,9 +793,9 @@ const PureChat: React.FC = () => {
     const L = (t: string) => <code style={{ background: 'rgba(255,255,255,0.12)', padding: '2px 6px', borderRadius: 6 }}>{t}</code>;
     const Common = (
       <ul style={{ margin: '6px 0 0 18px' }}>
-        <li>在右侧“Configure Provider”中保存 {K('API Key')} 与 {K('API Base')}</li>
-        <li>点击“连通性检查”快速验证网络与鉴权</li>
-        <li>点击“获取模型列表”填充下方表格，然后在“聊天设置”里选择模型</li>
+        <li>在右侧"Configure Provider"中保存 {K('API Key')} 与 {K('API Base')}</li>
+        <li>点击"连通性检查"快速验证网络与鉴权</li>
+        <li>点击"获取模型列表"填充下方表格，然后在"聊天设置"里选择模型</li>
       </ul>
     );
 
@@ -685,7 +883,7 @@ const PureChat: React.FC = () => {
       'dify': Guide('Dify 接入', (
         <ol style={{ margin: 0, paddingLeft: 18 }}>
           <li>准备 Dify 的 {K('API Key')} 与 {K('App ID')}</li>
-          <li>在“配置提供商”中填写 {K('API Base')}（如 {L('https://api.dify.ai/v1')}）并在右侧额外输入 {K('App ID')}</li>
+          <li>在"配置提供商"中填写 {K('API Base')}（如 {L('https://api.dify.ai/v1')}）并在右侧额外输入 {K('App ID')}</li>
           <li>聊天时选择 {K('provider=dify')}，请求将直连你的 Dify 应用/工作流</li>
         </ol>
       ), Common),
@@ -696,8 +894,8 @@ const PureChat: React.FC = () => {
           <ol style={{ margin: 0, paddingLeft: 18 }}>
             <li>安装并启动服务：{L('ollama serve')}</li>
             <li>拉取模型：{L('ollama pull llama3:8b')} 或 {L('ollama pull qwen2:7b')}</li>
-            <li>在“配置提供商”中将 {K('API Base')} 设为 {L('http://localhost:11434/v1')}</li>
-            <li>点击“获取模型列表”，系统将直接从 {L('/api/tags')} 实时读取本地模型</li>
+            <li>在"配置提供商"中将 {K('API Base')} 设为 {L('http://localhost:11434/v1')}</li>
+            <li>点击"获取模型列表"，系统将直接从 {L('/api/tags')} 实时读取本地模型</li>
           </ol>
           <div style={{ ...Small, marginTop: 8 }}>若浏览器遇到 CORS 限制，可配置反向代理或让我为你添加 /api/ollama/models 服务器端代理。</div>
           <div style={{ marginTop: 8 }}>{Common}</div>
@@ -751,11 +949,11 @@ const PureChat: React.FC = () => {
     dify: "https://api.dify.ai/v1",
   };
 
-  const getStored = (p: string, k: "apiKey" | "apiBase") => {
+  const getStored = (p: string, k: "apiKey" | "apiBase" | "endpoint" | "deployment" | "temperature" | "maxTokens" | "ws") => {
     if (typeof window === "undefined") return "";
     return localStorage.getItem(`chat.${k}.${p}`) || "";
   };
-  const setStored = (p: string, k: "apiKey" | "apiBase", v: string) => {
+  const setStored = (p: string, k: "apiKey" | "apiBase" | "endpoint" | "deployment" | "temperature" | "maxTokens" | "ws", v: string) => {
     if (typeof window === "undefined") return;
     localStorage.setItem(`chat.${k}.${p}`, v);
   };
@@ -894,7 +1092,7 @@ const PureChat: React.FC = () => {
     })();
   }, []);
 
-  // 选中厂商时拉取“支持模型”表格数据（Ollama 走本地 /api/tags 实时获取）
+  // 选中厂商时拉取"支持模型"表格数据（Ollama 走本地 /api/tags 实时获取）
   useEffect(() => {
     const fetchModels = async () => {
       if (!selectedProvider) return;
@@ -1009,6 +1207,73 @@ const PureChat: React.FC = () => {
     return t || "新的对话";
   };
 
+  // 优化提示词功能
+  const handleOptimizePrompt = async () => {
+    const raw = input.trim();
+    if (!raw) {
+      message.warning('请先输入提示词');
+      return;
+    }
+
+    // 检查API配置
+    if (!hasApiConfig(aiProvider)) {
+      message.error('请先配置AI服务提供商');
+      setShowApiConfig(true);
+      return;
+    }
+
+    setOptimizingPrompt(true);
+    try {
+      const resp = await fetch("/api/chat-proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: aiProvider,
+          model,
+          messages: [
+            {
+              role: "system",
+              content: "你是一个专业的提问优化助手。用户会给你一个问题或需求,你需要帮助他们重新表述为更清晰、更具体的提问,从而获得更好的回答。\n\n重要:\n- 优化后的内容必须是用户向AI提问的格式,不要变成AI回复用户的口吻\n- 不要出现\"如果你能提供\"、\"我可以帮你\"、\"请告诉我\"等AI助手的说话方式\n- 保持用户提问的角色定位\n\n优化原则:\n1. 保持用户的核心需求和意图\n2. 补充必要的背景信息和上下文\n3. 明确具体的要求(格式、长度、风格等)\n4. 将模糊的表述改为精确的描述\n5. 如果是技术问题,添加相关的技术栈或环境信息\n6. 直接返回优化后的问题,不要解释,不要用AI的口吻\n\n示例:\n原始: 帮我写代码\n优化: 请用Python编写一个函数,实现读取CSV文件并统计每列的缺失值数量,返回一个字典\n\n原始: 这个报错怎么办\n优化: 我在使用React开发时遇到\"Cannot read property 'map' of undefined\"错误,数据来自API请求,请帮我分析可能的原因和解决方案\n\n原始: 草莓叶子有问题\n优化: 这是我草莓植株的叶片照片,叶子上出现了褐色斑点。请帮我判断:\n- 是什么病害?\n- 病害的严重程度如何?\n- 建议采取什么防治措施?"
+            },
+            {
+              role: "user",
+              content: raw
+            }
+          ],
+          temperature: 0.7,
+          maxTokens: 1000,
+          stream: false,
+          apiKey: getStored(aiProvider, "apiKey"),
+          baseUrl: getStored(aiProvider, "apiBase"),
+        }),
+      });
+
+      if (!resp.ok) {
+        const txt = await resp.text();
+        message.error(`优化失败: ${txt || resp.status}`);
+        return;
+      }
+
+      const data = await resp.json().catch(() => null);
+      console.log('优化响应数据:', data);
+      const optimized = (data?.content ?? data?.choices?.[0]?.message?.content ?? "").toString().trim();
+      console.log('提取的优化结果:', optimized);
+      
+      if (optimized) {
+        setInput(optimized);
+        console.log('已设置输入框内容为:', optimized);
+        message.success('提示词已优化');
+      } else {
+        console.error('未能提取优化内容,完整响应:', data);
+        message.error('优化失败: 未返回内容');
+      }
+    } catch (error: any) {
+      message.error(`优化异常: ${error?.message || String(error)}`);
+    } finally {
+      setOptimizingPrompt(false);
+    }
+  };
+
   const handleSend = async () => {
     const raw = input.trim();
     const sPrep = (assistantSettingsMap?.[currentAssistant?.title || ""]?.preprocessTemplate || "").toString();
@@ -1041,28 +1306,66 @@ const PureChat: React.FC = () => {
     const placeholder: Message = { id: placeholderId, role: "assistant", content: "", typing: true };
     updateCurrentMessages(prev => [...prev, userMsg, placeholder]);
 
-    // 若用户附带了图片，则按“视觉解析→UniPixel-3B分割→合并回复”的顺序串行执行
+    // 若用户附带了图片，则按"视觉解析→UniPixel-3B分割→合并回复"的顺序串行执行
     const lastImage = assistantSettingsMap.__lastImage__ as string | undefined;
     if (lastImage) {
       try {
         // 1) 视觉模型解析（串行第一步）
+        let visionProvider = aiProvider;
+        let apiKey = getStored(aiProvider, 'apiKey');
+        let baseUrl = getStored(aiProvider, 'apiBase');
+        
+        // 如果当前 provider 没有配置 API key，尝试使用 OpenAI 作为后备
+        if (!apiKey && aiProvider !== 'openai') {
+          const openaiKey = getStored('openai', 'apiKey');
+          if (openaiKey) {
+            visionProvider = 'openai';
+            apiKey = openaiKey;
+            baseUrl = getStored('openai', 'apiBase');
+            message.info('当前提供商未配置，使用 OpenAI 进行图像分析');
+          }
+        }
+        
+        // 如果仍然没有 API key，显示错误并跳过图像分析
+        if (!apiKey && visionProvider !== 'ollama') {
+          message.error(`${visionProvider} 未配置 API Key，无法进行图像分析。请在设置中配置。`);
+          updateCurrentMessages(prev =>
+            prev.map(m =>
+              m.id === placeholderId ? { ...m, typing: false, content: '图像分析失败：未配置 API Key。请在设置中配置您的 AI 服务提供商。' } : m,
+            ),
+          );
+          setAssistantSettingsMap(prev => {
+            const { __lastImage__, ...rest } = prev;
+            return rest;
+          });
+          setInput("");
+          return;
+        }
+        
         const analyzeResp = await fetch('/api/vision/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             imageBase64: lastImage,
             prompt: text,
-            provider: aiProvider,
+            provider: visionProvider,
             model,
+            apiKey,
+            baseUrl,
           }),
         });
         let vlmText = '';
         if (analyzeResp.ok) {
           const j = await analyzeResp.json().catch(() => null);
           vlmText = (j?.content || j?.warning || '') as string;
+          if (!vlmText) {
+            vlmText = '图像分析完成，但未返回内容';
+          }
         } else {
-          const t = await analyzeResp.text().catch(() => '');
-          vlmText = `视觉解析失败：${t || analyzeResp.status}`;
+          const errorData = await analyzeResp.json().catch(() => null);
+          const errorMsg = errorData?.message || errorData?.error || analyzeResp.statusText;
+          vlmText = `视觉解析失败：${errorMsg}`;
+          message.error(`图像分析失败：${errorMsg}`);
         }
 
         // 2) UniPixel-3B 分割（串行第二步）
@@ -1095,22 +1398,37 @@ const PureChat: React.FC = () => {
           vlmText += `\n\n分割失败：${t || segResp.status}`;
         }
 
-        // 3) 合并回复（附分割图/描述），结束占位消息
-        const mdParts: string[] = [];
-        if (vlmText) mdParts.push(vlmText);
-        if (segImg) {
-          const url = segImg.startsWith('data:') ? segImg : `data:image/png;base64,${segImg}`;
-          mdParts.push(`分割结果（${text || '目标'}）：\n\n![segmentation](${url})`);
-        }
-        if (uniDesc) {
-          mdParts.push(`UniPixel 描述：\n\n${uniDesc}`);
-        }
-
+        // 3) 分成两个独立气泡：第一个气泡显示AI诊断，第二个气泡显示分割图片（直接渲染，不使用Markdown）
+        // 先发送AI诊断气泡
         updateCurrentMessages(prev =>
           prev.map(m =>
-            m.id === placeholderId ? { ...m, typing: false, content: mdParts.join('\\n\\n') } : m,
+            m.id === placeholderId ? { ...m, typing: false, content: vlmText } : m,
           ),
         );
+
+        // 再发送分割图片气泡（如果有分割结果）
+        if (segImg) {
+          const url = segImg.startsWith('data:') ? segImg : `data:image/png;base64,${segImg}`;
+          const imageMsg: Message = {
+            id: `${Date.now()}-seg`,
+            role: "assistant",
+            content: url, // 直接存储图片URL，不使用Markdown格式
+            typing: false,
+            isImage: true, // 标记为图片消息
+          };
+          updateCurrentMessages(prev => [...prev, imageMsg]);
+          
+          // 如果有UniPixel描述，追加一个文本气泡
+          if (uniDesc) {
+            const descMsg: Message = {
+              id: `${Date.now()}-desc`,
+              role: "assistant",
+              content: `UniPixel 描述：\n\n${uniDesc}`,
+              typing: false,
+            };
+            updateCurrentMessages(prev => [...prev, descMsg]);
+          }
+        }
 
         // 清理已用图像
         setAssistantSettingsMap(prev => {
@@ -1133,159 +1451,10 @@ const PureChat: React.FC = () => {
       return; // 完成图像管线后结束，不再进入后续默认/Tello流程
     }
 
-    // 若为 Tello 智能代理，则将命令发给后端 3004 解析
+    // 若为 Tello 智能代理，跳过默认处理（由 TelloIntelligentAgentChat 组件独立处理）
     if (currentAssistant?.title === 'Tello智能代理') {
-      try {
-        const ip =
-          (typeof window !== "undefined" ? (localStorage.getItem("tello.ip") || "") : "") ||
-          "192.168.10.1";
-        const wsBase =
-          (typeof window !== "undefined" ? (localStorage.getItem("tello.ws") || "") : "") ||
-          "ws://127.0.0.1:3004";
-        // 可选子协议：localStorage('tello.wsProtocol') 指定
-        const wsProtocol = (typeof window !== "undefined" ? localStorage.getItem("tello.wsProtocol") : "") || "";
-        const ws = wsProtocol ? new WebSocket(wsBase, wsProtocol) : new WebSocket(wsBase);
-
-        let accContent = "";
-
-        // 仅一次性发送命令，避免桥接导致重复派发
-        const telloOnce = { sent: false };
-
-        ws.onopen = () => {
-          // 1) 先发送 AI 配置，启用后端所需的模型/密钥/端点
-          const aiSettings: any = {
-            provider: aiProvider,                         // 'azure' | 'openai' | 'ollama' | 'dify'
-            model,                                        // 模型/部署名
-            api_key: getStored(aiProvider, "apiKey") || "",     // 前端已保存的密钥
-            base_url: getStored(aiProvider, "apiBase") || "",   // 通用端点
-            endpoint: getStored(aiProvider, "apiBase") || "",   // 兼容 azure 字段
-            deployment: model                              // 兼容 azure 的 deployment
-          };
-          if (aiProvider === 'dify') {
-            try {
-              const appId = typeof window !== 'undefined' ? (localStorage.getItem('chat.appId.dify') || '') : '';
-              if (appId) aiSettings.app_id = appId;
-            } catch {}
-          }
-          const settingsPayload = { type: "update_ai_settings", data: aiSettings };
-          try { ws.send(JSON.stringify(settingsPayload)); } catch {}
-
-          // 2) 略微延迟后再发送自然语言命令
-          setTimeout(() => {
-            const cmdPayload = { type: "natural_language_command", data: { command: text } };
-            try { ws.send(JSON.stringify(cmdPayload)); } catch {}
-          }, 80);
-        };
-
-        ws.onmessage = (evt) => {
-          let chunk = "";
-          try {
-            const data = typeof evt.data === "string" ? evt.data : "";
-            // 一旦收到数据，立即复位发送态，避免 Send 按钮卡住
-            try { setSending(false); } catch {}
-            // 兼容 JSON 或纯文本
-            const obj = (() => { try { return JSON.parse(data); } catch { return null; } })();
-            let doneFlag = false;
-
-            // 取消自动重试：收到错误直接提示并关闭 WS，避免重复派发
-            const errText = (obj?.error || "") as string;
-            const isUnknownType =
-              obj && obj.success === false && /未知消息类型|unknown message type/i.test(errText);
-
-            if (isUnknownType) {
-              updateCurrentMessages(prev =>
-                prev.map(m =>
-                  m.id === placeholderId
-                    ? { ...m, typing: false, content: `Tello 错误：${errText || "不支持的消息类型"}` }
-                    : m,
-                ),
-              );
-              try { ws.close(); } catch {}
-              return;
-            }
-
-            // 正常处理响应类型（兼容 parse_request_response / parse_response / delta / message）
-            if (obj && (obj.type === "parse_request_response" || obj.type === "parse_response" || obj.type === "delta" || obj.type === "message")) {
-              // 接收到 *_response 即视为一次响应完成，关闭 WS，结束打字态
-              if (typeof obj.type === "string" && obj.type.endsWith("_response")) {
-                try { ws.close(); } catch {}
-              }
-              if (obj.success === false) {
-                const msg = obj.error || "Tello 解析失败";
-                updateCurrentMessages(prev =>
-                  prev.map(m =>
-                    m.id === placeholderId ? { ...m, typing: false, content: `Tello 错误：${msg}` } : m,
-                  ),
-                );
-                try { ws.close(); } catch {}
-                return;
-              }
-              // 仅展示描述并做简洁装饰
-              const desc =
-                (obj?.ai_analysis?.commands && Array.isArray(obj.ai_analysis.commands) && obj.ai_analysis.commands[0]?.description) ||
-                (Array.isArray(obj?.execution_results) && obj.execution_results[0]?.message) ||
-                (typeof obj?.message === "string" ? obj.message : "");
-
-              chunk = desc
-                ? `🛫 Tello\n“${desc}”`
-                : "🛫 Tello\n（无可用描述）";
-
-              if (obj.done === true) doneFlag = true;
-            } else {
-              chunk = obj
-                ? (obj?.delta || obj?.message || obj?.content || obj?.result || (obj?.command ? "```json\n" + JSON.stringify(obj.command, null, 2) + "\n```" : JSON.stringify(obj)))
-                : data;
-            }
-          } catch {
-            chunk = String(evt.data || "");
-          }
-          if (!chunk) return;
-          accContent += chunk;
-          updateCurrentMessages(prev =>
-            prev.map(m =>
-              m.id === placeholderId ? { ...m, typing: true, content: accContent } : m,
-            ),
-          );
-        };
-
-        ws.onerror = (e: any) => {
-          updateCurrentMessages(prev =>
-            prev.map(m =>
-              m.id === placeholderId ? { ...m, typing: false, content: `Tello WebSocket 错误：${e?.message || "请检查 3004 服务是否运行"}` } : m,
-            ),
-          );
-          setSending(false);
-        };
-
-        // 可选心跳：localStorage('tello.wsHeartbeat') === 'true' 时启用
-        let heartbeatTimer: any = null;
-        if ((typeof window !== "undefined" ? localStorage.getItem("tello.wsHeartbeat") : "") === "true") {
-          heartbeatTimer = setInterval(() => {
-            try { ws.send(JSON.stringify({ type: "ping" })); } catch {}
-          }, 20000);
-        }
-
-        ws.onclose = (evt) => {
-          if (heartbeatTimer) { try { clearInterval(heartbeatTimer); } catch {} }
-          const code = (evt && (evt as any).code) || "";
-          const reason = (evt && (evt as any).reason) || "";
-          updateCurrentMessages(prev =>
-            prev.map(m =>
-              m.id === placeholderId
-                ? { ...m, typing: false, content: reason ? `连接关闭（${code}）：${reason}` : `连接关闭（${code}）` }
-                : m
-            ),
-          );
-          setSending(false);
-        };
-      } catch (e:any) {
-        updateCurrentMessages(prev =>
-          prev.map(m =>
-            m.id === placeholderId ? { ...m, typing: false, content: `Tello 连接异常：${e?.message || String(e)}` } : m,
-          ),
-        );
-        setSending(false);
-      }
+      console.log('⚠️ Tello智能代理由独立组件处理，跳过默认 handleSend 逻辑');
+      setSending(false);
       return;
     }
 
@@ -1448,7 +1617,7 @@ const PureChat: React.FC = () => {
 
   return (
     <Card
-      variant="borderless"
+      bordered={false}
       style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}
       styles={{ body: { padding: 16, display: "flex", flex: 1, flexDirection: "column", gap: 12, minHeight: 0 } }}
     >
@@ -1652,48 +1821,7 @@ const PureChat: React.FC = () => {
           >
             选择厂商
           </Button>
-          {currentAssistant?.title === 'Tello智能代理' && (
-            <>
-              <Button size="small" onClick={() => setShowTelloIpModal(true)}>
-                无人机
-              </Button>
-              <Button
-                size="small"
-                style={{ marginLeft: 8 }}
-                onClick={() => {
-                  try {
-                    const wsBase =
-                      (typeof window !== "undefined" ? (localStorage.getItem("tello.ws") || "") : "") ||
-                      "ws://127.0.0.1:3004";
-                    const wsProtocol = (typeof window !== "undefined" ? localStorage.getItem("tello.wsProtocol") : "") || "";
-                    const ws = wsProtocol ? new WebSocket(wsBase, wsProtocol) : new WebSocket(wsBase);
-                    const running = (typeof window !== "undefined" ? localStorage.getItem("tello.videoRunning") : "") === "true";
-                    const wantStart = !running;
-                    ws.onopen = () => {
-                      const payload = { type: wantStart ? "start_video" : "stop_video" };
-                      try { ws.send(JSON.stringify(payload)); } catch {}
-                    };
-                    ws.onmessage = (evt) => {
-                      let ok = false;
-                      try {
-                        const raw = typeof evt.data === "string" ? evt.data : "";
-                        const obj = JSON.parse(raw);
-                        ok = !!obj?.success;
-                      } catch {}
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("tello.videoRunning", ok && wantStart ? "true" : "false");
-                      }
-                      try { ws.close(); } catch {}
-                    };
-                    ws.onerror = () => { try { ws.close(); } catch {} };
-                    ws.onclose = () => {};
-                  } catch {}
-                }}
-              >
-                视频
-              </Button>
-            </>
-          )}
+          {/* Tello智能代理的控制按钮已集成到 TelloIntelligentAgentChat 组件中 */}
           <Button size="small" icon={<LucideSettings size={14} />} onClick={() => setShowAssistantSettings(true)}>
             设置
           </Button>
@@ -1738,11 +1866,31 @@ const PureChat: React.FC = () => {
         </div>
       </Modal>
 
-      <div
-        ref={messagesRef}
-        onScroll={onScroll}
-        style={{ flex: 1, minHeight: 0, overflow: "auto", paddingBottom: 160, scrollBehavior: streaming ? "auto" : "smooth", overscrollBehavior: "contain" }}
-      >
+      {/* Tello智能代理使用独立组件 */}
+      {(() => {
+        const isTelloAgent = currentAssistant?.title === 'Tello智能代理';
+        console.log('🔍 当前助理:', currentAssistant?.title, '| 是否为Tello智能代理:', isTelloAgent);
+        return isTelloAgent;
+      })() ? (
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <TelloIntelligentAgentChat
+            aiProvider={aiProvider as any}
+            aiModel={model}
+            aiApiKey={getStored(aiProvider, 'apiKey')}
+            aiBaseUrl={getStored(aiProvider, 'apiBase')}
+            aiEndpoint={getStored(aiProvider, 'endpoint')}
+            aiDeployment={getStored(aiProvider, 'deployment')}
+            temperature={parseFloat(getStored(aiProvider, 'temperature')) || 0.1}
+            maxTokens={parseInt(getStored(aiProvider, 'maxTokens')) || 1000}
+            droneBackendUrl={getStored('tello', 'ws') || 'ws://127.0.0.1:3002'}
+          />
+        </div>
+      ) : (
+        <div
+          ref={messagesRef}
+          onScroll={onScroll}
+          style={{ flex: 1, minHeight: 0, overflow: "auto", paddingBottom: 160, scrollBehavior: streaming ? "auto" : "smooth", overscrollBehavior: "contain" }}
+        >
         <RecommendWrap visible={messages.length === 0 && !showApiConfig}>
         {/* 欢迎区 */}
         <div style={{ textAlign: "center", padding: "24px 0 20px" }}>
@@ -1821,7 +1969,7 @@ const PureChat: React.FC = () => {
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 10, marginBottom: 10 }}>
           {[
             "是否支持语音合成和语音识别?",
-            "LobeChat 如何部署和使用?",
+            "TTChat 如何部署和使用?",
             "是否有自己的市场来获取 GPTs?",
             "是否支持本地语言模型?",
             "我在使用时遇到问题应该怎么办?",
@@ -1911,153 +2059,27 @@ const PureChat: React.FC = () => {
           )}
         </div>
         </RecommendWrap>
-        {messages.map((m) => (
-          <MessageRow key={m.id} isUser={m.role === "user"}>
-            {m.role === "assistant" ? (
-              <RowContent>
-                {(() => {
-                  const k = currentAssistant?.title || "";
-                  const s = assistantSettingsMap[k] || {};
-                  const bg = s.avatarBg || "#6b7280";
-                  if (s.avatarUrl) return <Avatar size={32} src={s.avatarUrl} style={{ backgroundColor: bg }} />;
-                  const em = s.avatarEmoji || currentAssistant?.emoji || '🤖';
-                  return <Avatar size={32} style={{ backgroundColor: bg }}>{em}</Avatar>;
-                })()}
-                <Bubble isUser={false}>
-                  {thinkingChain && !!m.thinking && (
-                    <div
-                      style={{
-                        marginBottom: 8,
-                        padding: '8px 10px',
-                        borderRadius: 10,
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.10)',
-                        color: '#c9ccd3',
-                        fontSize: 12,
-                        whiteSpace: 'pre-wrap'
-                      }}
-                    >
-                      <div style={{ opacity: 0.7, marginBottom: 4 }}>思考过程</div>
-                      <div>{m.thinking}</div>
-                    </div>
-                  )}
-
-                  {m.content ? (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeHighlight]}
-                      components={{
-                        p: ({ node, ...props }) => <p {...props} style={{ marginBottom: '1em', wordBreak: 'break-word' }} />,
-                        a: ({ node, ...props }) => <a {...props} style={{ color: '#90caf9', textDecoration: 'underline' }} />,
-                        ul: ({ node, ...props }) => <ul {...props} style={{ paddingLeft: '20px', listStyleType: 'disc' }} />,
-                        ol: ({ node, ...props }) => <ol {...props} style={{ paddingLeft: '20px' }} />,
-                        li: ({ node, ...props }) => <li {...props} style={{ marginBottom: '0.5em' }} />,
-                        code(props: any) { const { inline, className, children } = props;
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline ? (
-                            <div style={{ position: 'relative', background: 'rgba(0,0,0,0.25)', borderRadius: '8px', margin: '1em 0' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px', background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                                <span style={{ color: '#9ca3af', fontSize: '12px' }}>{match ? match[1] : ''}</span>
-                                <Button size="small" type="text" style={{ color: '#9ca3af' }} onClick={() => {
-                                  navigator.clipboard.writeText(String(children).replace(/\n$/, ''));
-                                  message.success('Copied!');
-                                }}>Copy</Button>
-                              </div>
-                              <pre style={{ margin: 0, padding: '12px', overflowX: 'auto', fontFamily: 'monospace', lineHeight: 1.5 }}>
-                                <code className={className} {...props}>
-                                  {children}
-                                </code>
-                              </pre>
-                            </div>
-                          ) : (
-                            <code className={className} {...props} style={{
-                              background: 'rgba(255,255,255,0.15)',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontFamily: 'monospace',
-                            }}>
-                              {children}
-                            </code>
-                          );
-                        },
-                        table: ({ node, ...props }) => <table {...props} style={{ width: '100%', borderCollapse: 'collapse', margin: '1em 0' }} />,
-                        thead: ({ node, ...props }) => <thead {...props} style={{ background: 'rgba(255,255,255,0.1)' }} />,
-                        th: ({ node, ...props }) => <th {...props} style={{ border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', textAlign: 'left' }} />,
-                        td: ({ node, ...props }) => <td {...props} style={{ border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px' }} />,
-                      }}
-                    >
-                      {m.content}
-                    </ReactMarkdown>
-                  ) : m.typing ? (
-                    <div style={{ whiteSpace: 'pre-wrap' }}>
-                      <span className="typing"><span>.</span><span>.</span><span>.</span></span>
-                    </div>
-                  ) : null}
-                </Bubble>
-              </RowContent>
-            ) : (
-              <RowContent isUser>
-                <Bubble isUser>
-                  {(() => {
-                    const raw = String(m.content || '');
-                    // 专门解析 "![upload](...)"，提取第一个 dataURL
-                    const match = raw.match(/!\[upload\]\(([^)]+)\)/i);
-                    const imgUrl = match?.[1] || '';
-                    const rest = match ? raw.replace(match[0], '').trimStart() : raw;
-                    return (
-                      <>
-                        {imgUrl && imgUrl.startsWith('data:') && (
-                          <img
-                            src={imgUrl}
-                            alt="upload"
-                            style={{ maxWidth: '100%', borderRadius: 10, border: '1px solid rgba(255,255,255,0.16)', display: 'block', margin: '6px 0 10px' }}
-                            onError={() => { /* 降级：若仍失败则不阻塞文本渲染 */ }}
-                          />
-                        )}
-                        {rest && (
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeHighlight]}
-                            components={{
-                              p: ({ node, ...props }) => <p {...props} style={{ marginBottom: '1em', wordBreak: 'break-word' }} />,
-                              a: ({ node, ...props }) => <a {...props} style={{ color: '#d1e9ff', textDecoration: 'underline' }} />,
-                              code(props: any) {
-                                const { inline, className, children } = props;
-                                const match2 = /language-(\w+)/.exec(className || '');
-                                return !inline ? (
-                                  <div style={{ position: 'relative', background: 'rgba(0,0,0,0.25)', borderRadius: 8, margin: '1em 0' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px', background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                                      <span style={{ color: '#9ca3af', fontSize: 12 }}>{match2 ? match2[1] : ''}</span>
-                                    </div>
-                                    <pre style={{ margin: 0, padding: 12, overflowX: 'auto', fontFamily: 'monospace', lineHeight: 1.5 }}>
-                                      <code className={className} {...props}>
-                                        {children}
-                                      </code>
-                                    </pre>
-                                  </div>
-                                ) : (
-                                  <code className={className} {...props} style={{ background: 'rgba(255,255,255,0.15)', padding: '2px 6px', borderRadius: 4, fontFamily: 'monospace' }}>
-                                    {children}
-                                  </code>
-                                );
-                              },
-                            }}
-                          >
-                            {rest}
-                          </ReactMarkdown>
-                        )}
-                        {!rest && !imgUrl && (
-                          <div style={{ whiteSpace: 'pre-wrap' }}>{raw}</div>
-                        )}
-                      </>
-                    );
-                  })()}
-                </Bubble>
-                <Avatar size={32} style={{ backgroundColor: "#1677ff" }}>🙂</Avatar>
-              </RowContent>
-            )}
-          </MessageRow>
-        ))}
+        {messages.map((m) => {
+          // 预计算助手头像,避免在MessageBubble中重复计算
+          const k = currentAssistant?.title || "";
+          const s = assistantSettingsMap[k] || {};
+          const bg = s.avatarBg || "#6b7280";
+          const assistantAvatar = s.avatarUrl 
+            ? <Avatar size={32} src={s.avatarUrl} style={{ backgroundColor: bg }} />
+            : <Avatar size={32} style={{ backgroundColor: bg }}>{s.avatarEmoji || currentAssistant?.emoji || '🤖'}</Avatar>;
+          
+          return (
+            <MessageBubble
+              key={m.id}
+              message={m}
+              isUser={m.role === "user"}
+              thinkingChain={thinkingChain}
+              markdownComponents={markdownComponents}
+              assistantAvatar={assistantAvatar}
+              userAvatar={userAvatar}
+            />
+          );
+        })}
         {/* 未配置 API 的助手消息卡片（深色，像助手回复） */}
         {showApiConfig && (
           <MessageRow isUser={false}>
@@ -2129,8 +2151,11 @@ const PureChat: React.FC = () => {
         )}
         <div ref={bottomRef} />
       </div>
+      )}
 
       {/* Lobe 风格输入区：顶部状态 + 输入 + 工具栏 */}
+      {/* Tello智能代理有自己的输入框，所以不显示默认输入框 */}
+      {currentAssistant?.title !== 'Tello智能代理' && (
       <InputBarWrap>
         <InputHeader>
           <Globe size={14} />
@@ -2182,7 +2207,7 @@ const PureChat: React.FC = () => {
             autoSize={{ minRows: 1, maxRows: 6 }}
             placeholder="输入消息…"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             style={{ color: "rgba(255,255,255,0.95)", background: "transparent", caretColor: "#fff" }}
             onPressEnter={(e) => {
               if (!e.shiftKey && enterToSend) {
@@ -2193,13 +2218,22 @@ const PureChat: React.FC = () => {
           />
 
           <InputFooter>
-            {/* 左：图标组 + 使用量胶囊（左对齐在一起） */}
+            {/* 左:图标组 + 使用量胶囊(左对齐在一起) */}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <IconGroup>
                 <Button size="small" shape="circle" type="default" icon={<LucideUpload size={14} />} />
                 <Button size="small" shape="circle" type="default" icon={<Zap size={14} />} />
                 <Button size="small" shape="circle" type="default" icon={<LucideCode size={14} />} />
                 <Button size="small" shape="circle" type="default" icon={<LucideSmile size={14} />} />
+                <Button 
+                  size="small" 
+                  shape="circle" 
+                  type="default" 
+                  icon={<BulbOutlined style={{ fontSize: 14 }} />}
+                  loading={optimizingPrompt}
+                  onClick={handleOptimizePrompt}
+                  title="优化提示词"
+                />
               </IconGroup>
               <Tag style={{ borderRadius: 999, padding: "2px 10px", background: "rgba(255,255,255,0.10)", border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.95)" }}>
                 😃 Used 10
@@ -2292,6 +2326,7 @@ const PureChat: React.FC = () => {
           </InputFooter>
         </InputContainer>
       </InputBarWrap>
+      )}
 
         </div>{/* End Main */}
 
@@ -2463,7 +2498,7 @@ const PureChat: React.FC = () => {
               <Row gutter={[12, 12]}>
                 {[
                   { title: "Tello智能代理", desc: "基于自然语言的 Tello 无人机智能控制", emoji: "🚁", prompt: "你是 DJI Tello / Tello EDU 智能体助手。用户以自然语言描述意图时，你需将其转译为无人机的原子指令（如：takeoff, land, hover, forward/back/left/right/up/down + 距离(cm), cw/ccw + 角度, flip + 方向, streamon/streamoff 等），并在必要时提醒安全与环境约束。严禁在未确认场景安全前执行危险动作。对不明确的命令先澄清需求，再给出分步行动建议。" },
-                  { title: "海龟汤主持人", desc: "一个海龟汤主持人，需要自己提供汤面、汤底与关键点。", emoji: "🐢", prompt: "你是资深海龟汤主持人，负责引导玩家通过提问来推理原故事。严格仅回答“是/否/无关”，必要时给微小提示，但不提前泄露答案。" },
+                  { title: "海龟汤主持人", desc: "一个海龟汤主持人，需要自己提供汤面、汤底与关键点。", emoji: "🐢", prompt: "你是资深海龟汤主持人，负责引导玩家通过提问来推理原故事。严格仅回答\"是/否/无关\"，必要时给微小提示，但不提前泄露答案。" },
                   { title: "美食评论员", desc: "美食评价专家", emoji: "🍿", prompt: "你是资深美食评论员，请从口味层次、食材搭配、烹饪手法、文化背景与改进建议五方面进行精炼评价，言简意赅可操作。" },
                   { title: "学术写作助手", desc: "专业的学术研究论文写作和正式文档编写专员", emoji: "📘", prompt: "你是学术写作助手，使用正式学术语体，结构化输出：摘要、引言、方法、结果、讨论、参考文献（简要）。避免虚构引用。" },
                   { title: "Minecraft 资深开发者", desc: "擅长高级 Java 开发及 Minecraft 开发", emoji: "🔻", prompt: "你是 Minecraft Mod 开发专家，针对 Forge/Fabric 与 Java 高级特性给出分步指导与示例代码，强调版本兼容与构建流程。" },
@@ -2560,7 +2595,7 @@ const PureChat: React.FC = () => {
                 >
                   <div style={{ fontWeight: 700, marginBottom: 8 }}>厂商</div>
                   {(() => {
-                    // 基于当前静态模型数据解析厂商名（desc 前缀 “供应商 · …”）
+                    // 基于当前静态模型数据解析厂商名（desc 前缀 "供应商 · …"）
                     const allModels = [
                       { title: "GPT-4o-mini", desc: "OpenAI · 经济高效的多模态模型", emoji: "🟦" },
                       { title: "Claude 3.5 Sonnet", desc: "Anthropic · 强大的文本与推理", emoji: "🟨" },
@@ -2787,10 +2822,10 @@ const PureChat: React.FC = () => {
                         "Tello智能代理": [
                           { role: "assistant", content: "你好，我是 Tello 智能代理。请用自然语言下达指令，例如：起飞、向前 50 厘米、顺时针旋转 90 度、开始视频。", avatar: "🚁" },
                           { role: "user", content: "起飞", avatar: "🙂" },
-                          { role: "assistant", content: "🛫 Tello\n“开始无人机起飞”", avatar: "🚁" }
+                          { role: "assistant", content: "🛫 Tello\n\"开始无人机起飞\"", avatar: "🚁" }
                         ],
                         "海龟汤主持人": [
-                          { role: "assistant", content: "欢迎来到海龟汤游戏！我是你的主持人，将引导你通过提问逐步揭示题背后的真相。你可以用“是”、“否”或“无关”来回答，帮助你逐步推理。准备好挑战你的推理能力了吗？让我们开始吧！", avatar: "🐢" },
+                          { role: "assistant", content: "欢迎来到海龟汤游戏！我是你的主持人，将引导你通过提问逐步揭示题背后的真相。你可以用\"是\"、\"否\"或\"无关\"来回答，帮助你逐步推理。准备好挑战你的推理能力了吗？让我们开始吧！", avatar: "🐢" },
                           { role: "user", content: "汤面是：我在黑暗中醒来，发现自己被绑在一张椅子上，四周没有出口。", avatar: "🫣" },
                           { role: "assistant", content: "我们来玩海龟汤吧：汤面是：我在黑暗中醒来，发现自己被绑在一张椅子上，四周没有出口。", avatar: "🐢" },
                           { role: "user", content: "我被绑在椅子上与外界有没有联系有关吗？", avatar: "🫣" },
@@ -2872,7 +2907,7 @@ const PureChat: React.FC = () => {
                           setCurrentAssistant(selectedApp);
                           onNewChat();
                           ensureOpeningForAssistant(selectedApp.title);
-                          // 若为“Tello智能代理”，打开 IP 设置对话框
+                          // 若为"Tello智能代理"，打开 IP 设置对话框
                           if (selectedApp.title === 'Tello智能代理') {
                             setTimeout(() => setShowTelloIpModal(true), 0);
                           }
@@ -3208,7 +3243,7 @@ const PureChat: React.FC = () => {
                                   setProviderModels(data);
                                   message.success('已读取本地 Ollama 模型');
                                 } else {
-                                  message.warning('未检测到本地模型，请先运行 “ollama serve” 并执行 “ollama pull xxx”');
+                                  message.warning('未检测到本地模型，请先运行 "ollama serve" 并执行 "ollama pull xxx"');
                                 }
                               } else {
                                 const res = await fetch(`/api/market/models?provider=${encodeURIComponent(providerConfigKey)}`).then(r=>r.json()).catch(()=>[]);
@@ -3847,7 +3882,7 @@ const PureChat: React.FC = () => {
           </Form.Item>
         </Form>
 
-        {/* 仅在“Tello智能代理”时显示的无人机 IP 设置 */}
+        {/* 仅在"Tello智能代理"时显示的无人机 IP 设置 */}
         {currentAssistant?.title === 'Tello智能代理' && (
           <div style={{ marginTop: 12 }}>
             <Divider />

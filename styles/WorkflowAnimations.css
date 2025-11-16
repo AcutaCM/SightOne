@@ -1,0 +1,407 @@
+/**
+ * Workflow Animations - Hardware Accelerated
+ * 
+ * 性能优化 (Requirements: 9.2):
+ * - 使用transform和opacity进行动画
+ * - 添加will-change属性
+ * - 启用硬件加速
+ * - 避免使用昂贵的CSS属性（如width, height, top, left）
+ */
+
+/* ========================================
+   硬件加速基础类
+   ======================================== */
+
+.hw-accelerated {
+  /* 启用硬件加速 - Requirements: 9.2 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.will-change-transform {
+  /* 提示浏览器该元素将发生transform变化 - Requirements: 9.2 */
+  will-change: transform;
+}
+
+.will-change-opacity {
+  /* 提示浏览器该元素将发生opacity变化 - Requirements: 9.2 */
+  will-change: opacity;
+}
+
+.will-change-transform-opacity {
+  /* 提示浏览器该元素将发生transform和opacity变化 - Requirements: 9.2 */
+  will-change: transform, opacity;
+}
+
+/* ========================================
+   节点动画
+   ======================================== */
+
+.node-hover-animation {
+  /* 节点悬停动画 - 使用transform而非top/left - Requirements: 9.2 */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.node-hover-animation:hover {
+  /* 使用transform实现抬升效果 - Requirements: 9.2 */
+  transform: translateY(-2px) translateZ(0);
+}
+
+.node-selected-animation {
+  /* 节点选中动画 - Requirements: 9.2 */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-color, box-shadow;
+}
+
+.node-expand-animation {
+  /* 节点展开/折叠动画 - 使用transform scale - Requirements: 9.2 */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  transform-origin: top center;
+}
+
+/* ========================================
+   参数项动画
+   ======================================== */
+
+.parameter-fade-in {
+  /* 参数淡入动画 - 使用opacity和transform - Requirements: 9.2 */
+  animation: parameterFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes parameterFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+.parameter-editing-glow {
+  /* 参数编辑光晕动画 - Requirements: 9.2 */
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow, border-color;
+}
+
+.parameter-error-shake {
+  /* 参数错误抖动动画 - 使用transform - Requirements: 9.2 */
+  animation: errorShake 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0) translateZ(0);
+  }
+  20%, 60% {
+    transform: translateX(-8px) translateZ(0);
+  }
+  40%, 80% {
+    transform: translateX(8px) translateZ(0);
+  }
+}
+
+.parameter-save-success {
+  /* 参数保存成功动画 - Requirements: 9.2 */
+  animation: saveSuccess 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-color;
+}
+
+@keyframes saveSuccess {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    transform: scale(1.02) translateZ(0);
+  }
+}
+
+/* ========================================
+   按钮动画
+   ======================================== */
+
+.button-hover-animation {
+  /* 按钮悬停动画 - 使用transform scale - Requirements: 9.2 */
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, background-color;
+}
+
+.button-hover-animation:hover {
+  transform: scale(1.05) translateZ(0);
+}
+
+.button-tap-animation:active {
+  /* 按钮点击动画 - Requirements: 9.2 */
+  transform: scale(0.95) translateZ(0);
+}
+
+.button-icon-rotate {
+  /* 按钮图标旋转动画 - Requirements: 9.2 */
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* ========================================
+   徽章动画
+   ======================================== */
+
+.badge-appear {
+  /* 徽章出现动画 - 使用transform scale - Requirements: 9.2 */
+  animation: badgeAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes badgeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+.badge-disappear {
+  /* 徽章消失动画 - Requirements: 9.2 */
+  animation: badgeDisappear 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes badgeDisappear {
+  from {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0) translateZ(0);
+  }
+}
+
+/* ========================================
+   状态指示器动画
+   ======================================== */
+
+.status-pulse {
+  /* 状态脉冲动画 - Requirements: 9.2 */
+  animation: statusPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1) translateZ(0);
+  }
+}
+
+.status-glow-pulse {
+  /* 状态光晕脉冲动画 - Requirements: 9.2 */
+  animation: statusGlowPulse 2s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes statusGlowPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.8) translateZ(0);
+  }
+}
+
+.status-spin {
+  /* 状态旋转动画（加载中） - Requirements: 9.2 */
+  animation: statusSpin 1s linear infinite;
+  will-change: transform;
+}
+
+@keyframes statusSpin {
+  from {
+    transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+/* ========================================
+   进度条动画
+   ======================================== */
+
+.progress-bar-animation {
+  /* 进度条动画 - 使用transform scaleX - Requirements: 9.2 */
+  animation: progressBar 2s ease-in-out infinite;
+  will-change: transform;
+  transform-origin: left center;
+}
+
+@keyframes progressBar {
+  0%, 100% {
+    transform: scaleX(0) translateZ(0);
+  }
+  50% {
+    transform: scaleX(1) translateZ(0);
+  }
+}
+
+/* ========================================
+   滚动条动画
+   ======================================== */
+
+.custom-scrollbar {
+  /* 自定义滚动条 - Requirements: 2.4 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, #999) var(--scrollbar-track, transparent);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, transparent);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #999);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+  will-change: background-color;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #666);
+}
+
+/* ========================================
+   调整大小动画
+   ======================================== */
+
+.resize-handle-animation {
+  /* 调整大小手柄动画 - Requirements: 9.2 */
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.resize-handle-animation:hover {
+  opacity: 1;
+  transform: scale(1.2) translateZ(0);
+}
+
+.resize-indicator {
+  /* 调整大小指示器动画 - Requirements: 9.2 */
+  animation: resizeIndicatorFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes resizeIndicatorFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateZ(0);
+  }
+}
+
+/* ========================================
+   工具提示动画
+   ======================================== */
+
+.tooltip-fade-in {
+  /* 工具提示淡入动画 - Requirements: 9.2 */
+  animation: tooltipFadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* ========================================
+   性能优化工具类
+   ======================================== */
+
+.gpu-accelerated {
+  /* 强制GPU加速 - Requirements: 9.2 */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+.disable-animations {
+  /* 禁用所有动画（用于性能测试或用户偏好） */
+  animation: none !important;
+  transition: none !important;
+}
+
+.reduce-motion {
+  /* 减少动画（用于用户偏好） */
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ========================================
+   响应用户偏好设置
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* 尊重用户的减少动画偏好 */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   性能监控类（开发用）
+   ======================================== */
+
+.perf-monitor {
+  /* 性能监控边框（开发时可见） */
+  outline: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.perf-monitor-transform {
+  /* 监控transform性能 */
+  outline: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.perf-monitor-opacity {
+  /* 监控opacity性能 */
+  outline: 1px solid rgba(0, 0, 255, 0.3);
+}

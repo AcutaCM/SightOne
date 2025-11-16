@@ -1,0 +1,124 @@
+/**
+ * IntegratedControlPanel Styles
+ * 
+ * Styles for the fully integrated control panel
+ */
+
+.panel {
+  position: relative;
+  height: 100%;
+  background-color: var(--wf-panel-bg);
+  border-left: 1px solid var(--wf-panel-border);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--wf-duration-normal) var(--wf-easing-default);
+  overflow: hidden;
+}
+
+.panel[data-theme='light'] {
+  background-color: #ffffff;
+  border-left-color: #e2e8f0;
+}
+
+.panel[data-theme='dark'] {
+  background-color: #111827;
+  border-left-color: #1f2937;
+}
+
+/* Collapsed state */
+.panel.collapsed {
+  width: 48px !important;
+}
+
+.panel.collapsed .content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Collapse Button */
+.collapseButton {
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-sm) 0 0 var(--wf-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.collapseButton:hover {
+  background-color: var(--wf-panel-hover);
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.collapseButton:active {
+  transform: translateY(-50%) translateX(-1px);
+}
+
+.collapseIcon {
+  color: var(--wf-panel-text-secondary);
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.collapseButton:hover .collapseIcon {
+  color: var(--wf-panel-text);
+}
+
+/* Panel Content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--wf-duration-normal) var(--wf-easing-default);
+  padding: var(--wf-spacing-lg);
+  gap: var(--wf-spacing-lg);
+}
+
+/* Logs Container */
+.logsContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    box-shadow: var(--wf-shadow-lg);
+  }
+  
+  .panel.collapsed {
+    transform: translateX(100%);
+  }
+  
+  .content {
+    padding: var(--wf-spacing-md);
+    gap: var(--wf-spacing-md);
+  }
+}
+
+/* Animation for smooth transitions */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .collapseButton,
+  .collapseIcon,
+  .content {
+    transition: none;
+  }
+}

@@ -1,0 +1,246 @@
+/**
+ * ExportButton Styles
+ * 
+ * Styles for the workflow export button component.
+ */
+
+.exportButton {
+  position: relative;
+  display: inline-block;
+}
+
+/* Button Styles */
+.button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Button Variants */
+.toolbarButton {
+  min-width: auto;
+}
+
+.standaloneButton {
+  min-width: 120px;
+  padding: 10px 16px;
+}
+
+/* Button Text */
+.buttonText {
+  flex: 1;
+}
+
+/* Chevron Icon */
+.chevron {
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Spinner Animation */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Export Menu */
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  padding: 8px;
+  z-index: 1000;
+  animation: menuSlideIn 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes menuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Section */
+.menuSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuLabel {
+  padding: 8px 12px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Menu Item */
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  width: 100%;
+}
+
+.menuItem:hover {
+  transform: translateX(2px);
+}
+
+.menuItem:active {
+  transform: translateX(0);
+}
+
+.menuItem:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+.menuItem svg {
+  flex-shrink: 0;
+}
+
+.menuItem span {
+  flex: 1;
+}
+
+/* Menu Divider */
+.menuDivider {
+  height: 1px;
+  margin: 8px 0;
+}
+
+/* Error Toast */
+.errorToast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  z-index: 10000;
+  animation: toastSlideIn 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 400px;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.errorToast svg {
+  flex-shrink: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .menu {
+    right: auto;
+    left: 0;
+    min-width: 200px;
+  }
+
+  .standaloneButton {
+    min-width: 100px;
+    padding: 8px 12px;
+  }
+
+  .errorToast {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
+
+/* Dark Theme Adjustments */
+[data-theme="dark"] .button {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .menu {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .chevron,
+  .menuItem,
+  .menu,
+  .errorToast {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .button {
+    border-width: 2px;
+  }
+
+  .menuItem:focus-visible {
+    outline-width: 3px;
+  }
+}

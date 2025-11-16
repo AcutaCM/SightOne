@@ -1,0 +1,19 @@
+{
+  "models": {
+    "strawberry_default": {
+      "id": "strawberry_default",
+      "name": "草莓成熟度检测",
+      "type": "strawberry",
+      "path": "c:/Users/Zarce/PycharmProjects/opencvpython/electron-drone-analyzer2/drone-analyzer-nextjs/python\\models\\best.pt",
+      "classes": [
+        "unripe",
+        "semi_ripe",
+        "ripe",
+        "overripe"
+      ],
+      "loaded_at": "2025-10-10T22:45:44.020354",
+      "is_default": true
+    }
+  },
+  "active_model": "strawberry_default"
+}

@@ -1,0 +1,156 @@
+/**
+ * OutputTabs Styles
+ * 
+ * Styles for the output tabs component with smooth animations
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Tab List */
+.tabList {
+  border-bottom: 1px solid var(--wf-panel-border);
+  padding: 0;
+  gap: var(--wf-spacing-md);
+}
+
+.container[data-theme='light'] .tabList {
+  border-bottom-color: #e2e8f0;
+}
+
+.container[data-theme='dark'] .tabList {
+  border-bottom-color: #1f2937;
+}
+
+/* Tab */
+.tab {
+  padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+  color: var(--wf-panel-text-secondary);
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+  cursor: pointer;
+  border-radius: var(--wf-radius-sm) var(--wf-radius-sm) 0 0;
+}
+
+.tab:hover {
+  color: var(--wf-panel-text);
+  background-color: var(--wf-panel-hover);
+}
+
+.tab[data-selected='true'] {
+  color: var(--wf-panel-text);
+}
+
+/* Tab Content */
+.tabContent {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+}
+
+/* Tab Title */
+.tabTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+}
+
+/* Tab Icon */
+.tabIcon {
+  flex-shrink: 0;
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--wf-radius-full);
+  background-color: var(--wf-status-idle);
+  color: white;
+  font-size: 11px;
+  font-weight: var(--wf-font-semibold);
+  line-height: 1;
+}
+
+.tab[data-selected='true'] .badge {
+  background-color: #3b82f6;
+}
+
+/* Cursor (underline) */
+.cursor {
+  background-color: #3b82f6;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Panel */
+.panel {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Tab Panel */
+.tabPanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tabList {
+    gap: var(--wf-spacing-sm);
+  }
+  
+  .tab {
+    padding: var(--wf-spacing-xs) var(--wf-spacing-sm);
+    font-size: var(--wf-text-xs);
+  }
+  
+  .badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 10px;
+  }
+}
+
+/* Animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .tabPanel {
+    transition: none;
+    animation: none;
+  }
+}

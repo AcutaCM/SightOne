@@ -1,0 +1,349 @@
+/**
+ * Admin Review Page CSS Module
+ * 使用CSS变量实现主题切换
+ */
+
+/* ========== 页面容器 ========== */
+.pageContainer {
+  min-height: 100vh;
+  background: var(--admin-page-bg, #f0f2f5);
+  padding: 24px;
+}
+
+.contentWrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ========== 头部区域 ========== */
+.headerSection {
+  padding: 24px;
+  background: var(--admin-header-bg);
+  border-radius: 8px 8px 0 0;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconWrapper {
+  padding: 8px;
+  background: var(--admin-icon-bg, #e6f7ff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconWrapper svg {
+  font-size: 24px;
+  color: var(--admin-icon-color, #1890ff);
+}
+
+.titleContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleText {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  margin: 0;
+  line-height: 1.2;
+}
+
+.titleDesc {
+  font-size: 14px;
+  color: var(--admin-text-secondary, rgba(0, 0, 0, 0.65));
+  margin: 0;
+  line-height: 1.4;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.searchSection {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* ========== 表格区域 ========== */
+.tableSection {
+  padding: 24px;
+  background: var(--admin-card-bg, #ffffff);
+  border-radius: 0 0 8px 8px;
+}
+
+.selectionBar {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--admin-selection-bg);
+  border-radius: 8px;
+  border: 2px solid var(--admin-border-color-emphasis, #91d5ff);
+}
+
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* ========== 助理信息 ========== */
+.assistantInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assistantContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.assistantTitle {
+  font-weight: 600;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.assistantDesc {
+  font-size: 12px;
+  color: var(--admin-text-secondary, rgba(0, 0, 0, 0.65));
+  max-width: 200px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+/* ========== 模态框 ========== */
+.modalContent {
+  padding: 16px 0;
+}
+
+.detailSection {
+  margin-bottom: 24px;
+}
+
+.detailSection:last-child {
+  margin-bottom: 0;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detailHeaderContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.detailTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.detailMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.detailMetaItem {
+  font-size: 14px;
+  color: var(--admin-text-secondary, rgba(0, 0, 0, 0.65));
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detailValue {
+  background: var(--admin-hover-bg, rgba(0, 0, 0, 0.04));
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  line-height: 1.6;
+}
+
+.promptBox {
+  background: var(--admin-hover-bg, rgba(0, 0, 0, 0.04));
+  padding: 16px;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  line-height: 1.6;
+}
+
+/* ========== 表单 ========== */
+.formField {
+  margin-bottom: 16px;
+}
+
+.formField:last-child {
+  margin-bottom: 0;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.formFieldFlex {
+  flex: 1;
+  min-width: 0;
+}
+
+.formFieldFixed {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.required {
+  color: var(--ant-error-color, #ff4d4f);
+  margin-left: 4px;
+}
+
+.errorText {
+  color: var(--ant-error-color, #ff4d4f);
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.switchWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switchLabel {
+  color: var(--admin-text-primary, rgba(0, 0, 0, 0.88));
+  font-size: 14px;
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: 16px;
+  }
+  
+  .headerSection {
+    padding: 16px;
+  }
+  
+  .tableSection {
+    padding: 16px;
+  }
+  
+  .headerTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .searchSection {
+    flex-direction: column;
+  }
+  
+  .titleText {
+    font-size: 20px;
+  }
+  
+  .formRow {
+    flex-direction: column;
+  }
+  
+  .formFieldFixed {
+    width: 100%;
+  }
+  
+  .detailHeader {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 12px;
+  }
+  
+  .headerSection {
+    padding: 12px;
+  }
+  
+  .tableSection {
+    padding: 12px;
+  }
+  
+  .titleText {
+    font-size: 18px;
+  }
+  
+  .titleDesc {
+    font-size: 13px;
+  }
+}
+
+/* ========== 打印样式 ========== */
+@media print {
+  .pageContainer {
+    background: white;
+    padding: 0;
+  }
+  
+  .headerSection {
+    background: white;
+    border: 1px solid #d9d9d9;
+  }
+  
+  .tableSection {
+    background: white;
+  }
+}

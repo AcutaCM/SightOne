@@ -1,0 +1,92 @@
+/**
+ * MultiSelectionToolbar Styles
+ * 
+ * Styling for the multi-selection toolbar component.
+ * Provides a clean, modern interface for batch operations.
+ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--workflow-spacing-md);
+  padding: var(--workflow-spacing-sm) var(--workflow-spacing-md);
+  border-radius: var(--workflow-radius-md);
+  animation: slideDown var(--workflow-duration-normal) var(--workflow-easing);
+  backdrop-filter: blur(8px);
+}
+
+.countChip {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--workflow-panel-border);
+  opacity: 0.5;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+}
+
+.alignIcon {
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button hover effects */
+.toolbar button:hover {
+  transform: translateY(-1px);
+  transition: transform var(--workflow-duration-fast) var(--workflow-easing);
+}
+
+.toolbar button:active {
+  transform: translateY(0);
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] .toolbar {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+[data-theme="light"] .toolbar {
+  background: var(--workflow-panel-bg);
+  border-color: var(--workflow-panel-border);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: var(--workflow-spacing-sm);
+    padding: var(--workflow-spacing-sm);
+  }
+  
+  .countChip {
+    font-size: 12px;
+  }
+  
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+}

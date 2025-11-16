@@ -1,0 +1,192 @@
+/**
+ * LogExportButtons Styles
+ * 
+ * Styles for log export and clear buttons
+ */
+
+.container {
+  display: flex;
+  gap: var(--wf-spacing-sm);
+  padding: var(--wf-spacing-sm);
+  border-top: 1px solid var(--wf-panel-border);
+}
+
+.container[data-theme='light'] {
+  border-top-color: #e2e8f0;
+}
+
+.container[data-theme='dark'] {
+  border-top-color: #1f2937;
+}
+
+/* Button */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wf-spacing-xs);
+  padding: var(--wf-spacing-xs) var(--wf-spacing-sm);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-sm);
+  background-color: var(--wf-panel-bg);
+  color: var(--wf-panel-text);
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-medium);
+  font-family: var(--wf-font-sans);
+  cursor: pointer;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button:not(:disabled):hover {
+  background-color: var(--wf-panel-hover);
+  border-color: var(--wf-panel-text-secondary);
+}
+
+.button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.buttonIcon {
+  flex-shrink: 0;
+}
+
+.buttonText {
+  white-space: nowrap;
+}
+
+/* Clear Button */
+.clearButton:not(:disabled):hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--wf-status-error);
+  color: var(--wf-status-error);
+}
+
+/* Export Container */
+.exportContainer {
+  position: relative;
+  flex: 1;
+}
+
+/* Export Button */
+.exportButton {
+  width: 100%;
+}
+
+/* Chevron */
+.chevron {
+  flex-shrink: 0;
+  transition: transform var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.chevronUp {
+  transform: rotate(180deg);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Export Menu */
+.exportMenu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--wf-panel-border);
+  border-radius: var(--wf-radius-md);
+  box-shadow: var(--wf-shadow-lg);
+  overflow: hidden;
+  z-index: 20;
+  animation: slideUp var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Item */
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm);
+  width: 100%;
+  padding: var(--wf-spacing-sm) var(--wf-spacing-md);
+  border: none;
+  background-color: transparent;
+  color: var(--wf-panel-text);
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  font-family: var(--wf-font-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.menuItem:hover {
+  background-color: var(--wf-panel-hover);
+}
+
+.menuItem:active {
+  background-color: var(--wf-panel-border);
+}
+
+.menuIcon {
+  flex-shrink: 0;
+  color: var(--wf-panel-text-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--wf-spacing-xs);
+    gap: var(--wf-spacing-xs);
+  }
+  
+  .button {
+    padding: 6px var(--wf-spacing-xs);
+    font-size: 11px;
+  }
+  
+  .buttonText {
+    display: none;
+  }
+  
+  .menuItem {
+    padding: var(--wf-spacing-xs) var(--wf-spacing-sm);
+    font-size: var(--wf-text-xs);
+  }
+}
+
+/* Animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .chevron,
+  .menuItem,
+  .exportMenu {
+    transition: none;
+    animation: none;
+  }
+  
+  .button:not(:disabled):active {
+    transform: none;
+  }
+}

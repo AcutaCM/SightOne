@@ -1,0 +1,633 @@
+/**
+ * Assistant Settings Sidebar Responsive Design
+ * 
+ * This module provides responsive design styles for the assistant settings sidebar.
+ * Ensures optimal display and interaction across desktop, tablet, and mobile devices.
+ * 
+ * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5
+ * 
+ * Breakpoints:
+ * - Mobile: < 768px (100% width, fullscreen)
+ * - Tablet: 768px - 1024px (70% width)
+ * - Desktop: > 1024px (480px fixed width)
+ */
+
+/* ========================================
+   Desktop Layout (> 1024px)
+   Requirement 6.3: 480px width
+   ======================================== */
+
+@media (min-width: 1025px) {
+  .sidebarContainer {
+    max-width: 480px;
+    width: 480px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+  }
+
+  .sidebarContent {
+    padding: 24px;
+  }
+
+  .formField {
+    margin-bottom: 20px;
+  }
+
+  .buttonGroup {
+    gap: 12px;
+  }
+
+  /* Optimal font sizes for desktop */
+  .fieldLabel {
+    font-size: 14px;
+  }
+
+  .fieldInput {
+    font-size: 16px;
+  }
+
+  .fieldDescription {
+    font-size: 12px;
+  }
+
+  /* Desktop-specific hover effects */
+  .interactiveElement:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ========================================
+   Tablet Layout (768px - 1024px)
+   Requirement 6.2: 70% width
+   ======================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .sidebarContainer {
+    max-width: 70%;
+    width: 70%;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+  }
+
+  .sidebarContent {
+    padding: 20px;
+  }
+
+  .formField {
+    margin-bottom: 18px;
+  }
+
+  .buttonGroup {
+    gap: 10px;
+  }
+
+  /* Slightly smaller fonts for tablet */
+  .fieldLabel {
+    font-size: 14px;
+  }
+
+  .fieldInput {
+    font-size: 16px;
+  }
+
+  .fieldDescription {
+    font-size: 12px;
+  }
+
+  /* Tablet touch targets */
+  .touchTarget {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ========================================
+   Mobile Layout (< 768px)
+   Requirement 6.1: 100% width, fullscreen
+   ======================================== */
+
+@media (max-width: 767px) {
+  .sidebarContainer {
+    max-width: 100%;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    inset: 0;
+    border-radius: 0;
+  }
+
+  .sidebarContent {
+    padding: 16px;
+    padding-bottom: 80px; /* Extra space for footer */
+  }
+
+  .formField {
+    margin-bottom: 16px;
+  }
+
+  .buttonGroup {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .buttonGroup button {
+    width: 100%;
+  }
+
+  /* Larger fonts for mobile readability */
+  .fieldLabel {
+    font-size: 15px;
+  }
+
+  .fieldInput {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .fieldDescription {
+    font-size: 13px;
+  }
+
+  /* Mobile touch targets (Requirement 6.5) */
+  .touchTarget {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Mobile-specific header */
+  .mobileHeader {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: inherit;
+    backdrop-filter: blur(10px);
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Mobile-specific footer */
+  .mobileFooter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: inherit;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  /* Fullscreen modal on mobile */
+  .modalFullscreen {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  /* Stack buttons vertically on mobile */
+  .stackedButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stackedButtons button {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   Form Field Responsiveness
+   Requirement 6.4: Readable on all devices
+   ======================================== */
+
+.responsiveField {
+  width: 100%;
+  transition: all 200ms ease;
+}
+
+/* Input fields */
+.responsiveInput {
+  width: 100%;
+  font-size: 16px; /* Prevents zoom on iOS */
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 200ms ease;
+}
+
+@media (max-width: 767px) {
+  .responsiveInput {
+    padding: 14px;
+    font-size: 16px;
+  }
+}
+
+/* Textarea fields */
+.responsiveTextarea {
+  width: 100%;
+  min-height: 120px;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+@media (max-width: 767px) {
+  .responsiveTextarea {
+    min-height: 150px;
+    padding: 14px;
+  }
+}
+
+/* Select fields */
+.responsiveSelect {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+@media (max-width: 767px) {
+  .responsiveSelect {
+    padding: 14px;
+  }
+}
+
+/* ========================================
+   Touch Interactions (Mobile)
+   Requirement 6.5: Touch support
+   ======================================== */
+
+@media (max-width: 767px) {
+  /* Larger touch targets */
+  .touchButton {
+    min-height: 48px;
+    padding: 14px 20px;
+    font-size: 16px;
+  }
+
+  .touchIcon {
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Remove hover effects on touch devices */
+  .touchElement:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Add active state for touch feedback */
+  .touchElement:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+
+  /* Prevent text selection on touch */
+  .noSelect {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Smooth scrolling on mobile */
+  .mobileScroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
+/* ========================================
+   Emoji Picker Responsiveness
+   ======================================== */
+
+.responsiveEmojiPicker {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .responsiveEmojiPicker {
+    /* Fullscreen emoji picker on mobile */
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--background);
+  }
+
+  .emojiPickerGrid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .emojiItem {
+    font-size: 32px;
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+@media (min-width: 768px) {
+  .emojiPickerGrid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .emojiItem {
+    font-size: 24px;
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* ========================================
+   Tag Management Responsiveness
+   ======================================== */
+
+.responsiveTagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 767px) {
+  .responsiveTagContainer {
+    gap: 6px;
+  }
+
+  .responsiveTag {
+    font-size: 14px;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+
+  .tagCloseButton {
+    min-width: 24px;
+    min-height: 24px;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsiveTag {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .tagCloseButton {
+    min-width: 20px;
+    min-height: 20px;
+  }
+}
+
+/* ========================================
+   Modal Responsiveness
+   ======================================== */
+
+.responsiveModal {
+  max-width: 90%;
+  margin: auto;
+}
+
+@media (max-width: 767px) {
+  .responsiveModal {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .modalContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modalBody {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .responsiveModal {
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsiveModal {
+    max-width: 480px;
+  }
+}
+
+/* ========================================
+   Character Counter Responsiveness
+   ======================================== */
+
+.responsiveCounter {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+  .responsiveCounter {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   Loading States Responsiveness
+   ======================================== */
+
+.responsiveLoadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+@media (max-width: 767px) {
+  .responsiveLoadingOverlay {
+    position: fixed;
+  }
+}
+
+/* ========================================
+   Accessibility Enhancements
+   ======================================== */
+
+/* Focus indicators for keyboard navigation */
+.focusVisible:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .responsiveInput,
+  .responsiveTextarea,
+  .responsiveSelect {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .responsiveField,
+  .responsiveInput,
+  .responsiveTextarea,
+  .responsiveSelect,
+  .touchElement {
+    transition: none;
+  }
+}
+
+/* ========================================
+   Landscape Orientation (Mobile)
+   ======================================== */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .sidebarContent {
+    padding: 12px;
+  }
+
+  .formField {
+    margin-bottom: 12px;
+  }
+
+  .responsiveTextarea {
+    min-height: 100px;
+  }
+
+  /* Compact header in landscape */
+  .mobileHeader {
+    padding: 12px;
+  }
+
+  .mobileFooter {
+    padding: 12px;
+  }
+}
+
+/* ========================================
+   Safe Area Support (iOS)
+   ======================================== */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (max-width: 767px) {
+    .sidebarContent {
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .mobileFooter {
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .sidebarContainer {
+    position: static;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+  }
+
+  .mobileHeader,
+  .mobileFooter {
+    position: static;
+  }
+
+  .buttonGroup {
+    display: none;
+  }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.hideOnMobile {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .hideOnMobile {
+    display: none;
+  }
+}
+
+.showOnMobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .showOnMobile {
+    display: block;
+  }
+}
+
+.hideOnTablet {
+  display: block;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hideOnTablet {
+    display: none;
+  }
+}
+
+.showOnTablet {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .showOnTablet {
+    display: block;
+  }
+}
+
+.hideOnDesktop {
+  display: block;
+}
+
+@media (min-width: 1025px) {
+  .hideOnDesktop {
+    display: none;
+  }
+}
+
+.showOnDesktop {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .showOnDesktop {
+    display: block;
+  }
+}

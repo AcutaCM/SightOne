@@ -14,6 +14,7 @@ import { useLayout } from "@/contexts/LayoutContext";
 import { useDrone } from "@/contexts/DroneContext";
 import { useLayout as useLayoutContext } from "@/contexts/LayoutContext";
 import { useRouter } from "next/navigation";
+import { DarkModeTokens } from "@/lib/design-tokens-dark";
 
 // 添加搜索结果类型
 interface SearchResult {
@@ -23,6 +24,78 @@ interface SearchResult {
   type: 'component' | 'setting' | 'mission' | 'drone';
   action: () => void;
 }
+
+// 搜索结果项组件
+const SearchResultItem: React.FC<{ result: SearchResult }> = ({ result }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+  
+  return (
+    <div
+      className="px-4 py-3 cursor-pointer last:border-b-0 transition-all"
+      style={{
+        backgroundColor: isHovered ? DarkModeTokens.colors.background.panel : 'transparent',
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        borderBottomColor: DarkModeTokens.colors.border.subtle,
+        transition: `all ${DarkModeTokens.transitions.duration.fast} ${DarkModeTokens.transitions.easing.default}`,
+      }}
+      onClick={result.action}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="flex items-center gap-3">
+        <div 
+          className="w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{
+            backgroundColor: result.type === 'component' ? 'rgba(59, 130, 246, 0.1)' :
+              result.type === 'setting' ? 'rgba(168, 85, 247, 0.1)' :
+              result.type === 'mission' ? 'rgba(34, 197, 94, 0.1)' :
+              'rgba(251, 191, 36, 0.1)',
+          }}
+        >
+          {result.type === 'component' && (
+            <svg className="w-4 h-4" style={{ color: 'rgba(96, 165, 250, 1)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          )}
+          {result.type === 'setting' && (
+            <SettingsIcon className="w-4 h-4" style={{ color: 'rgba(192, 132, 252, 1)' }} />
+          )}
+          {result.type === 'mission' && (
+            <svg className="w-4 h-4" style={{ color: 'rgba(74, 222, 128, 1)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          )}
+          {result.type === 'drone' && (
+            <svg className="w-4 h-4" style={{ color: 'rgba(253, 224, 71, 1)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div 
+            className="text-sm font-medium truncate"
+            style={{ 
+              color: DarkModeTokens.colors.text.primary,
+              opacity: DarkModeTokens.opacity.full,
+            }}
+          >
+            {result.title}
+          </div>
+          <div 
+            className="text-xs truncate"
+            style={{ 
+              color: DarkModeTokens.colors.text.secondary,
+              opacity: DarkModeTokens.opacity.mediumLow,
+            }}
+          >
+            {result.description}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 interface DroneStatusProps {
   aiStatus: string;
@@ -40,24 +113,68 @@ const StatusItem: React.FC<{
   variant: 'cruise' | 'mission' | 'drone' | 'ai';
   status?: 'normal' | 'active' | 'warning' | 'error' | 'connecting';
 }> = ({ icon, label, variant, status = 'normal' }) => {
-  // 根据状态确定样式
+  const [isHovered, setIsHovered] = React.useState(false);
+  
+  // 根据状态确定样式和透明度
   const getStatusStyles = () => {
+    const baseOpacity = isHovered ? DarkModeTokens.opacity.mediumHigh : DarkModeTokens.opacity.mediumLow;
+    
     switch (status) {
       case 'active':
-        return 'bg-green-500/20 border-green-400/40 text-green-100';
+        return {
+          backgroundColor: 'rgba(34, 197, 94, 0.1)',
+          borderColor: 'rgba(34, 197, 94, 0.3)',
+          color: 'rgba(34, 197, 94, 1)',
+          opacity: DarkModeTokens.opacity.full,
+        };
       case 'warning':
-        return 'bg-yellow-500/20 border-yellow-400/40 text-yellow-100';
+        return {
+          backgroundColor: 'rgba(251, 191, 36, 0.1)',
+          borderColor: 'rgba(251, 191, 36, 0.3)',
+          color: 'rgba(251, 191, 36, 1)',
+          opacity: DarkModeTokens.opacity.mediumHigh,
+        };
       case 'error':
-        return 'bg-red-500/20 border-red-400/40 text-red-100';
+        return {
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          borderColor: 'rgba(239, 68, 68, 0.3)',
+          color: 'rgba(239, 68, 68, 1)',
+          opacity: DarkModeTokens.opacity.high,
+        };
       case 'connecting':
-        return 'bg-blue-500/20 border-blue-400/40 text-blue-100 animate-pulse';
+        return {
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: 'rgba(59, 130, 246, 0.3)',
+          color: 'rgba(59, 130, 246, 1)',
+          opacity: DarkModeTokens.opacity.mediumLow,
+        };
       default:
-        return 'bg-white/10 border-white/20 text-white/90';
+        return {
+          backgroundColor: DarkModeTokens.colors.background.panel,
+          borderColor: DarkModeTokens.colors.border.subtle,
+          color: DarkModeTokens.colors.text.secondary,
+          opacity: baseOpacity,
+        };
     }
   };
 
+  const styles = getStatusStyles();
+
   return (
-    <div className={`flex items-center gap-2 px-3 py-[6px] rounded-[12px] backdrop-blur-md transition-all duration-300 hover:bg-white/15 hover:border-white/30 ${getStatusStyles()}`}>
+    <div 
+      className={`flex items-center gap-2 px-3 py-[6px] rounded-[12px] transition-all ${status === 'connecting' ? 'animate-pulse' : ''}`}
+      style={{
+        backgroundColor: styles.backgroundColor,
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: styles.borderColor,
+        color: styles.color,
+        opacity: styles.opacity,
+        transition: `all ${DarkModeTokens.transitions.duration.normal} ${DarkModeTokens.transitions.easing.default}`,
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="w-4 h-4">
         {icon}
       </div>
@@ -106,7 +223,12 @@ const DroneStatus: React.FC<DroneStatusProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div 
+      className="flex items-center gap-3"
+      style={{
+        transition: `all ${DarkModeTokens.transitions.duration.normal} ${DarkModeTokens.transitions.easing.default}`,
+      }}
+    >
       {/* 巡航状态 */}
       <StatusItem
         variant="cruise"
@@ -209,16 +331,8 @@ const TopNavbar: React.FC = () => {
           { id: 'manual-control', name: '手动控制面板', desc: '手动控制无人机' },
           { id: 'ai-analysis-report', name: 'AI分析报告', desc: '查看AI分析结果' },
           { id: 'challenge-cruise', name: '挑战巡航面板', desc: '执行预设巡航任务' },
-          { id: 'ai-analysis-panel', name: 'AI分析面板', desc: '配置和启动AI分析' },
-          { id: 'tools-panel', name: '工具面板', desc: '系统工具和QR码生成' },
-          { id: 'configuration-panel', name: '配置面板', desc: 'AI和系统配置管理' },
-          { id: 'simulation-panel', name: '模拟面板', desc: '模拟飞行环境' },
-          { id: 'status-info-panel', name: '状态信息面板', desc: '系统状态和统计数据' },
           { id: 'system-log-panel', name: '系统日志面板', desc: '查看系统日志信息' },
-          { id: 'video-control-panel', name: '视频控制面板', desc: '视频录制和截图控制' },
-          { id: 'report-panel', name: '报告面板', desc: '生成和管理分析报告' },
           { id: 'chat-panel', name: '聊天面板', desc: '与AI助手交互' },
-          { id: 'drone-control-panel', name: '无人机控制面板', desc: 'Tello无人机专用控制' },
           { id: 'tello-workflow-panel', name: 'Tello工作流面板', desc: '可视化编排Tello无人机任务流程' },
         ];
         
@@ -369,16 +483,34 @@ const TopNavbar: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-[51px] flex items-center justify-between px-6 bg-transparent mt-4 relative">
+    <div 
+      className="w-full h-[51px] flex items-center justify-between px-6 mt-4 relative transition-all duration-250"
+      style={{ 
+        backgroundColor: 'transparent', /* No background - clean look */
+        transition: `background-color ${DarkModeTokens.transitions.duration.normal} ${DarkModeTokens.transitions.easing.default}`
+      }}
+    >
       {/* 左侧 Logo 区域 */}
       <div className="flex items-center gap-2">
-        <Image src="/logo.svg" alt="TTtalentDev Logo" width={61} height={47} />
+        <Image src="/logo.svg" alt="SIGHTONE Logo" width={61} height={47} />
         <div>
-          <div className="text-white text-base font-normal leading-6">
-            TTtalentDev无人机作业平台
+          <div 
+            className="text-base font-normal leading-6 transition-opacity duration-250"
+            style={{ 
+              color: DarkModeTokens.colors.text.primary,
+              opacity: DarkModeTokens.opacity.full
+            }}
+          >
+            SIGHTONE瞰析人工智能分析平台
           </div>
-          <div className="text-white text-sm font-normal leading-tight">
-            DRONE PLF
+          <div 
+            className="text-sm font-normal leading-tight transition-opacity duration-250"
+            style={{ 
+              color: DarkModeTokens.colors.text.secondary,
+              opacity: DarkModeTokens.opacity.medium
+            }}
+          >
+            AI ANALYSIS PLATFORM
           </div>
         </div>
       </div>
@@ -406,7 +538,7 @@ const TopNavbar: React.FC = () => {
             onBlur={handleSearchBlur}
             startContent={
               isSearching ? (
-                <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin shadow-[0px_10px_50px_0px_rgba(0,0,0,0.1)]"></div>
               ) : (
                 <SearchIcon className="w-4 h-4 text-gray-600" />
               )
@@ -415,59 +547,38 @@ const TopNavbar: React.FC = () => {
               base: "h-[35px]",
               mainWrapper: "h-full",
               input: "text-xs text-gray-200 placeholder:text-gray-500",
-              inputWrapper: "h-full bg-[#0F1535] border-[0.5px] border-white/30 rounded-[15px] hover:border-white/50 focus-within:border-blue-400/70",
+              inputWrapper: "h-full bg-content1 border-[0.5px] border-divider rounded-[15px] hover:border-white/50 focus-within:border-blue-400/70",
             }}
           />
           
           {/* 搜索结果下拉框 */}
           {showSearchResults && (
             <div 
-              className="absolute top-full left-0 right-0 mt-2 bg-[#0F1535] border border-white/20 rounded-xl shadow-lg z-50 max-h-96 overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 rounded-xl z-50 max-h-96 overflow-y-auto"
+              style={{
+                backgroundColor: DarkModeTokens.colors.background.dropdown,
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: DarkModeTokens.colors.border.default,
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+              }}
               onMouseDown={(e) => e.preventDefault()} // 防止失去焦点
             >
               {searchResults.length > 0 ? (
                 searchResults.map((result) => (
-                  <div
-                    key={result.id}
-                    className="px-4 py-3 hover:bg-white/10 cursor-pointer border-b border-white/10 last:border-b-0 transition-colors"
-                    onClick={result.action}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                        result.type === 'component' ? 'bg-blue-500/20' :
-                        result.type === 'setting' ? 'bg-purple-500/20' :
-                        result.type === 'mission' ? 'bg-green-500/20' :
-                        'bg-yellow-500/20'
-                      }`}>
-                        {result.type === 'component' && (
-                          <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                          </svg>
-                        )}
-                        {result.type === 'setting' && (
-                          <SettingsIcon className="w-4 h-4 text-purple-400" />
-                        )}
-                        {result.type === 'mission' && (
-                          <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
-                        )}
-                        {result.type === 'drone' && (
-                          <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                          </svg>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-white text-sm font-medium truncate">{result.title}</div>
-                        <div className="text-white/60 text-xs truncate">{result.description}</div>
-                      </div>
-                    </div>
-                  </div>
+                  <SearchResultItem key={result.id} result={result} />
                 ))
               ) : (
                 <div className="px-4 py-6 text-center">
-                  <div className="text-white/60 text-sm">未找到相关结果</div>
+                  <div 
+                    className="text-sm"
+                    style={{ 
+                      color: DarkModeTokens.colors.text.secondary,
+                      opacity: DarkModeTokens.opacity.mediumLow,
+                    }}
+                  >
+                    未找到相关结果
+                  </div>
                 </div>
               )}
             </div>
@@ -482,8 +593,17 @@ const TopNavbar: React.FC = () => {
           isIconOnly
           size="sm"
           variant="light"
-          className="w-6 h-6 min-w-6 opacity-33"
+          className="w-6 h-6 min-w-6 transition-opacity duration-250"
+          style={{ 
+            opacity: DarkModeTokens.opacity.mediumLow,
+          }}
           onPress={() => isClient && router.push('/settings')}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.mediumHigh);
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.mediumLow);
+          }}
         >
           <SettingsIcon className="w-4 h-4 text-white" />
         </Button>
@@ -493,7 +613,16 @@ const TopNavbar: React.FC = () => {
           isIconOnly
           size="sm"
           variant="light"
-          className="w-6 h-6 min-w-6 opacity-33"
+          className="w-6 h-6 min-w-6 transition-opacity duration-250"
+          style={{ 
+            opacity: DarkModeTokens.opacity.mediumLow,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.mediumHigh);
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.mediumLow);
+          }}
         >
           <BellIcon className="w-4 h-4 text-white" />
         </Button>
@@ -503,8 +632,17 @@ const TopNavbar: React.FC = () => {
           isIconOnly
           size="sm"
           variant="light"
-          className="w-6 h-6 min-w-6 opacity-80 hover:opacity-100"
+          className="w-6 h-6 min-w-6 transition-opacity duration-250"
+          style={{ 
+            opacity: DarkModeTokens.opacity.mediumHigh,
+          }}
           onPress={() => { if (isClient) window.open('http://localhost', '_blank', 'noopener,noreferrer'); }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.full);
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = String(DarkModeTokens.opacity.mediumHigh);
+          }}
           aria-label="Open Dify"
         >
           <Image src="/dify-logo.svg?v=1" alt="Dify" width={20} height={20} className="w-5 h-5" />

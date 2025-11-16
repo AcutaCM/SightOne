@@ -15,6 +15,9 @@ import WorkflowCanvas from './WorkflowCanvas';
 import ControlStatusPanel from './ControlStatusPanel';
 import useWebSocket from '../hooks/useWebSocket';
 import StatusNode from './StatusNode';
+import InlineParameterNode from './workflow/InlineParameterNode';
+import { nodeRegistry } from '../lib/workflow/nodeRegistry';
+import { migrateWorkflowData, needsMigration } from '../lib/workflow/dataMigration';
 import styles from '../styles/WorkflowEditor.module.css';
 
 let id = 0;
@@ -28,7 +31,10 @@ const WorkflowEditor = () => {
   const [isNodeLibraryVisible, setIsNodeLibraryVisible] = useState(false);
   const { isConnected, lastMessage, sendMessage } = useWebSocket('ws://localhost:8080');
 
-  const nodeTypes = useMemo(() => ({ statusNode: StatusNode }), []);
+  const nodeTypes = useMemo(() => ({ 
+    statusNode: StatusNode,
+    inlineParameterNode: InlineParameterNode 
+  }), []);
 
   useEffect(() => {
     if (lastMessage !== null) {
@@ -82,18 +88,48 @@ const WorkflowEditor = () => {
         return;
       }
 
-      const { type, label } = JSON.parse(data);
+      const { type, label, category, icon, color } = JSON.parse(data);
       
       const position = {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       };
 
+      // 获取节点定义和默认参数
+      const nodeDefinition = nodeRegistry.getNode(type);
+      const defaultParameters = nodeRegistry.getDefaultParameters(type);
+      
+      // 确定使用哪种节点类型
+      // 如果节点定义存在且有参数，使用InlineParameterNode
+      // 否则使用旧的StatusNode作为后备
+      const nodeType = nodeDefinition && nodeDefinition.parameters.length > 0 
+        ? 'inlineParameterNode' 
+        : 'statusNode';
+
+      // 创建新节点数据
       const newNode = {
         id: getId(),
-        type: 'statusNode',
+        type: nodeType,
         position,
-        data: { label: `${label}`, status: 'idle' },
+        data: nodeType === 'inlineParameterNode' ? {
+          id: getId(),
+          type: type,
+          label: label || 'Unknown Node',
+          category: category || 'basic',
+          icon: icon,
+          color: color || '#64FFDA',
+          status: 'idle' as const,
+          parameters: defaultParameters,
+          isCollapsed: false,
+          priorityParams: nodeDefinition?.parameters
+            .filter(p => p.priority && p.priority >= 8)
+            .map(p => p.name) || [],
+          customSize: undefined,
+          lastModified: Date.now(),
+        } : {
+          label: `${label}`,
+          status: 'idle' as const,
+        },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -122,6 +158,28 @@ const WorkflowEditor = () => {
   const toggleNodeLibrary = () => {
     setIsNodeLibraryVisible(!isNodeLibraryVisible);
   };
+
+  // 加载工作流（带数据迁移）
+  // TODO: 将在工作流保存/加载系统中使用此函数
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const loadWorkflow = useCallback((workflowData: { nodes: any[]; edges: any[] }) => {
+    try {
+      // 检查是否需要迁移
+      if (needsMigration(workflowData)) {
+        console.log('Migrating workflow data to latest version...');
+        const migratedData = migrateWorkflowData(workflowData);
+        setNodes(migratedData.nodes);
+        setEdges(migratedData.edges);
+        toast.success('工作流已自动升级到最新版本');
+      } else {
+        setNodes(workflowData.nodes);
+        setEdges(workflowData.edges);
+      }
+    } catch (error) {
+      console.error('Failed to load workflow:', error);
+      toast.error('加载工作流失败');
+    }
+  }, [setNodes, setEdges]);
 
   return (
     <div className={styles.editorContainer}>

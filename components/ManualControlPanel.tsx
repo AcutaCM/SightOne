@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useRef, useCallback } from 'react';
 import { useTheme } from 'next-themes';
@@ -90,7 +90,7 @@ const ManualControlPanel: React.FC<ManualControlPanelProps> = ({
   return (
     <div className="w-full h-full relative">
       {/* 背景 */}
-      <div className="absolute inset-0 rounded-[20px] backdrop-blur-[120px] shadow-lg bg-background/60 border border-divider">
+      <div className="absolute inset-0 rounded-[20px] shadow-lg bg-content1 border border-divider">
       </div>
       
       {/* 标题 */}
@@ -104,11 +104,11 @@ const ManualControlPanel: React.FC<ManualControlPanelProps> = ({
       {/* 控制区域 */}
       <div className="absolute left-[41%] top-[15%] w-[52%] h-[76%]">
         {/* 外圆 */}
-        <div className="absolute inset-0 w-full h-full rounded-full border border-divider shadow-lg bg-content2/20">
+        <div className="absolute inset-0 w-full h-full rounded-full border border-divider shadow-lg bg-background/60">
         </div>
         
         {/* 内圆 */}
-        <div className="absolute left-[17%] top-[18%] w-[66%] h-[66%] rounded-full border border-divider shadow-lg bg-content2/20">
+        <div className="absolute left-[17%] top-[18%] w-[66%] h-[66%] rounded-full border border-divider shadow-lg bg-background/60">
         </div>
         
         {/* 上箭头 */}
@@ -153,7 +153,7 @@ const ManualControlPanel: React.FC<ManualControlPanelProps> = ({
         
         {/* 中心按钮 */}
         <div 
-          className="absolute left-[40%] top-[42%] w-[21%] h-[19%] flex items-center justify-center rounded-full opacity-40 hover:opacity-60 active:opacity-80 transition-opacity cursor-pointer select-none bg-content2/55"
+          className="absolute left-[40%] top-[42%] w-[21%] h-[19%] flex items-center justify-center rounded-full opacity-40 hover:opacity-60 active:opacity-80 transition-opacity cursor-pointer select-none bg-background/60"
           {...createPressHandlers('center')}
         >
           <div className="w-2 h-2 rounded-full bg-foreground"></div>

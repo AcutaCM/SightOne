@@ -3,22 +3,44 @@ import { userDatabase } from '@/lib/userDatabase';
 
 export async function POST(request: NextRequest) {
   try {
-    const authorization = request.headers.get('authorization');
+    // 优先使用 Cookie 认证
+    const email = request.cookies.get('user_email')?.value;
+    let userId: string | undefined;
     
-    if (!authorization || !authorization.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { message: '未提供有效的认证token' },
-        { status: 401 }
-      );
+    if (email) {
+      // Cookie 认证：通过 email 查找用户
+      const user = userDatabase.getUserByEmail(email);
+      if (user) {
+        userId = user.id;
+      }
+    } else {
+      // 回退到 Bearer token 认证（向后兼容）
+      const authorization = request.headers.get('authorization');
+      
+      if (!authorization || !authorization.startsWith('Bearer ')) {
+        return NextResponse.json(
+          { message: '未提供有效的认证信息' },
+          { status: 401 }
+        );
+      }
+
+      const token = authorization.split(' ')[1];
+      const sessionData = userDatabase.getSessionByToken(token);
+      
+      if (!sessionData) {
+        return NextResponse.json(
+          { message: 'Token无效或已过期' },
+          { status: 401 }
+        );
+      }
+      
+      userId = sessionData.user.id;
     }
 
-    const token = authorization.split(' ')[1];
-    const sessionData = userDatabase.getSessionByToken(token);
-    
-    if (!sessionData) {
+    if (!userId) {
       return NextResponse.json(
-        { message: 'Token无效或已过期' },
-        { status: 401 }
+        { message: '用户不存在' },
+        { status: 404 }
       );
     }
 
@@ -41,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // 更改密码
     const success = await userDatabase.changePassword(
-      sessionData.user.id,
+      userId,
       oldPassword,
       newPassword
     );

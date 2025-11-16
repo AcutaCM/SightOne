@@ -1,0 +1,125 @@
+/**
+ * NodeStatusIndicator Styles
+ * 
+ * Styles for the node status indicator component with animations.
+ */
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Size variants */
+.indicator.sm {
+  gap: 4px;
+}
+
+.indicator.md {
+  gap: var(--wf-spacing-xs);
+}
+
+.indicator.lg {
+  gap: var(--wf-spacing-sm);
+}
+
+/* Icon wrapper */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.icon {
+  transition: transform var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+/* Spinning animation for running status */
+.icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Label */
+.label {
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-medium);
+  white-space: nowrap;
+  transition: color var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.indicator.lg .label {
+  font-size: var(--wf-text-sm);
+}
+
+/* Status-specific animations */
+.indicator[data-status="running"] .iconWrapper {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.indicator[data-status="success"] .icon {
+  animation: successPop 0.3s ease-out;
+}
+
+.indicator[data-status="success"] .iconWrapper {
+  /* Subtle glow effect for success state - 100% white opacity */
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
+
+.indicator[data-status="error"] .icon {
+  animation: errorShake 0.4s ease-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+/* Hover effect */
+.indicator:hover .icon {
+  transform: scale(1.1);
+}
+
+.indicator:hover .icon.spinning {
+  animation: spin 0.5s linear infinite;
+}

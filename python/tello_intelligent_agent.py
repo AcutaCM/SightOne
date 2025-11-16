@@ -820,7 +820,21 @@ class TelloIntelligentAgent:
             else:
                 response.update({'success': False, 'error': f'未知消息类型: {message_type}'})
             
-            await websocket.send(json.dumps(response))
+            # 检查连接状态后再发送响应
+            if websocket.open:
+                try:
+                    await websocket.send(json.dumps(response))
+                    logger.info(f"成功发送响应: {message_type}")
+                except websockets.exceptions.ConnectionClosed:
+                    logger.warning(f"尝试发送响应时连接已关闭: {message_type}")
+                    return  # 连接已关闭，直接返回
+                except Exception as send_err:
+                    logger.error(f"发送响应失败: {send_err}")
+                    return
+            else:
+                logger.warning(f"WebSocket连接已关闭，无法发送响应: {message_type}")
+                return
+            
             # 将关键响应广播给所有客户端，便于3002桥接接收AI分析与执行反馈
             resp_type = response.get('type')
             if resp_type in ('natural_language_command_response', 'drone_command_response'):
@@ -829,17 +843,55 @@ class TelloIntelligentAgent:
                 except Exception as be:
                     logger.error(f"广播响应失败({resp_type}): {be}")
             
+            # 如果是自然语言命令的AI分析结果，发送到3002端口执行
+            if message_type == 'natural_language_command' and response.get('success'):
+                try:
+                    ai_analysis = response.get('ai_analysis')
+                    if ai_analysis and ai_analysis.get('commands'):
+                        await self._send_analysis_to_3002(ai_analysis)
+                except Exception as e:
+                    logger.error(f"发送AI分析到3002失败: {e}")
+            
         except Exception as e:
             logger.error(f"处理WebSocket消息失败: {e}")
+            logger.error(f"错误堆栈: {traceback.format_exc()}")
             error_response = {
                 'type': 'error',
                 'success': False,
                 'error': f'消息处理失败: {str(e)}'
             }
             try:
-                await websocket.send(json.dumps(error_response))
-            except:
-                pass
+                if websocket.open:
+                    await websocket.send(json.dumps(error_response))
+            except Exception as send_error:
+                logger.error(f"发送错误响应失败: {send_error}")
+    
+    async def _send_analysis_to_3002(self, ai_analysis: Dict[str, Any]):
+        """发送AI分析结果到3002端口的后端服务"""
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.post(
+                    'http://localhost:3002/api/ai-analysis',
+                    json={
+                        'type': 'ai_analysis',
+                        'data': ai_analysis,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                )
+                if response.status_code == 200:
+                    logger.info("成功连接到3002后端")
+                    result = response.json()
+                    logger.info(f"AI分析结果已发送到3002后端")
+                    return result
+                else:
+                    logger.warning(f"3002后端返回非200状态码: {response.status_code}")
+                    return None
+        except httpx.ConnectError:
+            logger.debug("无法连接到3002端口（服务可能未启动）")
+            return None
+        except Exception as e:
+            logger.error(f"发送分析到3002失败: {e}")
+            return None
     
     async def _ollama_chat(self, messages: List[Dict[str, str]]) -> str:
         """
@@ -925,48 +977,76 @@ class TelloIntelligentAgent:
             raise
 
     async def websocket_handler(self, websocket: WebSocketServerProtocol, path: str):
-        """WebSocket连接处理器"""
+        """WebSocket连接处理器 - 保持持久连接"""
         self.websocket_clients.add(websocket)
-        logger.info(f"新的WebSocket连接: {websocket.remote_address}")
+        logger.info(f"新的WebSocket连接建立: {websocket.remote_address}")
         
         try:
+            # 发送连接确认消息
+            await websocket.send(json.dumps({
+                'type': 'connection_established',
+                'success': True,
+                'message': '连接已建立，等待命令...'
+            }))
+            
+            # 持续监听消息，保持连接
             async for message in websocket:
                 try:
                     data = json.loads(message)
+                    logger.info(f"收到消息类型: {data.get('type')}")
                     await self.handle_websocket_message(websocket, data)
-                except json.JSONDecodeError:
-                    await websocket.send(json.dumps({
-                        'type': 'error',
-                        'success': False,
-                        'error': '无效的JSON格式'
-                    }))
+                    # 消息处理完成后，连接继续保持打开状态
+                    logger.info(f"消息处理完成，连接保持打开: {data.get('type')}")
+                except json.JSONDecodeError as je:
+                    logger.error(f"JSON解析错误: {je}, 原始消息: {message[:200]}")
+                    if websocket.open:
+                        await websocket.send(json.dumps({
+                            'type': 'error',
+                            'success': False,
+                            'error': '无效的JSON格式'
+                        }))
                 except Exception as e:
                     logger.error(f"处理消息失败: {e}")
-                    await websocket.send(json.dumps({
-                        'type': 'error',
-                        'success': False,
-                        'error': str(e)
-                    }))
-        except websockets.exceptions.ConnectionClosed:
-            logger.info(f"WebSocket连接关闭: {websocket.remote_address}")
+                    logger.error(f"错误堆栈: {traceback.format_exc()}")
+                    if websocket.open:
+                        try:
+                            await websocket.send(json.dumps({
+                                'type': 'error',
+                                'success': False,
+                                'error': str(e)
+                            }))
+                        except Exception as send_err:
+                            logger.error(f"发送错误响应失败: {send_err}")
+        except websockets.exceptions.ConnectionClosedOK:
+            logger.info(f"WebSocket连接正常关闭: {websocket.remote_address}")
+        except websockets.exceptions.ConnectionClosedError as cce:
+            logger.warning(f"WebSocket连接异常关闭: {websocket.remote_address}, 代码: {cce.code}, 原因: {cce.reason}")
+        except websockets.exceptions.ConnectionClosed as cc:
+            logger.info(f"WebSocket连接关闭: {websocket.remote_address}, 代码: {cc.code}")
         except Exception as e:
             logger.error(f"WebSocket处理错误: {e}")
+            logger.error(f"错误堆栈: {traceback.format_exc()}")
         finally:
             self.websocket_clients.discard(websocket)
+            logger.info(f"WebSocket客户端已移除: {websocket.remote_address}")
     
     async def start_server(self, host: str = 'localhost', port: int = 3004):
-        """启动WebSocket服务器"""
+        """启动WebSocket服务器 - 配置持久连接"""
         logger.info(f"启动Tello智能代理服务器: {host}:{port}")
         
         server = await websockets.serve(
             self.websocket_handler,
             host,
             port,
-            ping_interval=20,
-            ping_timeout=10
+            ping_interval=20,      # 每20秒发送ping保持连接
+            ping_timeout=60,       # 60秒超时（增加以适应长时间命令执行）
+            close_timeout=10,      # 关闭超时
+            max_size=10 * 1024 * 1024,  # 最大消息大小10MB
+            compression=None       # 禁用压缩以提高性能
         )
         
-        logger.info("Tello智能代理服务器启动成功")
+        logger.info(f"Tello智能代理服务器启动成功 - 持久连接模式")
+        logger.info(f"配置: ping_interval=20s, ping_timeout=60s")
         return server
 
 async def main():

@@ -99,7 +99,17 @@ export default function DarkVeil({
   resolutionScale = 1
 }: DarkVeilProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const { isDark } = useTheme();
+  
+  // Try to use theme context, but provide fallback if not available
+  let isDark = false;
+  try {
+    const theme = useTheme();
+    isDark = theme.isDark;
+  } catch (e) {
+    // Theme context not available, use default
+    isDark = false;
+  }
+  
   const brightness = isDark ? 0.0 : 0.5;
   
   useEffect(() => {

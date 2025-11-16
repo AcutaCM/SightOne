@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { useDraggable } from '../hooks/useDraggable';
 import { useLayout, useComponentLayout } from '@/contexts/LayoutContext';
 import { useSnapAlignment, SnapLine } from '../hooks/useSnapAlignment';
 import { useGridSnap } from '../hooks/useGridSnap';
+import { getCardPanelStyle } from '@/lib/panel-styles';
 
 interface BatteryStatusPanelProps {
   batteryLevel: number;
@@ -12,6 +14,7 @@ interface BatteryStatusPanelProps {
 }
 
 export default function BatteryStatusPanel({ batteryLevel, isCharging = false }: BatteryStatusPanelProps) {
+  const { theme } = useTheme();
   const componentId = 'battery-status';
   const cardRef = useRef<HTMLDivElement>(null);
   const { isEditMode, layouts } = useLayout();
@@ -88,9 +91,16 @@ export default function BatteryStatusPanel({ batteryLevel, isCharging = false }:
   });
 
   const getBatteryColor = (level: number) => {
-    if (level > 60) return '#4F9CF9'; // 蓝色
-    if (level > 30) return '#FF9500'; // 橙色
-    return '#FF3B30'; // 红色
+    // Use NextUI theme-aware colors
+    if (level > 60) return 'hsl(var(--nextui-success))'; // Success color
+    if (level > 30) return 'hsl(var(--nextui-warning))'; // Warning color
+    return 'hsl(var(--nextui-danger))'; // Danger color
+  };
+  
+  const getBatteryColorClass = (level: number) => {
+    if (level > 60) return 'text-success';
+    if (level > 30) return 'text-warning';
+    return 'text-danger';
   };
 
   const getBatteryMessage = (level: number) => {
@@ -101,8 +111,9 @@ export default function BatteryStatusPanel({ batteryLevel, isCharging = false }:
   };
 
   const batteryColor = getBatteryColor(batteryLevel);
+  const batteryColorClass = getBatteryColorClass(batteryLevel);
   const batteryMessage = getBatteryMessage(batteryLevel);
-  const circumference = 2 * Math.PI * 120; // 半径120的圆周长
+  const circumference = 2 * Math.PI * 90; // 半径90的圆周长
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (batteryLevel / 100) * circumference;
 
@@ -151,91 +162,108 @@ export default function BatteryStatusPanel({ batteryLevel, isCharging = false }:
         />
       ))}
       
-      <div className="battery-card w-full h-full rounded-2xl bg-gradient-to-br from-[rgba(26,31,58,0.7)] via-[rgba(42,47,74,0.75)] to-[rgba(30,35,64,0.7)] backdrop-blur-xl border border-[rgba(58,64,99,0.35)] shadow-[0_10px_30px_rgba(2,8,23,0.45)]">
-      <div className="p-0 relative overflow-hidden">
-        {/* 标题区域 */}
-        <div className="absolute top-[6%] left-[6%] z-10">
-          <h3 className="text-white font-bold text-[1.125rem] leading-tight mb-1">
-            电池状况
-          </h3>
-          <p className="text-[#8B92B0] font-medium text-[0.875rem] leading-tight">
-            Battery Status
-          </p>
-        </div>
-
-        {/* 圆形进度条容器 */}
-        <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex items-center justify-center" style={{width: 'min(60%, 240px)', height: 'min(60%, 240px)'}}>
-          {/* SVG 圆形进度条 */}
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 240 240">
-            {/* 背景圆环 */}
-            <circle
-              cx="120"
-              cy="120"
-              r="110"
-              stroke="#2a2f4a"
-              strokeWidth="20"
-              fill="none"
-              className="opacity-50"
-            />
-            {/* 进度圆环 */}
-            <circle
-              cx="120"
-              cy="120"
-              r="110"
-              stroke={batteryColor}
-              strokeWidth="20"
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={strokeDasharray}
-              strokeDashoffset={strokeDashoffset}
-              className="transition-all duration-1000 ease-out"
-              style={{
-                filter: 'drop-shadow(0 0 8px rgba(79, 156, 249, 0.6))'
-              }}
-            />
-          </svg>
+      <div className="w-full h-full rounded-2xl p-6 relative overflow-hidden" style={getCardPanelStyle(theme as 'light' | 'dark')}>
+        {/* 背景装饰 */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-success/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="relative z-10 w-full h-full flex flex-col">
+          {/* 标题区域 */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-foreground/80 font-semibold text-sm tracking-wide uppercase">
+                🔋 电池状态
+              </h3>
+              {isCharging && (
+                <div className="flex items-center gap-1 text-xs text-success">
+                  <svg className="w-4 h-4 animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13 2L3 14h6l-1 8 10-12h-6l1-8z" />
+                  </svg>
+                  <span>充电中</span>
+                </div>
+              )}
+            </div>
+          </div>
           
-          {/* 中心闪电图标 */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-[#34C759] rounded-full flex items-center justify-center shadow-lg" style={{width: 'min(23%, 56px)', height: 'min(23%, 56px)'}}>
-              <svg className="w-[43%] h-[43%]" viewBox="0 0 24 24" fill="none">
-                <path 
-                  d="M13 2L3 14h6l-1 8 10-12h-6l1-8z" 
-                  fill="white"
-                  stroke="white"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
+          {/* 电池可视化 */}
+          <div className="flex-1 flex items-center justify-center mb-6">
+            <div className="relative w-48 h-48">
+              {/* SVG 圆形进度条 */}
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
+                {/* 背景圆环 */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="none"
+                  className="text-foreground/10"
+                />
+                {/* 进度圆环 */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  stroke={batteryColor}
+                  strokeWidth="12"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={strokeDasharray}
+                  strokeDashoffset={strokeDashoffset}
+                  className="transition-all duration-1000 ease-out"
+                  style={{
+                    filter: `drop-shadow(0 0 8px ${batteryColor}80)`
+                  }}
                 />
               </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* 底部信息卡片 */}
-        <div className="absolute bottom-[6%] left-[6%] right-[6%]" style={{height: 'min(20%, 80px)'}}>
-          <div className="w-full h-full bg-gradient-to-r from-[rgba(30,35,64,0.2)] to-[rgba(37,42,69,0.25)] backdrop-blur-lg rounded-[16px] border border-[rgba(58,64,99,0.3)] relative overflow-hidden">
-            {/* 背景光效 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(79,156,249,0.12)] to-transparent"></div>
-            
-            {/* 内容 */}
-            <div className="relative z-10 h-full flex flex-col justify-center px-[4%]">
-              {/* 顶部电量百分比和范围 */}
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[#8B92B0] text-[0.75rem] font-medium">0%</span>
-                <span className="text-white font-bold leading-none" style={{fontSize: 'min(2rem, 8vw)'}}>{batteryLevel}%</span>
-                <span className="text-[#8B92B0] text-[0.75rem] font-medium">100%</span>
-              </div>
               
-              {/* 底部状态文字 */}
-              <div className="text-center">
-                <span className="text-[#8B92B0] text-[0.75rem] font-medium">
-                  {batteryMessage}
-                </span>
+              {/* 中心内容 */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className={`text-5xl font-bold mb-1 ${batteryColorClass}`}>
+                  {batteryLevel}
+                </div>
+                <div className="text-sm text-foreground/60">
+                  %
+                </div>
+                {/* 闪电图标 */}
+                <div className={`mt-2 w-10 h-10 rounded-full flex items-center justify-center ${batteryColorClass} bg-opacity-20`}>
+                  <svg className={`w-5 h-5 ${batteryColorClass}`} viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13 2L3 14h6l-1 8 10-12h-6l1-8z" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
+          
+          {/* 状态信息 */}
+          <div className="space-y-3">
+            {/* 电量条 */}
+            <div className="relative h-2 bg-foreground/10 rounded-full overflow-hidden">
+              <div 
+                className="absolute left-0 top-0 h-full rounded-full transition-all duration-1000"
+                style={{
+                  width: `${batteryLevel}%`,
+                  backgroundColor: batteryColor
+                }}
+              />
+            </div>
+            
+            {/* 状态文字 */}
+            <div className="text-center">
+              <p className="text-foreground/80 text-sm font-medium">
+                {batteryMessage}
+              </p>
+            </div>
+            
+            {/* 电量范围指示 */}
+            <div className="flex justify-between text-xs text-foreground/40">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

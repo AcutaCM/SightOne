@@ -16,22 +16,34 @@ interface StrawberryDetectionCardProps {
     halfRipe: number;
     unripe: number;
   };
+  // 新增：从detectionStats获取实时数据
+  totalPlants?: number;
+  matureStrawberries?: number;
+  immatureStrawberries?: number;
 }
 
 export default function StrawberryDetectionCard({
-  detectedCount = 25,
+  detectedCount = 0,
   latestDetection = {
-    name: "成熟草莓",
-    location: "南区[34,100,0]",
-    timestamp: "Today, 16:36",
-    maturity: "成熟"
+    name: "等待检测...",
+    location: "-",
+    timestamp: "-",
+    maturity: "-"
   },
   maturityStats = {
-    ripe: 15,
-    halfRipe: 8,
-    unripe: 2
-  }
+    ripe: 0,
+    halfRipe: 0,
+    unripe: 0
+  },
+  // 使用实时数据
+  totalPlants = 0,
+  matureStrawberries = 0,
+  immatureStrawberries = 0
 }: StrawberryDetectionCardProps) {
+  // 使用实时数据或默认值
+  const actualTotal = totalPlants || detectedCount;
+  const actualMature = matureStrawberries || maturityStats.ripe;
+  const actualImmature = immatureStrawberries || (maturityStats.halfRipe + maturityStats.unripe);
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -98,81 +110,92 @@ export default function StrawberryDetectionCard({
         height: 'calc(100% - 20px)'
       }}
     >
-      <Card className="w-full h-full bg-background/60 backdrop-blur-[120px] border border-divider shadow-2xl">
-        <CardBody className="p-0 relative overflow-hidden">
-        {/* 主要内容区域 */}
-        <div className="absolute top-[10%] left-[6%] w-[88%] h-[43%]">
-          {/* 检测数量卡片 */}
-          <div className="relative w-full h-full bg-primary rounded-[20px] backdrop-blur-[120px]">
-            {/* 阴影装饰 */}
-            <div className="absolute top-[-25%] right-[40%] w-[44%] h-[206%] opacity-10">
-              <div className="w-full h-full bg-gradient-to-br from-primary-foreground to-transparent rounded-full blur-[60px]" />
-            </div>
-            
-            {/* 文本内容 */}
-            <div className="relative z-10">
-              <h3 className="absolute top-[12%] left-[5%] text-primary-foreground/80 font-medium text-[0.75rem] leading-tight tracking-[-0.02em]">
-                已检测草莓数量
+      <Card className="w-full h-full bg-content1 border-divider shadow-2xl">
+        <CardBody className="p-6 relative overflow-hidden h-full">
+          {/* 背景装饰 */}
+          <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-success/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
+          
+          {/* 内容容器 - 使用flex布局填充整个高度 */}
+          <div className="relative z-10 w-full h-full flex flex-col">
+          
+          {/* 标题区域 */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-foreground/80 font-semibold text-sm tracking-wide uppercase">
+                🍓 草莓检测
               </h3>
-              <div className="absolute top-[35%] left-[5%] text-primary-foreground font-bold text-[2.5rem] leading-tight">
-                {detectedCount}
-              </div>
-              
-              {/* 更多按钮 */}
-              <div className="absolute top-[15%] right-[3.8%] w-[5.4%] h-[23%] flex items-center justify-center text-primary-foreground">
-                <svg className="w-[1rem] h-[0.25rem]" viewBox="0 0 16 4" fill="none">
-                  <path d="M2 2C2 0.9 1.1 0 0 0V4C1.1 4 2 3.1 2 2ZM8 2C8 0.9 7.1 0 6 0V4C7.1 4 8 3.1 8 2ZM14 2C14 0.9 13.1 0 12 0V4C13.1 4 14 3.1 14 2Z" fill="currentColor"/>
+              <div className="flex items-center gap-1 text-foreground/40">
+                <svg className="w-4 h-4" viewBox="0 0 16 4" fill="none">
+                  <circle cx="2" cy="2" r="2" fill="currentColor"/>
+                  <circle cx="8" cy="2" r="2" fill="currentColor"/>
+                  <circle cx="14" cy="2" r="2" fill="currentColor"/>
                 </svg>
               </div>
             </div>
-          </div>
-        </div>
-        
-        {/* NEWEST 标签 */}
-        <div className="absolute top-[61%] left-[6%]">
-          <span className="text-foreground/60 font-normal text-[0.625rem] leading-tight">
-            NEWEST
-          </span>
-        </div>
-        
-        {/* 最新检测信息 */}
-        <div className="absolute top-[71%] left-[6%] w-[88%] h-[18%]">
-          {/* 图标 */}
-          <div className="absolute top-[2%] left-0 w-[9.5%] h-[98%]">
-            <div className="w-full h-full rounded-full bg-foreground/[0.08]" />
+            
+            {/* 总数显示 */}
+            <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-6 border border-primary/20">
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-foreground/60 text-xs mb-1">检测总数</p>
+                  <p className="text-foreground font-bold text-5xl leading-none">
+                    {actualTotal}
+                  </p>
+                </div>
+                <div className="text-6xl opacity-20">🍓</div>
+              </div>
+            </div>
           </div>
           
-          {/* 文本信息 */}
-          <div className="absolute top-0 left-[14.5%] w-[85.5%] h-full">
-            <div className="text-foreground font-medium text-[0.875rem] leading-tight">
-              {latestDetection.name}
+          {/* 成熟度统计 */}
+          <div className="relative z-10 space-y-3">
+            <p className="text-foreground/60 text-xs font-medium uppercase tracking-wide mb-3">
+              成熟度分布
+            </p>
+            
+            {/* 成熟草莓 */}
+            <div className="flex items-center justify-between p-3 bg-danger/10 rounded-xl border border-danger/20 hover:bg-danger/15 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-danger/20 flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-danger"></div>
+                </div>
+                <div>
+                  <p className="text-foreground font-medium text-sm">成熟</p>
+                  <p className="text-foreground/60 text-xs">Ripe & Overripe</p>
+                </div>
+              </div>
+              <p className="text-danger font-bold text-2xl">{actualMature}</p>
             </div>
-            <div className="absolute top-[51%] left-0 text-foreground/60 font-normal text-[0.875rem] leading-tight">
-              {latestDetection.timestamp}
-            </div>
-            <div className="absolute top-[21%] right-0 text-foreground font-bold text-[0.875rem] leading-tight text-right">
-              {latestDetection.location}
+            
+            {/* 未成熟草莓 */}
+            <div className="flex items-center justify-between p-3 bg-success/10 rounded-xl border border-success/20 hover:bg-success/15 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-success"></div>
+                </div>
+                <div>
+                  <p className="text-foreground font-medium text-sm">未成熟</p>
+                  <p className="text-foreground/60 text-xs">Unripe & Partially Ripe</p>
+                </div>
+              </div>
+              <p className="text-success font-bold text-2xl">{actualImmature}</p>
             </div>
           </div>
-        </div>
-        
-        {/* 成熟度统计 - 新增区域 */}
-        <div className="absolute bottom-[2%] left-[6%] w-[88%] h-[8%] flex justify-between items-center">
-          <div className="flex items-center gap-2 text-xs">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-danger"></div>
-              <span className="text-danger">成熟: {maturityStats.ripe}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-warning"></div>
-              <span className="text-warning">半熟: {maturityStats.halfRipe}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-success"></div>
-              <span className="text-success">未熟: {maturityStats.unripe}</span>
+          
+          {/* 底部状态 */}
+          <div className="mt-auto pt-4 border-t border-divider/30">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-foreground/60">
+                {actualTotal > 0 ? '实时检测中...' : '等待检测'}
+              </span>
+              <span className="text-foreground/40">
+                {new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
           </div>
-        </div>
+          
+          </div>
         </CardBody>
       </Card>
     </div>

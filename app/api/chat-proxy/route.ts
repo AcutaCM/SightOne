@@ -36,6 +36,84 @@ function toOpenAIChat(messages: ChatProxyPayload["messages"]) {
   return messages.map(m => ({ role: m.role, content: m.content }));
 }
 
+// 新增：从 Markdown 中提取 dataURL 图片，构造成 OpenAI 兼容的多模态 parts
+function extractImageDataUrls(text: string): string[] {
+  if (!text) return [];
+  const urls: string[] = [];
+  // 匹配 ![upload](data:...) 或任意 ![alt](data:...)
+  const reMd = /!\[[^\]]*]\((data:image\/[a-zA-Z0-9+.\-]+;base64,[^)]+)\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = reMd.exec(text)) !== null) {
+    urls.push(m[1]);
+  }
+  // 兜底：直接扫描裸露的 data:image... 片段
+  const reRaw = /(data:image\/[a-zA-Z0-9+.\-]+;base64,[A-Za-z0-9+/=]+)/g;
+  while ((m = reRaw.exec(text)) !== null) {
+    const u = m[1];
+    if (!urls.includes(u)) urls.push(u);
+  }
+  return urls;
+}
+function stripImageMarkdown(text: string): string {
+  if (!text) return "";
+  // 去掉图片 Markdown，保留其余文本
+  return text
+    .replace(/!\[[^\]]*]\((data:image\/[a-zA-Z0-9+.\-]+;base64,[^)]+)\)/g, "")
+    .trim();
+}
+function toOpenAIChatWithVision(messages: ChatProxyPayload["messages"]) {
+  return messages.map(m => {
+    const imgs = extractImageDataUrls(m.content || "");
+    if (!imgs.length) return { role: m.role, content: m.content };
+    const text = stripImageMarkdown(m.content || "");
+    const parts: any[] = [];
+    if (text) parts.push({ type: "text", text });
+    for (const u of imgs) {
+      parts.push({ type: "image_url", image_url: { url: u } });
+    }
+    return { role: m.role, content: parts };
+  });
+}
+
+// Anthropic/Gemini 多模态转换
+function toAnthropicMessagesWithVision(messages: ChatProxyPayload["messages"]) {
+  return messages.map(m => {
+    const imgs = extractImageDataUrls(m.content || "");
+    if (!imgs.length) return { role: m.role, content: [{ type: "text", text: m.content }] as any[] };
+    const text = stripImageMarkdown(m.content || "");
+    const parts: any[] = [];
+    if (text) parts.push({ type: "text", text });
+    for (const u of imgs) {
+      // 解析 dataURL -> mime/base64
+      const match = /^data:([^;]+);base64,(.+)$/i.exec(u);
+      const mime = (match?.[1] || "image/png").toLowerCase();
+      const base64 = match?.[2] || "";
+      parts.push({
+        type: "image",
+        source: { type: "base64", media_type: mime, data: base64 },
+      });
+    }
+    return { role: m.role, content: parts };
+  });
+}
+
+function toGeminiContentsWithVision(messages: ChatProxyPayload["messages"]) {
+  return messages.map(m => {
+    const imgs = extractImageDataUrls(m.content || "");
+    if (!imgs.length) return { role: m.role === "user" ? "user" : "model", parts: [{ text: m.content }] };
+    const text = stripImageMarkdown(m.content || "");
+    const parts: any[] = [];
+    if (text) parts.push({ text });
+    for (const u of imgs) {
+      const match = /^data:([^;]+);base64,(.+)$/i.exec(u);
+      const mime = (match?.[1] || "image/png").toLowerCase();
+      const base64 = match?.[2] || "";
+      parts.push({ inline_data: { mime_type: mime, data: base64 } });
+    }
+    return { role: m.role === "user" ? "user" : "model", parts };
+  });
+}
+
 function toAnthropicMessages(messages: ChatProxyPayload["messages"]) {
   // Anthropic requires content as array parts
   return messages.map(m => ({
@@ -132,7 +210,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           model,
-          messages: toOpenAIChat(messages),
+          messages: toOpenAIChatWithVision(messages),
           temperature,
           max_tokens: maxTokens,
           stream,
@@ -181,7 +259,7 @@ export async function POST(req: NextRequest) {
           model,
           max_tokens: maxTokens,
           temperature,
-          messages: toAnthropicMessages(messages),
+          messages: toAnthropicMessagesWithVision(messages),
         }),
       });
       if (!resp.ok) {
@@ -203,7 +281,7 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: toGeminiContents(messages),
+          contents: toGeminiContentsWithVision(messages),
           generationConfig: {
             temperature,
             maxOutputTokens: maxTokens,
@@ -233,7 +311,7 @@ export async function POST(req: NextRequest) {
       const body = isCompat
         ? {
             model,
-            messages: toOpenAIChat(messages),
+            messages: toOpenAIChatWithVision(messages),
             temperature,
             max_tokens: maxTokens,
             stream,

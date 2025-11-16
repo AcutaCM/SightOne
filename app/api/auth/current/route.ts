@@ -1,15 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserRole, setUserRole, hasAdmin } from '../../../../lib/user-store';
-import { UserRole } from '../../../../lib/roles';
-import { DEFAULT_ADMIN_EMAIL } from '../../../../lib/config';
+import { authMiddleware } from '../../../../lib/auth/middleware';
 
-export async function GET(req: NextRequest) {
-  const email = (req.cookies.get('user_email')?.value || '').toLowerCase();
-  let role: UserRole = email ? getUserRole(email) : 'normal';
-  // 若尚无管理员，且当前用户为默认管理员邮箱，自动设为管理员
-  if (email && !hasAdmin() && email === DEFAULT_ADMIN_EMAIL && role !== 'admin') {
-    setUserRole(email, 'admin');
-    role = 'admin';
+/**
+ * GET /api/auth/current
+ * Returns authenticated user information
+ * 
+ * Requirements: 2.1, 2.2, 2.3
+ */
+export async function GET(request: NextRequest) {
+  try {
+    // Use existing JWT middleware to validate token
+    const { user, error } = await authMiddleware(request);
+
+    // Handle unauthenticated requests gracefully
+    if (error || !user) {
+      return NextResponse.json(
+        {
+          email: '',
+          role: 'normal',
+          authenticated: false,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Return user email, role, and authentication status
+    return NextResponse.json(
+      {
+        email: user.email,
+        role: user.role,
+        authenticated: true,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in /api/auth/current:', error);
+    
+    // Handle errors gracefully - return unauthenticated state
+    return NextResponse.json(
+      {
+        email: '',
+        role: 'normal',
+        authenticated: false,
+      },
+      { status: 200 }
+    );
   }
-  return NextResponse.json({ email, role });
 }

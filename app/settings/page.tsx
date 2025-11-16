@@ -109,13 +109,12 @@ export default function SettingsPage() {
     setError(null);
 
     try {
-      const token = localStorage.getItem('authToken');
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', // 使用 Cookie 认证
         body: JSON.stringify({
           name: profileForm.name,
           avatar: profileForm.avatar
@@ -155,13 +154,12 @@ export default function SettingsPage() {
     setError(null);
 
     try {
-      const token = localStorage.getItem('authToken');
       const response = await fetch('/api/user/change-password', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include', // 使用 Cookie 认证
         body: JSON.stringify({
           oldPassword: passwordForm.oldPassword,
           newPassword: passwordForm.newPassword
@@ -201,15 +199,12 @@ export default function SettingsPage() {
     setMessage(null);
 
     try {
-      const token = localStorage.getItem('authToken');
       const formData = new FormData();
       formData.append('file', file);
 
       const response = await fetch('/api/upload/avatar', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
+        credentials: 'include', // 使用 Cookie 认证
         body: formData
       });
 

@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Divider } from "@heroui/divider";
+import { usePanelStyles } from "@/hooks/usePanelStyles";
 
 interface MemoryItem {
   id?: string;
@@ -19,6 +20,7 @@ const MemoryPanel: React.FC = () => {
   const [newText, setNewText] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const { cardStyle } = usePanelStyles();
 
   const fetchList = async () => {
     setLoading(true);
@@ -102,8 +104,8 @@ const MemoryPanel: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full min-h-0 flex flex-col bg-background/60 border border-divider rounded-[16px] overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 bg-content1/50">
+    <div className="w-full h-full min-h-0 flex flex-col rounded-[16px] overflow-hidden" style={cardStyle}>
+      <div className="flex items-center gap-2 px-4 py-3" style={cardStyle}>
         <div className="text-foreground text-sm font-medium">记忆管理 (mem0)</div>
         <div className="ml-auto flex items-center gap-2">
           <Input size="sm" placeholder="搜索记忆..." value={query} onValueChange={setQuery} className="w-64" />
@@ -132,7 +134,7 @@ const MemoryPanel: React.FC = () => {
               const id = (it as any).id || (it as any)._id || String(idx);
               const text = it.text || it.content || '';
               return (
-                <div key={id} className="p-2 rounded-lg border border-divider bg-content2/30">
+                <div key={id} className="p-2 rounded-lg border border-divider bg-background/60">
                   {editId === id ? (
                     <div className="space-y-2">
                       <Textarea value={editText} onValueChange={setEditText} minRows={2} />

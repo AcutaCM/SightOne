@@ -1,0 +1,232 @@
+/**
+ * ResultList Styles
+ * 
+ * Styles for the result list component with card layout
+ */
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--wf-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-md);
+}
+
+/* Custom scrollbar */
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background-color: var(--wf-panel-border);
+  border-radius: 4px;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background-color: var(--wf-panel-text-secondary);
+}
+
+/* Result Card */
+.resultCard {
+  background-color: var(--wf-panel-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--wf-radius-md);
+  padding: var(--wf-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-sm);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  cursor: default;
+}
+
+.resultCard[role='button'] {
+  cursor: pointer;
+}
+
+.resultCard:hover {
+  border-color: var(--wf-panel-text-secondary);
+  box-shadow: none;
+}
+
+.resultCard[role='button']:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+/* Card Header */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wf-spacing-sm);
+}
+
+/* Node Info */
+.nodeInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.nodeName {
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-semibold);
+  color: var(--wf-panel-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nodeId {
+  font-size: var(--wf-text-xs);
+  font-family: var(--wf-font-mono);
+  color: var(--wf-panel-text-secondary);
+  padding: 2px 6px;
+  border-radius: var(--wf-radius-sm);
+  background-color: var(--wf-panel-hover);
+  white-space: nowrap;
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: var(--wf-text-xs);
+  font-family: var(--wf-font-mono);
+  color: var(--wf-panel-text-secondary);
+  white-space: nowrap;
+}
+
+/* Type Badge */
+.typeBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  padding: 4px 8px;
+  border-radius: var(--wf-radius-sm);
+  background-color: currentColor;
+  opacity: 0.1;
+  width: fit-content;
+}
+
+.typeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 10;
+}
+
+.typeLabel {
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 10;
+}
+
+/* Result Data */
+.resultData {
+  background-color: var(--wf-panel-hover);
+  border-radius: var(--wf-radius-sm);
+  padding: var(--wf-spacing-sm);
+  overflow: hidden;
+}
+
+.resultContent {
+  margin: 0;
+  font-family: var(--wf-font-mono);
+  font-size: var(--wf-text-xs);
+  line-height: var(--wf-leading-relaxed);
+  color: var(--wf-panel-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.resultContent::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.resultContent::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.resultContent::-webkit-scrollbar-thumb {
+  background-color: var(--wf-panel-border);
+  border-radius: 3px;
+}
+
+/* Empty State */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wf-spacing-md);
+  padding: var(--wf-spacing-2xl);
+  color: var(--wf-panel-text-secondary);
+  text-align: center;
+}
+
+.emptyIcon {
+  opacity: 0.3;
+}
+
+.emptyText {
+  font-size: var(--wf-text-base);
+  font-weight: var(--wf-font-medium);
+  margin: 0;
+}
+
+.emptyHint {
+  font-size: var(--wf-text-sm);
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .list {
+    padding: var(--wf-spacing-xs);
+    gap: var(--wf-spacing-sm);
+  }
+  
+  .resultCard {
+    padding: var(--wf-spacing-sm);
+  }
+  
+  .nodeName {
+    font-size: var(--wf-text-xs);
+  }
+  
+  .nodeId,
+  .timestamp,
+  .typeLabel {
+    font-size: 10px;
+  }
+  
+  .resultContent {
+    font-size: 11px;
+    max-height: 150px;
+  }
+}
+
+/* Animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .resultCard {
+    transition: none;
+  }
+  
+  .resultCard[role='button']:hover {
+    transform: none;
+  }
+}

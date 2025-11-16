@@ -1,0 +1,170 @@
+/**
+ * ControlPanelHeader Styles
+ * 
+ * Styles for the control panel header with connection status indicators
+ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-md);
+  padding-bottom: var(--wf-spacing-lg);
+  border-bottom: 1px solid var(--wf-panel-border);
+}
+
+.header[data-theme='light'] {
+  border-bottom-color: #e2e8f0;
+}
+
+.header[data-theme='dark'] {
+  border-bottom-color: #1f2937;
+}
+
+/* Title */
+.title {
+  font-size: var(--wf-text-lg);
+  font-weight: var(--wf-font-semibold);
+  color: var(--wf-panel-text);
+  margin: 0;
+  line-height: var(--wf-leading-tight);
+}
+
+/* Status Container */
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wf-spacing-sm);
+}
+
+/* Status Item */
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-sm);
+}
+
+/* Status Indicator */
+.statusIndicator {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--wf-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+  position: relative;
+}
+
+.statusIndicator.connected {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--wf-status-success);
+}
+
+.statusIndicator.disconnected {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: var(--wf-status-idle);
+}
+
+/* Pulse animation for connected status */
+.statusIndicator.connected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--wf-radius-sm);
+  background-color: rgba(16, 185, 129, 0.2);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.statusIcon {
+  position: relative;
+  z-index: 1;
+}
+
+/* Status Label */
+.statusLabel {
+  font-size: var(--wf-text-sm);
+  font-weight: var(--wf-font-medium);
+  color: var(--wf-panel-text);
+  flex: 1;
+}
+
+/* Status Text */
+.statusText {
+  font-size: var(--wf-text-xs);
+  font-weight: var(--wf-font-medium);
+  padding: 2px 8px;
+  border-radius: var(--wf-radius-full);
+  transition: all var(--wf-duration-fast) var(--wf-easing-default);
+}
+
+.statusText.statusConnected {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--wf-status-success);
+}
+
+.statusText.statusDisconnected {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: var(--wf-status-idle);
+}
+
+/* Last Update */
+.lastUpdate {
+  display: flex;
+  align-items: center;
+  gap: var(--wf-spacing-xs);
+  font-size: var(--wf-text-xs);
+  color: var(--wf-panel-text-secondary);
+  padding-top: var(--wf-spacing-xs);
+}
+
+.lastUpdateLabel {
+  opacity: 0.7;
+}
+
+.lastUpdateTime {
+  font-weight: var(--wf-font-medium);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    padding-bottom: var(--wf-spacing-md);
+  }
+  
+  .title {
+    font-size: var(--wf-text-base);
+  }
+  
+  .statusContainer {
+    gap: var(--wf-spacing-xs);
+  }
+  
+  .statusIndicator {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .statusIndicator,
+  .statusText {
+    transition: none;
+  }
+  
+  .statusIndicator.connected::before {
+    animation: none;
+  }
+}
