@@ -184,7 +184,7 @@ rm ~/miniconda3/miniconda.sh
 
    包括可防止 conda 进行任何实际文件更新。`--dry-run`
 
-### 2.安裝環境
+##### 2.安裝環境
 
 1. 從 GitHub 複製該倉庫。
 
@@ -212,19 +212,19 @@ pip install -r requirements.txt
 
 對於 NPU 用戶，請安裝 CPU 版本的 PyTorch [`torch_npu`](https://github.com/Ascend/pytorch)。
 
-### 3. 安装FASTAPI环境
+##### 3. 安装FASTAPI环境
 
 ```
 pip install fastapi
 ```
 
-### 4. 复制开放服务脚本`service.py`到Unipixel-3B文件夹下
+##### 4. 复制开放服务脚本`service.py`到Unipixel-3B文件夹下
 
 ```
 cp ./service.py ./Unipixel-3B
 ```
 
-### 5.运行脚本
+##### 5.运行脚本
 
 ```
 conda activate unipixel
