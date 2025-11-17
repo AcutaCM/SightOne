@@ -146,9 +146,9 @@ pip install -r requirements.txt
 
    再次连接即可解决问题
 
-##  **五、Unipixel+WSL配置指南**
+####  **五、Unipixel+WSL配置指南**
 
-### 1.在Ubuntu22.04中安装miniconda
+##### 1.在Ubuntu22.04中安装miniconda
 
 运行以下四个命，下载并安装适用于您选择的芯片架构的最新 Linux 安装程序。逐行，这些命令：
 
