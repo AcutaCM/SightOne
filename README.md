@@ -6,17 +6,39 @@
 
 本章节介绍了您该如何下载本项目以及安装本项目的具体流程，本平台使用的前端技术架构为NEXTJS14+HEROUI+AntDesign的混合架构，以`NPM`作为包管理程式，安装时需要前置`NODEJS 20+`, 您可以前去官网下载并且安装.
 
-不同的计算机安全级别对`npm`环境有不同的安全保护措施，`Windows11`用户建议您更新`powershell`的版本`（powershell7.5)` 避免版本过旧、影响`npm`命令的执行
+不同的计算机安全级别对`npm`环境有不同的安全保护措施，`Windows11`用户建议您使用conda环境绕过powershell的安全策略
 
 若您执意使用旧版的`powershell`,请您执行`npm`命令时请在`npm`命令后加一个`.cmd` 如
 
 ```bash
 npm.cmd install 
 ```
+1. miniconda的安装
 
-1. 打开一个您经常使用的ai ide，创建一个项目文件夹，之后再创建一个终端窗口，请按以下顺序输入安装命令
+windows用户：
 
-2. github源代码下载
+打开您的powershell，输入以下程式码：
+
+```bash
+Invoke-WebRequest -Uri "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe" -outfile ".\miniconda.exe"
+Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
+del .\miniconda.exe
+```
+2. 如果您已完成安裝，但無法在命令列介面中使用 conda，則可能是您的 shell 尚未初始化。您可以在安裝後手動初始化 shell，方法是重启您的计算机。
+
+3. 打开一个您经常使用的ai ide，创建一个项目文件夹，之后再创建一个终端窗口，请按以下顺序输入安装命令
+   
+   ```bash
+   conda create -y -n node20 nodejs=20 -c conda-forge
+   ```
+   
+4. 激活conda nodejs环境
+
+   ```bash
+   conda activate node20
+   ```
+   
+5. github源代码下载
 
    ```bash
    git clone https://github.com/AcutaCM/SightOne.git
@@ -62,19 +84,13 @@ Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
 del .\miniconda.exe
 ```
 
-2. 如果您已完成安裝，但無法在命令列介面中使用 conda，則可能是您的 shell 尚未初始化。您可以在安裝後手動初始化 shell，方法是執行以下命令：
-
-```bash
-# Replace <PATH_TO_CONDA> with the path to your conda install
-source <PATH_TO_CONDA>/bin/activate
-conda init --all
-```
+2. 如果您已完成安裝，但無法在命令列介面中使用 conda，則可能是您的 shell 尚未初始化。您可以在安裝後手動初始化 shell，方法是重启您的计算机。
 
 3. 激活环境：若您安装conda完成后，请输入以下程式码激活环境
 
 ```bash
 conda create -n sightone python=3.12 -y
-conda activate unipixel
+conda activate sightone
 ```
 
 ​	当bash前面带有`(base) Sightone`时说明您激活成功了
