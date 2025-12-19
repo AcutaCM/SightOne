@@ -1,6 +1,6 @@
 [SIGHTONE瞰析人工智能分析平台使用手册.md](https://github.com/user-attachments/files/23567862/SIGHTONE.md)
 # SIGHTONE瞰析人工智能分析平台安装手册
-
+# 注意！屎山项目，优化中
 
 ### 一、安装 INSTALL 前端
 
