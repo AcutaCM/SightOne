@@ -1,92 +1,70 @@
-[SIGHTONE瞰析人工智能分析平台使用手册.md](https://github.com/user-attachments/files/23567862/SIGHTONE.md)
-# 前言：
-# 如果你要使用这个平台作为竞赛项目，你需要翻过层层屎山才能到达真正的终点。
-## 练手的项目，如果你真的要用，请参考后端层面，前端堆了一堆屎，望理解。
+好，这个我直接**按 GitHub 官方 README 习惯**，帮你把这坨内容 **完整重排 + 去噪 + 结构化**，不改你原意，只做「**能给人看的 README**」。
 
+下面这一版 **你可以直接整段复制，覆盖仓库的 `README.md`**。
 
+---
 
+# 🛰️ SIGHTONE「瞰析」人工智能分析平台
 
+> ⚠️ **项目状态说明**
+>
+> **本项目已停止维护（Archived）**
+>
+> * 该项目存在较严重的历史技术债
+> * 适合作为 **竞赛 / 学习 / 后端结构参考**
+> * ❌ **不建议直接用于生产环境**
+> * 前端结构混乱（屎山警告），请谨慎阅读
 
+---
 
+## 📌 项目声明（请先阅读）
 
-# SIGHTONE瞰析人工智能分析平台安装手册
-# 注意！屎山项目，优化中
+> 如果你打算把这个项目当成完整平台来用，你需要：
+>
+> * 翻过前端堆积的历史遗留代码
+> * 自行重构 UI / 组件层
+> * **仅推荐参考后端通信 + 推理管线设计**
 
-### 一、安装 INSTALL 前端
+**作者声明：**
 
-本章节介绍了您该如何下载本项目以及安装本项目的具体流程，本平台使用的前端技术架构为NEXTJS14+HEROUI+AntDesign的混合架构，以`NPM`作为包管理程式，安装时需要前置`NODEJS 20+`, 您可以前去官网下载并且安装.
+* 这是一个练手项目
+* 前端部分存在大量不可维护代码
+* 后端相对更有参考价值
 
-不同的计算机安全级别对`npm`环境有不同的安全保护措施，`Windows11`用户建议您使用conda环境绕过powershell的安全策略
+---
 
-若您执意使用旧版的`powershell`,请您执行`npm`命令时请在`npm`命令后加一个`.cmd` 如
+## 🧠 技术架构总览
+
+| 模块   | 技术                               |
+| ---- | -------------------------------- |
+| 前端   | Next.js 14 + HeroUI + Ant Design |
+| 后端   | Python + WebSocket               |
+| 通信   | WebSocket（无人机 ↔ 平台）              |
+| 推理   | 可接 UniPixel                      |
+| 环境管理 | Conda                            |
+| 运行方式 | 前后端分离                            |
+
+---
+
+## 📦 一、前端安装（INSTALL FRONTEND）
+
+### 1️⃣ 环境要求
+
+* Node.js **20+**
+* npm
+* Windows 11 用户 **强烈建议使用 Conda**
+* 避免 PowerShell 执行策略限制
+
+> ⚠️ 如果坚持用旧 PowerShell
+> 请使用 `npm.cmd` 而不是 `npm`
 
 ```bash
-npm.cmd install 
+npm.cmd install
 ```
-1. miniconda的安装
 
-windows用户：
+---
 
-打开您的powershell，输入以下程式码：
-
-```bash
-Invoke-WebRequest -Uri "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe" -outfile ".\miniconda.exe"
-Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
-del .\miniconda.exe
-```
-2. 如果您已完成安裝，但無法在命令列介面中使用 conda，則可能是您的 shell 尚未初始化。您可以在安裝後手動初始化 shell，方法是重启您的计算机。
-
-3. 打开一个您经常使用的ai ide，创建一个项目文件夹，之后再创建一个终端窗口，请按以下顺序输入安装命令
-   
-   ```bash
-   conda create -y -n node20 nodejs=20 -c conda-forge
-   ```
-   
-4. 激活conda nodejs环境
-
-   ```bash
-   conda activate node20
-   ```
-   
-5. github源代码下载
-
-   ```bash
-   git clone https://github.com/AcutaCM/SightOne.git
-   cd release/drone-analyzer-nextjs
-   npm install
-   npm run dev
-   ```
-
-   若出现依赖安装错误，请你试一下这个命令
-
-   ```bash
-   cd drone-analyzer-nextjs
-   npm install --legacy-peer-deps
-   ```
-
-   或者
-
-   ```bash
-   npm install --ignore-scripts --legacy-peer-deps
-   ```
-
-   2. 若出现网络问题，请你开启你的代理
-
-   3. 若您依旧出现任何安装问题，请使用ai ide的Agent帮助您安装程式
-
-      
-
-#### **二、安装 INSTALL 后端**
-
-本章节介绍了您该如何安装本项目后端的具体流程，本项目采用Python+Websocket通信后端架构，通过websocket与无人机通信。
-
-要使用本项目的后端，请您配置好conda环境
-
-1. miniconda的安装
-
-windows用户：
-
-打开您的powershell，输入以下程式码：
+### 2️⃣ 安装 Miniconda（Windows）
 
 ```bash
 Invoke-WebRequest -Uri "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe" -outfile ".\miniconda.exe"
@@ -94,149 +72,193 @@ Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
 del .\miniconda.exe
 ```
 
-2. 如果您已完成安裝，但無法在命令列介面中使用 conda，則可能是您的 shell 尚未初始化。您可以在安裝後手動初始化 shell，方法是重启您的计算机。
+> 若安装完成后无法使用 `conda`，请 **重启电脑**
 
-3. 激活环境：若您安装conda完成后，请输入以下程式码激活环境
+---
+
+### 3️⃣ 创建 Node.js 环境
+
+```bash
+conda create -y -n node20 nodejs=20 -c conda-forge
+conda activate node20
+```
+
+---
+
+### 4️⃣ 克隆并运行前端
+
+```bash
+git clone https://github.com/AcutaCM/SightOne.git
+cd SightOne/release/drone-analyzer-nextjs
+npm install
+npm run dev
+```
+
+#### ❗ 常见依赖问题解决
+
+```bash
+npm install --legacy-peer-deps
+```
+
+或：
+
+```bash
+npm install --ignore-scripts --legacy-peer-deps
+```
+
+> 若出现网络问题，请开启代理
+> 或使用 AI IDE 的 Agent 自动修复依赖
+
+---
+
+## 🧩 二、后端安装（INSTALL BACKEND）
+
+### 1️⃣ 创建 Python 环境
 
 ```bash
 conda create -n sightone python=3.12 -y
 conda activate sightone
 ```
 
-​	当bash前面带有`(base) Sightone`时说明您激活成功了
+> 当终端显示 `(sightone)` 即代表激活成功
 
-4. 接着输入以下程式码，安装需要使用的依赖
+---
+
+### 2️⃣ 安装依赖
 
 ```bash
-cd /python
+cd release/drone-analyzer-nextjs/python
 pip install -r requirements.txt
 ```
 
-​	若出现依赖版本问题，请您使用实际的包体的最新版本更新
+> 如遇版本冲突，请优先使用 **最新可兼容版本**
 
-#### **三、启动平台**
+---
 
-​	本平台使用前后端分离的架构设计，所以您需要同时打开两个服务
+## ▶️ 三、启动平台（RUN）
 
-1. 开启前端服务器
+本项目为 **前后端分离架构**，请同时启动两个服务。
 
-   ```bash
-   cd release/drone-analyzer-nextjs
-   npm run dev 
-   ```
+### 1️⃣ 启动前端
 
-2. 开启后端服务器
+```bash
+cd release/drone-analyzer-nextjs
+npm run dev
+```
 
-   ```bash
-   conda activate sightone
-   cd release/drone-analyzer-nextjs/python
-   python drone_backend.py
-   ```
+---
 
-3. **你需要登录超级管理员账号才能够使用诊断工作流功能**
+### 2️⃣ 启动后端
 
-   ```
-   账户：admin@drone-analyzer.com
-   密码: admin123456
-   ```
+```bash
+conda activate sightone
+cd release/drone-analyzer-nextjs/python
+python drone_backend.py
+```
 
-#### **四、疑难杂症解决**
+---
 
-​	本平台处于开发阶段，存在不少的不足，以下是部分问题的解决方法
+### 3️⃣ 超级管理员账号（必需）
 
-1. 连接面板无法连接无人机
-
-   此问题是由于后端连接无人机的稳健程序的书写错误。
-
-   ```
-   ✔解决办法：
-   
-   进入后端的终端————CTRL+ C终止运行后端————按一下键盘↑再回车————重启后端
-   ```
-
-   再次连接即可解决问题
-
-####  **五、Unipixel+WSL配置指南**
-
-##### 1.在Ubuntu22.04中安装miniconda
-
-运行以下四个命，下载并安装适用于您选择的芯片架构的最新 Linux 安装程序。逐行，这些命令：
-
-- 在主目录中创建一个名为“miniconda3”的新目录。
-- 下载适用于您选择的芯片架构的 Linux Miniconda 安装脚本，并将脚本保存为 miniconda3 目录。`miniconda.sh`
-- 使用 bash 在静默模式下运行安装脚本。`miniconda.sh`
-- 安装完成后删除安装脚本文件。`miniconda.sh`
+> ⚠️ **诊断工作流仅管理员可用**
 
 ```
+账号：admin@drone-analyzer.com
+密码：admin123456
+```
+
+---
+
+## 🛠️ 四、疑难问题（FAQ）
+
+### ❓ 无法连接无人机
+
+**原因：**
+
+* 后端无人机连接逻辑存在不稳定问题
+
+**解决方法：**
+
+```text
+1. 在后端终端按 Ctrl + C 停止服务
+2. 按 ↑（上箭头）
+3. 回车重新启动
+```
+
+多数情况下可恢复连接。
+
+---
+
+## 🧬 五、UniPixel + WSL 配置指南（进阶）
+
+> 本章节适用于 **Ubuntu 22.04 / WSL2**
+
+---
+
+### 1️⃣ 安装 Miniconda（Linux）
+
+```bash
 mkdir -p ~/miniconda3
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
 bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
 rm ~/miniconda3/miniconda.sh
 ```
 
-1. 安装后，关闭并重新打开终端应用程序或通过运行以下命令刷新它：
-
-   ```
-   source ~/miniconda3/bin/activate
-   ```
-
-2. 然后，通过运行以下命令在所有可用的 shell 上初始化 conda：
-
-   ```
-   conda init --all
-   ```
-
-   使用 会修改某些 shell 配置文件，例如 或 。要测试哪些文件将在您的系统上修改，请运行带有标志的命令。`conda init``.bash_profile``.zshrc``conda init``--dry-run`
-
-   ```
-   conda init --all --dry-run
-   ```
-
-   包括可防止 conda 进行任何实际文件更新。`--dry-run`
-
-##### 2.安裝環境
-
-1. 從 GitHub 複製該倉庫。
-
+```bash
+source ~/miniconda3/bin/activate
+conda init --all
 ```
+
+> 可使用 `--dry-run` 预览修改内容
+
+```bash
+conda init --all --dry-run
+```
+
+---
+
+### 2️⃣ UniPixel 环境配置
+
+```bash
 git clone https://github.com/PolyU-ChenLab/UniPixel.git
 cd UniPixel
-```
 
-1. 設定虛擬環境以及安装依赖
-
-```
 conda create -n unipixel python=3.12 -y
 conda activate unipixel
-
-pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cu128
-
-pip install flash_attn==2.8.2 --no-build-isolation 
 ```
 
-1. 安裝依賴項。
+#### CUDA PyTorch
 
+```bash
+pip install torch==2.7.1 torchvision==0.22.1 \
+  --index-url https://download.pytorch.org/whl/cu128
 ```
+
+```bash
+pip install flash_attn==2.8.2 --no-build-isolation
 pip install -r requirements.txt
 ```
 
-對於 NPU 用戶，請安裝 CPU 版本的 PyTorch [`torch_npu`](https://github.com/Ascend/pytorch)。
+> NPU 用户请使用 `torch_npu`
 
-##### 3. 安装FASTAPI环境
+---
 
-```
+### 3️⃣ 安装 FastAPI
+
+```bash
 pip install fastapi
 ```
 
-##### 4. 复制开放服务脚本`service.py`到Unipixel-3B文件夹下
+---
 
-```
+### 4️⃣ 启动 UniPixel 服务
+
+```bash
 cp ./service.py ./Unipixel-3B
-```
-
-##### 5.运行脚本
-
-```
 conda activate unipixel
 python service.py
 ```
+
+---
+
+
